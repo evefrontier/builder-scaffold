@@ -15,11 +15,19 @@ import axios from "axios";
 import { jwtDecode, type JwtPayload } from "jwt-decode";
 import { createInterface } from "readline";
 
+//** Send a transaction with the zkLogin address.
+//  - Check balance
+//  - Generate ephemeral credentials
+//  - Display login URL
+//  - Wait for JWT input (returned from the user)
+//  - Execute transaction (either with the provided transaction bytes or a test transaction)
+//** */
+
 // Configuration
 const AUTH_URL = "https://test.auth.evefrontier.com";
 const CLIENT_ID = "c8815001-f950-4147-905e-4833d904cd38";
 const PROVER_URL = "https://prover-dev.mystenlabs.com/v1";
-const SUI_NETWORK_URL = "https://fullnode.testnet.sui.io:443";
+const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";
 
 const suiClient = new SuiClient({ url: SUI_NETWORK_URL });
 
@@ -234,7 +242,7 @@ const main = async () => {
   console.log("\n⚙️  Step 3: Checking balance...\n");
 
   try {
-    fetchBalance(jwtToAddress(jwt, USER_SALT));
+    await fetchBalance(jwtToAddress(jwt, USER_SALT));
   } catch (error) {
     console.error("\n❌ Error:", error);
     process.exit(1);
@@ -255,7 +263,7 @@ const main = async () => {
     process.exit(1);
   }
 
-  console.log("\n═".repeat(50));
+  console.log("\n═".repeat(30));
   console.log("🎉 Done!\n");
 };
 
