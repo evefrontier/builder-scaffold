@@ -251,7 +251,14 @@ const main = async () => {
   console.log("\n⚙️  Step 4: Executing transaction...\n");
 
   try {
-    await executeTxn(undefined, jwt, ephemeralKeyPair, maxEpoch, randomness);
+    // Step 5: Wait for transaction bytes input
+    const txbytesString = await promptUser(
+      "📋 Paste your transaction bytes here or leave blank for a test transaction "
+    );
+    const txbytes = txbytesString
+      ? Uint8Array.from(txbytesString.split(",").map(Number))
+      : undefined;
+    await executeTxn(txbytes, jwt, ephemeralKeyPair, maxEpoch, randomness);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("\n❌ Error:", error.response?.data || error.message);
