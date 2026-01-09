@@ -139,34 +139,35 @@ const fetchBalance = async (zkLoginUserAddress: string) => {
   return suiBalance.totalBalance;
 };
 
-// Execute the test transaction
-const executeTxn = async (
-  transactionBytes: Uint8Array | undefined,
-  jwt: string,
-  ephemeralKeyPair: Ed25519Keypair,
-  maxEpoch: number,
-  randomness: string
-) => {
-  const decodedJwt = jwtDecode(jwt) as JwtPayload;
-  const zkLoginUserAddress = jwtToAddress(jwt, USER_SALT);
-
-  // Test transaction in case transactionBytes is not provided
+// Create test transaction bytes
+const createTestTransactionBytes = async (zkLoginUserAddress: string) => {
   const testTx = new Transaction();
-
-  // Test transaction: Transfer 0.1 SUI to the 0x0 address
   const coin = coinWithBalance({ balance: 100_000_000 });
   testTx.transferObjects(
     [coin],
     "0x0000000000000000000000000000000000000000000000000000000000000000"
   );
   testTx.setSender(zkLoginUserAddress);
-
   const testTxnBytes = await testTx.build({ client: suiClient });
+  return testTxnBytes.toString();
+};
+
+// Execute the test transaction
+const executeTxn = async (
+  transactionBytesString: string,
+  jwt: string,
+  ephemeralKeyPair: Ed25519Keypair,
+  maxEpoch: number,
+  randomness: string
+) => {
+  const decodedJwt = jwtDecode(jwt) as JwtPayload;
+
+  const txBytes = Uint8Array.from(
+    transactionBytesString.split(",").map(Number)
+  );
 
   // Sign either the provided transaction bytes or the test transaction bytes if none is provided
-  const signedBytes = await ephemeralKeyPair.signTransaction(
-    transactionBytes || testTxnBytes
-  );
+  const signedBytes = await ephemeralKeyPair.signTransaction(txBytes);
 
   if (!decodedJwt.sub || !decodedJwt.aud || Array.isArray(decodedJwt?.aud)) {
     throw new Error("Missing or invalid decoded JWT fields");
@@ -251,14 +252,26 @@ const main = async () => {
   console.log("\n⚙️  Step 4: Executing transaction...\n");
 
   try {
+    const getTxBytesString = await createTestTransactionBytes(
+      jwtToAddress(jwt, USER_SALT)
+    );
+
+    console.log("\n⚙️  Test transaction bytes:\n", getTxBytesString);
+
+    console.log("\n═".repeat(10));
+
     // Step 5: Wait for transaction bytes input
     const txbytesString = await promptUser(
-      "📋 Paste your transaction bytes here or leave blank for a test transaction "
+      "📋 Paste your transaction bytes from the test tx printed above: "
     );
-    const txbytes = txbytesString
-      ? Uint8Array.from(txbytesString.split(",").map(Number))
-      : undefined;
-    await executeTxn(txbytes, jwt, ephemeralKeyPair, maxEpoch, randomness);
+
+    await executeTxn(
+      txbytesString,
+      jwt,
+      ephemeralKeyPair,
+      maxEpoch,
+      randomness
+    );
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("\n❌ Error:", error.response?.data || error.message);
