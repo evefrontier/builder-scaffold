@@ -31,7 +31,7 @@ const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";
 
 const suiClient = new SuiClient({ url: SUI_NETWORK_URL });
 
-// Fixed salt (will be dynamic once salt server is deployed)
+// Fixed salt (TODO: Change to Enoki return)
 const USER_SALT = "45065794681351736022272385507316449656";
 
 // Helper to prompt user for input
@@ -158,7 +158,7 @@ const executeTxn = async (
   jwt: string,
   ephemeralKeyPair: Ed25519Keypair,
   maxEpoch: number,
-  randomness: string
+  proof: any
 ) => {
   const decodedJwt = jwtDecode(jwt) as JwtPayload;
 
@@ -180,9 +180,6 @@ const executeTxn = async (
     decodedJwt.sub,
     decodedJwt.aud
   ).toString();
-
-  console.log("🔐 Requesting ZK proof from prover...");
-  const proof = await getProof(jwt, ephemeralKeyPair, maxEpoch, randomness);
 
   const zkLoginSignature = getZkLoginSignature({
     inputs: {
@@ -249,42 +246,62 @@ const main = async () => {
     process.exit(1);
   }
 
-  console.log("\n⚙️  Step 4: Executing transaction...\n");
+  // Fetch ZK proof once and cache it for all transactions
+  console.log("\n🔐 Fetching ZK proof (one-time)...");
+  const proof = await getProof(jwt, ephemeralKeyPair, maxEpoch, randomness);
+  console.log("   ✓ ZK proof cached\n");
 
-  try {
-    const getTxBytesString = await createTestTransactionBytes(
-      jwtToAddress(jwt, USER_SALT)
-    );
+  const getTxBytesString = await createTestTransactionBytes(
+    jwtToAddress(jwt, USER_SALT)
+  );
 
-    console.log("\n⚙️  Test transaction bytes:\n", getTxBytesString);
+  console.log("\n⚙️  Test transaction bytes:\n", getTxBytesString);
+  console.log("\n═".repeat(10));
 
-    console.log("\n═".repeat(10));
+  console.log("\n⚙️  Step 4: Ready to execute transactions\n");
+  console.log("   Type 'exit' or 'quit' to stop\n");
 
-    // Step 5: Wait for transaction bytes input
-    const txbytesString = await promptUser(
-      "📋 Paste your transaction bytes from the test tx printed above: "
-    );
+  // Transaction loop - keeps running until user exits
+  while (true) {
+    try {
+      const txbytesString = await promptUser(
+        "📋 Paste transaction bytes, 'test' to generate new tx bytes or 'exit' to quit: "
+      );
 
-    await executeTxn(
-      txbytesString,
-      jwt,
-      ephemeralKeyPair,
-      maxEpoch,
-      randomness
-    );
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("\n❌ Error:", error.response?.data || error.message);
-    } else if (error instanceof Error) {
-      console.error("\n❌ Error:", error.message);
-    } else {
-      console.error("\n❌ Unknown error occurred");
+      // Check for exit commands
+      if (
+        txbytesString.toLowerCase() === "exit" ||
+        txbytesString.toLowerCase() === "quit"
+      ) {
+        console.log("\n👋 Goodbye!\n");
+        break;
+      }
+
+      if (txbytesString.toLowerCase() === "test") {
+        const testTxBytes = await createTestTransactionBytes(
+          jwtToAddress(jwt, USER_SALT)
+        );
+        console.log("\n⚙️  Test transaction bytes:\n", testTxBytes);
+        console.log("\n═".repeat(10));
+        continue;
+      }
+
+      await executeTxn(txbytesString, jwt, ephemeralKeyPair, maxEpoch, proof);
+
+      console.log("✅ Ready for next transaction\n");
+      console.log("\n═".repeat(10));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("\n❌ Error:", error.response?.data || error.message);
+      } else if (error instanceof Error) {
+        console.error("\n❌ Error:", error.message);
+      } else {
+        console.error("\n❌ Unknown error occurred");
+      }
+      // Don't exit - just continue to next iteration
+      console.log("\n🔄 You can try again or type 'exit' to quit\n");
     }
-    process.exit(1);
   }
-
-  console.log("\n═".repeat(30));
-  console.log("🎉 Done!\n");
 };
 
 main();
