@@ -30,7 +30,7 @@ Review the README in each directory for specific setup instructions
 
 ## End to end Local Development Flow 
 Follow the instructions [here](./docker/readme.md). You can skip this step if you are connecting to the testnet
-Follow the instrcutions [here](./setup-world/readme.md). It deploys the world, creates some test resources (smart assemblies and inventory items). You can skip this step if you are connecting to the testnet world
+Follow the instructions [here](./setup-world/readme.md). It deploys the world, creates some test resources (smart assemblies and inventory items). You can skip this step if you are connecting to the testnet world
 Refer [gate-extension](./move-contracts/gate/) to see how to mod the smart gate with the custom logic 
 Deploy the gate package to your desired environment. 
 You can either interact with the deployed contracts using the ts-script or process to building a dapp to interact with the deployed contracts via a UI 
