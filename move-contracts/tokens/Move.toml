@@ -6,6 +6,9 @@ edition = "2024"         # edition = "legacy" to use legacy (pre-2024) Move
 
 [dependencies]
 
+[addresses]
+tokens = "0x0"
+
 # Use -e local for build/publish (local chain ID changes each run)
 [environments]
 local = "0x0"

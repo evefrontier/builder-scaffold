@@ -1,10 +1,13 @@
 [package]
 name = "storage_unit"
-edition = "2024"         # edition = "legacy" to use legacy (pre-2024) Move
+edition = "2024"      # edition = "legacy" to use legacy (pre-2024) Move
 # license = ""           # e.g., "MIT", "GPL", "Apache 2.0"
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
 [dependencies]
+
+[addresses]
+storage_unit = "0x0"
 
 # Use -e local for build/publish (local chain ID changes each run)
 [environments]
