@@ -32,7 +32,6 @@ for alias in ADMIN PLAYER_A PLAYER_B; do
   printf '\n' | sui client new-address ed25519 "$alias" 2>/dev/null || true
 done
 
-# List addresses
 sui client addresses
 
 echo "[sui-dev] Funding accounts (faucet for each)..."
@@ -53,10 +52,8 @@ for alias in ADMIN PLAYER_A PLAYER_B; do
   fi
 done
 
-# Prefer ADMIN as default signer
 sui client switch --address ADMIN
 
-# Collect addresses for .env.sui
 ADMIN=$(sui client active-address)
 sui client switch --address PLAYER_A
 PLAYER_A=$(sui client active-address)

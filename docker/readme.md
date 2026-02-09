@@ -1,65 +1,92 @@
 # Sui development environment (Docker)
 
-Single container with **Sui CLI**, **local node**, **Node.js**, and three funded ed25519 accounts (**ADMIN**, **PLAYER_A**, **PLAYER_B**). Use it to build and deploy Move packages and run TypeScript without installing Sui on your host.
+Single container with **Sui CLI**, **Node.js**, and optional **local node**. Use it to build and deploy Move packages and run TypeScript without installing Sui on your host. You must choose **local** or **testnet** explicitly.
 
 ## Build
 
 ```bash
-docker build -t sui-local .
+docker build -t sui-docker .
 ```
 
 ## Run with shell
 
-Mount your Move packages and get an interactive shell with the local node and keys ready:
+Set **`SUI_NETWORK`** to `local` or `testnet` (required):
+
+**Local** – starts a local node, creates and funds ADMIN / PLAYER_A / PLAYER_B:
 
 ```bash
 docker run -it --rm \
+  -e SUI_NETWORK=local \
   -v "$(pwd)/../move-contracts:/workspace/contracts" \
-  -v "$(pwd)/../ts-scripts:/workspace/scripts" \
-  sui-local
+  -v "$(pwd)/../ts-scripts:/workspace/ts-scripts" \
+  sui-docker
 ```
+
+**Testnet** – no local node; use your own keys (with testnet SUI). Add three Bech32 private keys in **`.env.testnet`** so ADMIN / PLAYER_A / PLAYER_B work like local:
+
+Create `.env.testnet` in the docker directory. 
+
+```
+ADMIN_PRIVATE_KEY=suiprivkey1...
+PLAYER_A_PRIVATE_KEY=suiprivkey1...
+PLAYER_B_PRIVATE_KEY=suiprivkey1...
+```
+
+Mount it into the container so it appears at `/workspace/.env.testnet`:
+
+```bash
+docker run -it --rm \
+  -e SUI_NETWORK=testnet \
+  -v "$(pwd)/../move-contracts:/workspace/contracts" \
+  -v "$(pwd)/../ts-scripts:/workspace/ts-scripts" \
+  -v "$(pwd)/.env.testnet:/workspace/.env.testnet" \
+  sui-docker
+```
+
+On startup the script imports the three keys with aliases ADMIN, PLAYER_A, PLAYER_B and writes `.env.sui` with the same address vars as local. Do not commit `.env.testnet` (add to `.gitignore`).
+
+Optional: override testnet RPC with `-e SUI_RPC_URL=https://fullnode.testnet.sui.io` (default is used if unset).
 
 Inside the container:
 
-- **RPC:** `http://127.0.0.1:9000`
-- **Addresses / env:** `/workspace/.env.sui` (ADMIN, PLAYER_A, PLAYER_B)
+- **Env file:** `/workspace/.env.sui` (RPC URL and, for local, ADMIN / PLAYER_A / PLAYER_B addresses).
 - **Private keys for TypeScript:** Keys live in the Sui keystore. To get a private key (e.g. for signing in TS scripts):
   ```bash
   sui keytool export --key-identity ADMIN
   ```
-  Use the alias (ADMIN, PLAYER_A, PLAYER_B) or the address. Output is a Bech32 string (e.g. `suiprivkey1...`) you can put in `.env` for your scripts. To use deterministic keys, import a mnemonic first, then export:
+  Use the alias or address. Output is Bech32 (e.g. `suiprivkey1...`) for your `.env`. For deterministic keys, import a mnemonic first, then export:
   ```bash
   sui keytool import "your twelve word mnemonic here" ed25519
   sui keytool export --key-identity <ALIAS_OR_ADDRESS>
   ```
-- **Build & deploy any Move package** (e.g. from mounted `move-contracts`). Use `-e local` so the CLI’s chain ID is ignored (local net gets a new chain ID each run):
-
+- **Build & deploy (local):** Use `-e local` for the Move CLI:
   ```bash
   cd /workspace/contracts/gate
   sui move build -e local
   sui client publish -e local --gas-budget 100000000
   ```
-
-  If you see **"Environment \`local\` is not present in Move.toml"**, the package was previously built for another env and `Move.lock` is pinning it. Remove the lock and rebuild: `rm Move.lock && sui move build -e local`.
-
-- **Run TypeScript** (after `npm install` in your script dir):
-
+- **Build & deploy (testnet):** Use `-e testnet` and your imported keys:
   ```bash
-  cd /workspace/scripts
-  npm install
-  # use SUI_RPC_URL=http://127.0.0.1:9000 and addresses from /workspace/.env.sui
-  node your-script.js
+  sui move build -e testnet
+  sui client publish -e testnet --gas-budget 100000000
   ```
-
+  If you see **"Environment \`local\` is not present in Move.toml"** (or testnet), the package was built for another env and `Move.lock` is pinning it. Remove the lock and rebuild: `rm Move.lock && sui move build -e <local|testnet>`.
+- **Run TypeScript:** `cd /workspace/ts-scripts`, `npm install`, then run your scripts; use `SUI_RPC_URL` and addresses from `/workspace/.env.sui`.
 
 ## What runs on startup
 
-1. **First run only:** start local Sui node, create three ed25519 keypairs (ADMIN, PLAYER_A, PLAYER_B), request gas from the faucet for each, write `/workspace/.env.sui`.
-2. **Later runs:** if the node PID is gone, the node is restarted.
-3. Then the container runs your command or `bash`.
+- **If `SUI_NETWORK=local`:** (1) First run only: start local node, create ADMIN/PLAYER_A/PLAYER_B, fund them, write `.env.sui`. (2) Later runs: restart node if PID is gone. (3) Then run your command or `bash`.
+- **If `SUI_NETWORK=testnet`:** (1) First run only: switch client to testnet; if `/workspace/.env.testnet` exists with `ADMIN_PRIVATE_KEY`, `PLAYER_A_PRIVATE_KEY`, `PLAYER_B_PRIVATE_KEY` (Bech32), import them with aliases and write `.env.sui` with the same address vars as local; otherwise write `.env.sui` with RPC only. (2) Then run your command or `bash`.
+- **If `SUI_NETWORK` is unset or not `local`/`testnet`:** print usage and exit 1.
 
 ## Contents
 
-- **Base image:** `mysten/sui-tools:testnet` (Sui CLI + node).
-- **Node.js:** 20 LTS for TypeScript/JS scripts.
+- **Base:** Ubuntu 24.04, Sui CLI (suiup), Node.js 20 LTS.
 - **No local Sui install needed:** all `sui` and `node` usage happens inside the container.
+
+## Keeping it simple
+
+- **One scripts folder:** All shell scripts live in `docker/scripts/`; the Dockerfile copies the folder in one step. Add new scripts there and extend entrypoint when needed.
+- **Minimal surface:** Two modes (local / testnet), one env file (`.env.sui`), optional `.env.testnet` for testnet keys. Avoid extra env vars or modes until you need them.
+- **No secrets in the image:** `.dockerignore` excludes `.env`, `.env.*`, `.env.testnet`. Mount `.env.testnet` at run time; never COPY it.
+- **Docs next to code:** `readme.md` and `env.example` stay in `docker/` for humans; they are not required in the image at runtime.
