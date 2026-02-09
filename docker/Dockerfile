@@ -20,7 +20,7 @@ RUN curl -sSfL https://raw.githubusercontent.com/MystenLabs/suiup/main/install.s
 WORKDIR /workspace
 ENV SUI_CONFIG_DIR=/root/.sui
 
-COPY setup-dev.sh entrypoint.sh common.sh /workspace/
-RUN chmod +x /workspace/setup-dev.sh /workspace/entrypoint.sh /workspace/common.sh
+COPY setup-local.sh entrypoint.sh common.sh /workspace/
+RUN chmod +x /workspace/setup-local.sh /workspace/entrypoint.sh /workspace/common.sh
 
 ENTRYPOINT ["/workspace/entrypoint.sh"]

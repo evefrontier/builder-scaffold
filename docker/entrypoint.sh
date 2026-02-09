@@ -6,7 +6,7 @@ source "$SCRIPT_DIR/common.sh"
 
 # One-time setup: start local node, create ADMIN/PLAYER_A/PLAYER_B, fund them
 if [ ! -f "$WORKSPACE/.env.sui" ]; then
-  "$WORKSPACE/setup-dev.sh"
+  "$WORKSPACE/setup-local.sh"
 fi
 
 # If container was restarted, ensure node is running

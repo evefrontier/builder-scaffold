@@ -23,6 +23,15 @@ Inside the container:
 
 - **RPC:** `http://127.0.0.1:9000`
 - **Addresses / env:** `/workspace/.env.sui` (ADMIN, PLAYER_A, PLAYER_B)
+- **Private keys for TypeScript:** Keys live in the Sui keystore. To get a private key (e.g. for signing in TS scripts):
+  ```bash
+  sui keytool export --key-identity ADMIN
+  ```
+  Use the alias (ADMIN, PLAYER_A, PLAYER_B) or the address. Output is a Bech32 string (e.g. `suiprivkey1...`) you can put in `.env` for your scripts. To use deterministic keys, import a mnemonic first, then export:
+  ```bash
+  sui keytool import "your twelve word mnemonic here" ed25519
+  sui keytool export --key-identity <ALIAS_OR_ADDRESS>
+  ```
 - **Build & deploy any Move package** (e.g. from mounted `move-contracts`). Use `-e local` so the CLI’s chain ID is ignored (local net gets a new chain ID each run):
 
   ```bash
