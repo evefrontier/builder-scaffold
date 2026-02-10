@@ -83,10 +83,3 @@ Inside the container:
 
 - **Base:** Ubuntu 24.04, Sui CLI (suiup), Node.js 20 LTS.
 - **No local Sui install needed:** all `sui` and `node` usage happens inside the container.
-
-## Keeping it simple
-
-- **One scripts folder:** All shell scripts live in `docker/scripts/`; the Dockerfile copies the folder in one step. Add new scripts there and extend entrypoint when needed.
-- **Minimal surface:** Two modes (local / testnet), one env file (`.env.sui`), optional `.env.testnet` for testnet keys. Avoid extra env vars or modes until you need them.
-- **No secrets in the image:** `.dockerignore` excludes `.env`, `.env.*`, `.env.testnet`. Mount `.env.testnet` at run time; never COPY it.
-- **Docs next to code:** `readme.md` and `env.example` stay in `docker/` for humans; they are not required in the image at runtime.
