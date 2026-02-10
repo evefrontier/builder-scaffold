@@ -2,6 +2,10 @@
 
 Single container with **Sui CLI**, **Node.js**, and optional **local node**. Use it to build and deploy Move packages and run TypeScript without installing Sui on your host. You must choose **local** or **testnet** explicitly.
 
+- **Local** – Starts a node and faucet, creates and funds ADMIN / PLAYER_A / PLAYER_B, writes `/workspace/.env.sui`.
+- **Testnet** – Imports three Bech32 keys from a mounted `.env.testnet` (ADMIN, PLAYER_A, PLAYER_B), configures the client, and writes `.env.sui` with the same address vars so TS scripts and deploy flows match.
+- **Mounts** – `move-contracts` and `ts-scripts` are bind-mounted so you edit on the host and build/run inside the container.
+
 ## Build
 
 ```bash
