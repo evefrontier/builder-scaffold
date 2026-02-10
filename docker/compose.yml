@@ -1,0 +1,23 @@
+services:
+  sui-local:
+    build: .
+    image: sui-docker
+    stdin_open: true
+    tty: true
+    environment:
+      - SUI_NETWORK=local
+    volumes:
+      - ../move-contracts:/workspace/contracts
+      - ../ts-scripts:/workspace/ts-scripts
+
+  sui-testnet:
+    build: .
+    image: sui-docker
+    stdin_open: true
+    tty: true
+    environment:
+      - SUI_NETWORK=testnet
+    volumes:
+      - ../move-contracts:/workspace/contracts
+      - ../ts-scripts:/workspace/ts-scripts
+      - ./.env.testnet:/workspace/.env.testnet

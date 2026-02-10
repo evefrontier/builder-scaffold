@@ -6,29 +6,13 @@ Single container with **Sui CLI**, **Node.js**, and optional **local node**. Use
 - **Testnet** – Imports three Bech32 keys from a mounted `.env.testnet` (ADMIN, PLAYER_A, PLAYER_B), configures the client, and writes `.env.sui` with the same address vars so TS scripts and deploy flows match.
 - **Mounts** – `move-contracts` and `ts-scripts` are bind-mounted so you edit on the host and build/run inside the container.
 
-## Build
+## Quick Start (Docker Compose)
 
 ```bash
-docker build -t sui-docker .
+docker compose run --rm sui-local
 ```
 
-## Run with shell
-
-Set **`SUI_NETWORK`** to `local` or `testnet` (required):
-
-**Local** – starts a local node, creates and funds ADMIN / PLAYER_A / PLAYER_B:
-
-```bash
-docker run -it --rm \
-  -e SUI_NETWORK=local \
-  -v "$(pwd)/../move-contracts:/workspace/contracts" \
-  -v "$(pwd)/../ts-scripts:/workspace/ts-scripts" \
-  sui-docker
-```
-
-**Testnet** – no local node; use your own keys (with testnet SUI). Add three Bech32 private keys in **`.env.testnet`** so ADMIN / PLAYER_A / PLAYER_B work like local:
-
-Create `.env.testnet` in the docker directory. 
+**Testnet** – uses your own keys. First create `.env.testnet` in the docker directory:
 
 ```
 ADMIN_PRIVATE_KEY=suiprivkey1...
@@ -36,7 +20,33 @@ PLAYER_A_PRIVATE_KEY=suiprivkey1...
 PLAYER_B_PRIVATE_KEY=suiprivkey1...
 ```
 
-Mount it into the container so it appears at `/workspace/.env.testnet`:
+Then run:
+
+```bash
+docker compose run --rm sui-testnet
+```
+
+To build/rebuild the image:
+
+```bash
+docker compose build
+```
+
+## Alternative: 
+
+**Local:**
+
+```bash
+docker build -t sui-docker .
+
+docker run -it --rm \
+  -e SUI_NETWORK=local \
+  -v "$(pwd)/../move-contracts:/workspace/contracts" \
+  -v "$(pwd)/../ts-scripts:/workspace/ts-scripts" \
+  sui-docker
+```
+
+**Testnet:**
 
 ```bash
 docker run -it --rm \
@@ -46,6 +56,8 @@ docker run -it --rm \
   -v "$(pwd)/.env.testnet:/workspace/.env.testnet" \
   sui-docker
 ```
+
+> **Windows PowerShell:** Replace `$(pwd)` with `${PWD}` and use backticks (`` ` ``) for line continuation instead of `\`.
 
 On startup the script imports the three keys with aliases ADMIN, PLAYER_A, PLAYER_B and writes `.env.sui` with the same address vars as local. Do not commit `.env.testnet` (add to `.gitignore`).
 

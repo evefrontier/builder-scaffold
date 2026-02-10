@@ -32,7 +32,7 @@ sui client switch --env testnet 2>/dev/null || true
 # .env.sui when keys are missing (no .env.testnet or incomplete keys)
 if [ -f "$WORKSPACE/.env.testnet" ]; then
   set -a
-  source "$WORKSPACE/.env.testnet"
+  source <(crlf_clean "$WORKSPACE/.env.testnet")
   set +a
 fi
 if [ ! -f "$WORKSPACE/.env.testnet" ] || [ -z "$ADMIN_PRIVATE_KEY" ] || [ -z "$PLAYER_A_PRIVATE_KEY" ] || [ -z "$PLAYER_B_PRIVATE_KEY" ]; then

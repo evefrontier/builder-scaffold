@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     git \
+    dos2unix \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -21,6 +22,6 @@ WORKDIR /workspace
 ENV SUI_CONFIG_DIR=/root/.sui
 
 COPY scripts/ /workspace/scripts/
-RUN chmod +x /workspace/scripts/*.sh
+RUN dos2unix /workspace/scripts/*.sh && chmod +x /workspace/scripts/*.sh
 
 ENTRYPOINT ["/workspace/scripts/entrypoint.sh"]
