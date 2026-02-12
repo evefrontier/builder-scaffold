@@ -30,10 +30,12 @@ On first run, `docker/workspace-data` is created and holds `.env.sui` with addre
 
 ## Local vs testnet
 
-| | Local | Testnet |
-|---|------|---------|
-| **Use when** | Learning, testing, iteration | Testing with real network testnet |
-| **Setup** | None | Add `.env.testnet` with your keys |
+Both modes use the same `sui-local` container. Enter with `docker compose run --rm sui-local`, then switch networks from inside the container.
+
+| Usage | Local | Testnet |
+|--------|------|---------|
+| **Use when** | Learning, testing, iteration | Testing with real network |
+| **Setup** | None | Add `docker/.env.testnet` with your keys |
 | **Accounts** | Pre-created ADMIN, PLAYER_A, PLAYER_B | Your own keys |
 
 **Switch network** (inside container): `./scripts/switch-network.sh [local|testnet]`

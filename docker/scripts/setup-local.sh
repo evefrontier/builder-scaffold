@@ -31,7 +31,11 @@ start_local_node
 
 echo "[sui-dev] Creating ed25519 keypairs: ADMIN, PLAYER_A, PLAYER_B..."
 for alias in ADMIN PLAYER_A PLAYER_B; do
-  printf '\n' | sui client new-address ed25519 "$alias" 2>/dev/null || true
+  if sui keytool export --key-identity "$alias" --json 2>/dev/null | jq -e '.key.suiAddress' >/dev/null 2>&1; then
+    echo "[sui-dev] $alias already exists, skipping"
+  else
+    printf '\n' | sui client new-address ed25519 "$alias" || { echo "[sui-dev] ERROR: Failed to create key $alias" >&2; exit 1; }
+  fi
 done
 
 sui client addresses

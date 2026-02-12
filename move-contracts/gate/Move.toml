@@ -12,5 +12,5 @@ local = "0x0"
 
 # Read more about the package management system options:
 # https://docs.sui.io/guides/developer/sui-101/move-package-management
-# [addresses]
-# gate = "0x0"
+[addresses]
+gate = "0x0"

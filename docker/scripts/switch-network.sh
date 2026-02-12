@@ -85,9 +85,14 @@ if [ "$MODE" = "testnet" ]; then
   sui keytool import "$PLAYER_A_PRIVATE_KEY" ed25519 --alias testnet-PLAYER_A 2>/dev/null || true
   sui keytool import "$PLAYER_B_PRIVATE_KEY" ed25519 --alias testnet-PLAYER_B 2>/dev/null || true
 
-  ADMIN=$(sui keytool export --key-identity testnet-ADMIN --json | jq -r '.key.suiAddress')
-  PLAYER_A=$(sui keytool export --key-identity testnet-PLAYER_A --json | jq -r '.key.suiAddress')
-  PLAYER_B=$(sui keytool export --key-identity testnet-PLAYER_B --json | jq -r '.key.suiAddress')
+  ADMIN=$(sui keytool export --key-identity testnet-ADMIN --json 2>/dev/null | jq -r '.key.suiAddress')
+  PLAYER_A=$(sui keytool export --key-identity testnet-PLAYER_A --json 2>/dev/null | jq -r '.key.suiAddress')
+  PLAYER_B=$(sui keytool export --key-identity testnet-PLAYER_B --json 2>/dev/null | jq -r '.key.suiAddress')
+
+  if [ -z "$ADMIN" ] || [ "$ADMIN" = "null" ] || [ -z "$PLAYER_A" ] || [ "$PLAYER_A" = "null" ] || [ -z "$PLAYER_B" ] || [ "$PLAYER_B" = "null" ]; then
+    echo "[sui-dev] ERROR: Failed to import/export testnet keys. Check .env.testnet private keys are valid." >&2
+    exit 1
+  fi
 
   write_client_yaml "testnet" "$ADMIN"
   mkdir -p "$WORKSPACE_DATA"
@@ -109,6 +114,7 @@ else
   PLAYER_B_PRIVATE_KEY=$(sui keytool export --key-identity PLAYER_B 2>/dev/null | grep -oE 'suiprivkey1[a-z0-9]+' | head -1)
 
   write_client_yaml "local" "$ADMIN"
+  mkdir -p "$WORKSPACE_DATA"
   write_env_sui "local" "$LOCAL_RPC"
 
   if need_start_local_node; then

@@ -51,7 +51,7 @@ See [setup-world/readme.md](./setup-world/readme.md)
 Write custom Move logic to change how your Smart Assembly works.
 
 See [move-contracts](./move-contracts/readme.md) for example custom logic to extend [Smart Storage Unit](./move-contracts/storage_unit/), 
-[Smart Gate](./move-contracts/gate/) and [Smart Turret](./move-contracts/gate/) 
+[Smart Gate](./move-contracts/gate/) and [Smart Turret](./move-contracts/turret/) 
 
 ---
 
