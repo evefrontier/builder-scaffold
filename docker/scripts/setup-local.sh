@@ -64,6 +64,7 @@ ADMIN_PRIVATE_KEY=$ADMIN_PRIVATE_KEY
 PLAYER_A_PRIVATE_KEY=$PLAYER_A_PRIVATE_KEY
 PLAYER_B_PRIVATE_KEY=$PLAYER_B_PRIVATE_KEY
 EOF
+chmod 600 "$WORKSPACE_DATA/.env.sui"
 echo "[sui-dev] Wrote $WORKSPACE_DATA/.env.sui with ADMIN, PLAYER_A, PLAYER_B addresses and private keys."
 
 sui client balance
