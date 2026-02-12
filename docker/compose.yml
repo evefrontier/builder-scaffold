@@ -1,0 +1,17 @@
+services:
+  sui-local:
+    build: .
+    image: sui-docker
+    stdin_open: true
+    tty: true
+    environment:
+      - SUI_NETWORK=local
+    volumes:
+      - sui-keystore:/root/.sui
+      - ./workspace-data:/workspace/data
+      - .:/workspace/docker
+      - ../move-contracts:/workspace/contracts
+      - ../ts-scripts:/workspace/ts-scripts
+
+volumes:
+  sui-keystore:

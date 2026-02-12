@@ -1,5 +1,10 @@
+# Node modules
 */node_modules
 
-
+# Environment variables
 .keys/
 .env
+.env.testnet
+
+# keys from .env.sui, etc.
+docker/workspace-data

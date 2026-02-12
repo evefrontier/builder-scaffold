@@ -1,60 +1,95 @@
 # Builder Scaffold
 
-**Templates and tools to build in eve-frontier world**
+Templates and tools for building on EVE Frontier.
 
-Development toolkit for building custom extensions, dApps, and integrations on the Frontier World Contracts. 
+## What's included
 
-This scaffold provides templates to extend Smart Assemblies, create tokens, build frontend applications, automate login workflows, and set up local development environments.
+- **Docker** – Local dev environment (Sui CLI + Node.js)
+- **Move contracts** – Extend Smart Assemblies with custom logic
+- **TypeScript & Rust scripts** – Interact with contracts
+- **dApp template** – Extension use cases
+- **zkLogin CLI** – OAuth-based transaction signing
 
-## What's Included
+Each directory has its own README for setup and usage.
 
-- Docker setup for local development environment
-- Move Contracts template to extend Smart Assemblies
-- TypeScript examples to interact with contracts
-- Rust scripts with equivalent functionality to TypeScript scripts
-- dApp template for extension use cases
-- zkLogin CLI
+## Prerequisites
 
-Review the README in each directory for specific setup instructions
-
-## High Level Builder Flow (What you’ll be able to do)
-
-1. **Setup your local development environment** run a local sui node for development (localnet) and deploy a hello world move contract.
-2. **Deploy an EVE Frontier world locally** and seed test resources (localnet).
-3. **Mod a Smart Assembly** by adding custom Move logic (example: Smart Gate extension).
-4. **Deploy your custom Move package on-chain** (localnet/testnet/production).
-5. **Configure & test the custom logic** by authorizing it for a Smart Assembly you own, then running interactions (scripts) based on the environment.
-6. **Submit transactions using zkLogin** (ephemeral keys + JWT-based flow; typically used on hosted networks like testnet).
-7. **Build a dapp UI** that connects to a wallet and interacts with your deployed packages (typically testnet).
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://docs.docker.com/get-docker/) (optional but recommended for local dev)
 
 
-## End to end Local Development Flow 
-Follow the instructions [here](./docker/readme.md). You can skip this step if you are connecting to the testnet
-Follow the instructions [here](./setup-world/readme.md). It deploys the world, creates some test resources (smart assemblies and inventory items). You can skip this step if you are connecting to the testnet world
-Refer [gate-extension](./move-contracts/gate/) to see how to mod the smart gate with the custom logic 
-Deploy the gate package to your desired environment. 
-You can either interact with the deployed contracts using the ts-script or process to building a dapp to interact with the deployed contracts via a UI 
+## Builder Flow
 
-## End to end Testnet Development Flow
+### Step 1: Set up your local environment
 
-This section is primarily for deploying custom extension packages and configuring them for existing in-game Smart Assemblies on testnet. Most other in-game interactions must be performed via the game UI.
+You need Sui tools and Node.js. You can do this by:
 
-Note: Some Smart Assembly interactions can only be performed via the in-game UI. The game enforces certain in-game constraints (e.g., player position/proximity) that scripts can’t satisfy.
+**Using Docker (recommended):**
+```bash
+# from repo root
+cd docker 
+docker compose run --rm sui-local
+```
 
-Example: jumping through a gate can’t be triggered from scripts because your character must be next to the gate when the jump occurs.
+Full details: [docker/readme.md](./docker/readme.md)
 
+**Or Installing on your host:**  
+Follow [Sui getting started](https://docs.sui.io/guides/developer/getting-started).
 
-## End to end Production/Stillness Development Flow
+---
+
+### Step 2: Deploy an EVE Frontier world
+
+Deploy the [world contracts](https://github.com/evefrontier/world-contracts) and create test resources.
+
+See [setup-world/readme.md](./setup-world/readme.md)
+
+---
+
+### Step 3: Extend a Smart Assembly
+
+Write custom Move logic to change how your Smart Assembly works.
+
+See [move-contracts](./move-contracts/readme.md) for example custom logic to extend [Smart Storage Unit](./move-contracts/storage_unit/), 
+[Smart Gate](./move-contracts/gate/) and [Smart Turret](./move-contracts/turret/) 
+
+---
+
+### Step 4: Deploy and test your logic
+
+1. Build and publish your Move package.
+2. Authorize it for a Smart Assembly you own.
+3. Run interaction scripts (TypeScript or Rust) against your environment.
+
+See [ts-scripts/readme.md](./ts-scripts/readme.md) or [rust-scripts/readme.md](./rust-scripts/readme.md)
+
+---
+
+### Step 5: Use zkLogin (optional)
+
+Test JWT-based auth on hosted networks (e.g. testnet).
+
+See [zklogin/readme.md](./zklogin/readme.md)
+
+---
+
+### Step 6: Build a dApp
+
+Create a dApp that talks to your deployed packages.
+
+Do this: See [dapps/readme.md](./dapps/readme.md)
 
 
 ## Project Structure
+```
 builder-scaffold/
-├── dapps/               # Reference dApp
-├── docker/              # Dev containers
-├── move-contracts/      # Move extension examples
-├── rust-scripts/        # Rust interaction scripts
-├── ts-scripts/          # TypeScript interaction scripts
-└── zklogin/             # zkLogin automation scripts
+├── dapps/           # Reference dApp
+├── docker/          # Dev containers
+├── move-contracts/  # Move extension examples
+├── rust-scripts/    # Rust interaction scripts
+├── ts-scripts/      # TypeScript interaction scripts
+└── zklogin/         # zkLogin automation
+```
 
 ## Contributing
 
