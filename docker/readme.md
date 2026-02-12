@@ -36,21 +36,11 @@ On first run, `docker/workspace-data` is created and holds `.env.sui` with addre
 | **Setup** | None | Add `.env.testnet` with your keys |
 | **Accounts** | Pre-created ADMIN, PLAYER_A, PLAYER_B | Your own keys |
 
-**To use testnet:** Create `docker/.env.testnet` with your Bech32 formatted private keys:
-
-```
-ADMIN_PRIVATE_KEY=suiprivkey1...
-PLAYER_A_PRIVATE_KEY=suiprivkey1...
-PLAYER_B_PRIVATE_KEY=suiprivkey1...
-```
-
-Then run `docker compose run --rm sui-testnet`. Do not commit `.env.testnet`.
-
 **Switch network** (inside container): `./scripts/switch-network.sh [local|testnet]`
-- `testnet`: Stops local node, imports keys from `.env.testnet` (aliases: testnet-ADMIN, etc.)
+- `testnet`: Stops local node, imports keys from `docker/.env.testnet` (aliases: testnet-ADMIN, etc.)
 - `local`: Starts fresh chain, funds from faucet, uses ADMIN/PLAYER_A/PLAYER_B keys
 
-For testnet, create `docker/.env.testnet` with Bech32 keys. Do not commit.
+For testnet, create `docker/.env.testnet` with Bech32 keys (ADMIN_PRIVATE_KEY, PLAYER_A_PRIVATE_KEY, PLAYER_B_PRIVATE_KEY). Do not commit.
 
 ## Useful commands inside the container
 
@@ -75,7 +65,7 @@ docker compose build
 To reset keystore and workspace data (new keys, fix corrupted config). Run from the `docker` directory:
 
 ```bash
-rm -r workspace-data/
+rm -rf workspace-data
 docker compose build
 docker volume rm docker_sui-keystore 2>/dev/null || true
 docker compose run --rm sui-local
