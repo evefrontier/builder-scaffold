@@ -26,6 +26,8 @@ sui move build -e local
 
 Your `move-contracts` and `ts-scripts` folders are mounted—edit files on your host and run commands in the container.
 
+On first run, `docker/workspace-data` is created and holds `.env.sui` with addresses and private keys (persists across container restarts).
+
 ## Local vs testnet
 
 | | Local | Testnet |
@@ -44,6 +46,12 @@ PLAYER_B_PRIVATE_KEY=suiprivkey1...
 
 Then run `docker compose run --rm sui-testnet`. Do not commit `.env.testnet`.
 
+**Switch network** (inside container): `./scripts/switch-network.sh [local|testnet]`
+- `testnet`: Stops local node, imports keys from `.env.testnet` (aliases: testnet-ADMIN, etc.)
+- `local`: Starts fresh chain, funds from faucet, uses ADMIN/PLAYER_A/PLAYER_B keys
+
+For testnet, create `docker/.env.testnet` with Bech32 keys. Do not commit.
+
 ## Useful commands inside the container
 
 | Task | Command |
@@ -51,14 +59,26 @@ Then run `docker compose run --rm sui-testnet`. Do not commit `.env.testnet`.
 | Build Move | `cd /workspace/contracts/gate && sui move build -e local` |
 | Publish Move | `sui client publish -e local --gas-budget 100000000` |
 | Run TypeScript | `cd /workspace/ts-scripts && npm install && npm run <script>` |
-| Export key for TS | `sui keytool export --key-identity ADMIN` |
+| View keys | `cat /workspace/data/.env.sui` |
+| Switch network | `./scripts/switch-network.sh local` or `./scripts/switch-network.sh testnet` |
 
-Env vars and addresses are in `/workspace/.env.sui`.
+Env vars, addresses, and private keys are in `/workspace/data/.env.sui`. For TypeScript, `source /workspace/data/.env.sui` or copy the vars into `ts-scripts/.env`. Do not commit `workspace-data`.
 
 ## Rebuild the image
 
 ```bash
 docker compose build
+```
+
+## Clean up / Fresh start
+
+To reset keystore and workspace data (new keys, fix corrupted config). Run from the `docker` directory:
+
+```bash
+rm -r workspace-data/
+docker compose build
+docker volume rm docker_sui-keystore 2>/dev/null || true
+docker compose run --rm sui-local
 ```
 
 ## Troubleshooting

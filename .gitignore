@@ -5,3 +5,6 @@
 .keys/
 .env
 .env.testnet
+
+# keys from .env.sui, etc.
+docker/workspace-data

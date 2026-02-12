@@ -2,3 +2,4 @@ readme.md
 .env
 .env.*
 .env.testnet
+workspace-data
