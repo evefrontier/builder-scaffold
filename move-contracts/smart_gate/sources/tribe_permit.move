@@ -23,6 +23,8 @@ use world::{character::Character, gate::{Self, Gate}};
 const ENotStarterTribe: vector<u8> = b"Character is not a starter tribe";
 #[error(code = 1)]
 const ENoTribeConfig: vector<u8> = b"Missing TribeConfig on ExtensionConfig";
+#[error(code = 2)]
+const EExpiryOverflow: vector<u8> = b"Expiry timestamp overflow";
 
 /// Stored as a dynamic field value under `ExtensionConfig`.
 public struct TribeConfig has drop, store {
@@ -54,8 +56,10 @@ public fun issue_jump_permit(
     // Check if the character's tribe is a starter tribe
     assert!(character.tribe() == tribe_cfg.tribe, ENotStarterTribe);
 
-    // 5 days in milliseconds. Please make this configurable.
-    let expires_at_timestamp_ms = clock.timestamp_ms() + 5 * 24 * 60 * 60 * 1000;
+    let five_days_ms: u64 = 5 * 24 * 60 * 60 * 1000;
+    let ts = clock.timestamp_ms();
+    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - five_days_ms), EExpiryOverflow);
+    let expires_at_timestamp_ms = ts + five_days_ms;
     gate::issue_jump_permit<XAuth>(
         source_gate,
         destination_gate,

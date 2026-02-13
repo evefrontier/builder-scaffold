@@ -23,6 +23,8 @@ const ECorpseTypeIdEmpty: vector<u8> = b"Corpse type id is empty";
 const ECorpseTypeMismatch: vector<u8> = b"Corpse type id mismatch";
 #[error(code = 2)]
 const ENoBountyConfig: vector<u8> = b"Missing BountyConfig on ExtensionConfig";
+#[error(code = 3)]
+const EExpiryOverflow: vector<u8> = b"Expiry timestamp overflow";
 
 /// Stored as a dynamic field value under `ExtensionConfig`.
 public struct BountyConfig has drop, store {
@@ -41,7 +43,7 @@ public fun collect_corpse_bounty<T: key>(
     destination_gate: &Gate,
     character: &Character,
     player_inventory_owner_cap: &OwnerCap<T>,
-    corpe_item_id: u64,
+    corpse_item_id: u64,
     proximity_proof: vector<u8>,
     clock: &Clock,
     ctx: &mut TxContext,
@@ -57,7 +59,7 @@ public fun collect_corpse_bounty<T: key>(
         server_registry,
         character,
         player_inventory_owner_cap,
-        corpe_item_id,
+        corpse_item_id,
         proximity_proof,
         clock,
         ctx,
@@ -73,8 +75,10 @@ public fun collect_corpse_bounty<T: key>(
         ctx,
     );
 
-    // 5 days in milliseconds.
-    let expires_at_timestamp_ms = clock.timestamp_ms() + 5 * 24 * 60 * 60 * 1000;
+    let five_days_ms: u64 = 5 * 24 * 60 * 60 * 1000;
+    let ts = clock.timestamp_ms();
+    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - five_days_ms), EExpiryOverflow);
+    let expires_at_timestamp_ms = ts + five_days_ms;
     gate::issue_jump_permit<XAuth>(
         source_gate,
         destination_gate,
