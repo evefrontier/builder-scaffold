@@ -16,12 +16,15 @@ public struct AdminCap has key, store {
 }
 
 // This can be any type that is authorized to call the `issue_jump_permit` function.
-// eg: AlgorithimicWarfareAuth, TribalAuth, GoonCorpAuth, etc.
+// eg: AlgorithmicWarfareAuth, TribalAuth, GoonCorpAuth, etc.
 public struct XAuth has drop {}
 
 public fun x_auth(): XAuth {
     XAuth {}
 }
+
+/// Default permit expiry duration (5 days in ms). Use for gate extensions that issue JumpPermits.
+public const DEFAULT_PERMIT_EXPIRY_MS: u64 = 5 * 24 * 60 * 60 * 1000;
 
 // === Init ===
 fun init(ctx: &mut TxContext) {

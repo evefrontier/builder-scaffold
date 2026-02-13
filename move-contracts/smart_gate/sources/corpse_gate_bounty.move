@@ -29,6 +29,7 @@ const EExpiryOverflow: vector<u8> = b"Expiry timestamp overflow";
 /// Stored as a dynamic field value under `ExtensionConfig`.
 public struct BountyConfig has drop, store {
     bounty_type_id: u64,
+    expiry_duration_ms: u64,
 }
 
 /// Dynamic-field key for `BountyConfig`.
@@ -75,10 +76,10 @@ public fun collect_corpse_bounty<T: key>(
         ctx,
     );
 
-    let five_days_ms: u64 = 5 * 24 * 60 * 60 * 1000;
+    let expiry_ms = bounty_cfg.expiry_duration_ms;
     let ts = clock.timestamp_ms();
-    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - five_days_ms), EExpiryOverflow);
-    let expires_at_timestamp_ms = ts + five_days_ms;
+    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - expiry_ms), EExpiryOverflow);
+    let expires_at_timestamp_ms = ts + expiry_ms;
     gate::issue_jump_permit<XAuth>(
         source_gate,
         destination_gate,
@@ -94,16 +95,21 @@ public fun bounty_type_id(extension_config: &ExtensionConfig): u64 {
     extension_config.borrow_rule<BountyConfigKey, BountyConfig>(BountyConfigKey {}).bounty_type_id
 }
 
+public fun bounty_expiry_duration_ms(extension_config: &ExtensionConfig): u64 {
+    extension_config.borrow_rule<BountyConfigKey, BountyConfig>(BountyConfigKey {}).expiry_duration_ms
+}
+
 // === Admin Functions ===
-public fun set_bounty_type_id(
+public fun set_bounty_config(
     extension_config: &mut ExtensionConfig,
     admin_cap: &AdminCap,
     bounty_type_id: u64,
+    expiry_duration_ms: u64,
 ) {
     assert!(bounty_type_id != 0, ECorpseTypeIdEmpty);
     extension_config.set_rule<BountyConfigKey, BountyConfig>(
         admin_cap,
         BountyConfigKey {},
-        BountyConfig { bounty_type_id },
+        BountyConfig { bounty_type_id, expiry_duration_ms },
     );
 }

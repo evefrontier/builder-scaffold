@@ -7,7 +7,7 @@
 /// - Once configured, travelers must use `world::gate::jump_with_permit`; default `jump` is not allowed.
 /// - This extension issues permits through `issue_jump_permit`, which:
 ///   - checks a simple rule (character must belong to the configured starter `tribe`)
-///   - sets an expiry window (currently 5 days from `Clock`)
+///   - sets an expiry window from config (use `config::DEFAULT_PERMIT_EXPIRY_MS` for 5 days)
 ///   - calls `world::gate::issue_jump_permit<XAuth>` to mint a single-use permit to the character.
 ///
 /// `GateRules` is a shared object holding configurable parameters,
@@ -29,6 +29,7 @@ const EExpiryOverflow: vector<u8> = b"Expiry timestamp overflow";
 /// Stored as a dynamic field value under `ExtensionConfig`.
 public struct TribeConfig has drop, store {
     tribe: u32,
+    expiry_duration_ms: u64,
 }
 
 /// Dynamic-field key for `TribeConfig`.
@@ -37,6 +38,10 @@ public struct TribeConfigKey has copy, drop, store {}
 // === View Functions ===
 public fun tribe(extension_config: &ExtensionConfig): u32 {
     extension_config.borrow_rule<TribeConfigKey, TribeConfig>(TribeConfigKey {}).tribe
+}
+
+public fun expiry_duration_ms(extension_config: &ExtensionConfig): u64 {
+    extension_config.borrow_rule<TribeConfigKey, TribeConfig>(TribeConfigKey {}).expiry_duration_ms
 }
 
 // === Admin Functions ===
@@ -56,10 +61,10 @@ public fun issue_jump_permit(
     // Check if the character's tribe is a starter tribe
     assert!(character.tribe() == tribe_cfg.tribe, ENotStarterTribe);
 
-    let five_days_ms: u64 = 5 * 24 * 60 * 60 * 1000;
+    let expiry_ms = tribe_cfg.expiry_duration_ms;
     let ts = clock.timestamp_ms();
-    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - five_days_ms), EExpiryOverflow);
-    let expires_at_timestamp_ms = ts + five_days_ms;
+    assert!(ts <= (0xFFFFFFFFFFFFFFFFu64 - expiry_ms), EExpiryOverflow);
+    let expires_at_timestamp_ms = ts + expiry_ms;
     gate::issue_jump_permit<XAuth>(
         source_gate,
         destination_gate,
@@ -74,10 +79,11 @@ public fun set_tribe_config(
     extension_config: &mut ExtensionConfig,
     admin_cap: &AdminCap,
     tribe: u32,
+    expiry_duration_ms: u64,
 ) {
     extension_config.set_rule<TribeConfigKey, TribeConfig>(
         admin_cap,
         TribeConfigKey {},
-        TribeConfig { tribe },
+        TribeConfig { tribe, expiry_duration_ms },
     );
 }
