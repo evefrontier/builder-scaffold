@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@mysten/dapp-kit/dist/index.css";
 import "@radix-ui/themes/styles.css";
 
 import { QueryClient } from "@tanstack/react-query";

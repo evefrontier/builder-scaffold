@@ -8,3 +8,5 @@
 
 # keys from .env.sui, etc.
 docker/workspace-data
+
+dapps/frontend
