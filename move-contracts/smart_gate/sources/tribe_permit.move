@@ -10,7 +10,7 @@
 ///   - sets an expiry window from config (use `config::DEFAULT_PERMIT_EXPIRY_MS` for 5 days)
 ///   - calls `world::gate::issue_jump_permit<XAuth>` to mint a single-use permit to the character.
 ///
-/// Configuration for this extension is stored in the shared `ExtensionConfig` object,
+/// Configuration for this extension is stored in the shared `ExtensionConfig` object.
 #[allow(unused_use)]
 module smart_gate::tribe_permit;
 
