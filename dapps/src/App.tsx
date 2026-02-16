@@ -1,10 +1,11 @@
 import { Box, Container, Flex, Heading } from "@radix-ui/themes";
 import { WalletStatus } from "./WalletStatus";
-import { useConnection } from "@evefrontier/dapp-kit";
+import { abbreviateAddress, useConnection } from "@evefrontier/dapp-kit";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 
 function App() {
-  const { handleConnect, handleDisconnect, walletAddress, hasEveVault } =
-    useConnection();
+  const { handleConnect, hasEveVault, handleDisconnect } = useConnection();
+  const account = useCurrentAccount();
 
   return (
     <>
@@ -22,8 +23,13 @@ function App() {
         </Box>
 
         <Box>
-          <button onClick={handleConnect}>Connect Wallet</button>s{" "}
-          {/* <ConnectWallet handleConnect={handleConnect} /> */}
+          <button
+            onClick={() =>
+              account?.address ? handleDisconnect() : handleConnect()
+            }
+          >
+            {account ? abbreviateAddress(account?.address) : "Connect Wallet"}
+          </button>
         </Box>
       </Flex>
       <Container>
@@ -33,7 +39,7 @@ function App() {
           px="4"
           style={{ background: "var(--gray-a2)", minHeight: 500 }}
         >
-          {/* <WalletStatus /> */}
+          <WalletStatus />
         </Container>
       </Container>
     </>

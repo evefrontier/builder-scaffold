@@ -27,7 +27,7 @@ import { createInterface } from "readline";
 const AUTH_URL = "https://test.auth.evefrontier.com";
 const CLIENT_ID = "c8815001-f950-4147-905e-4833d904cd38";
 const PROVER_URL = "https://prover-dev.mystenlabs.com/v1";
-const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";
+const SUI_NETWORK_URL = "https://fullnode.testnet.sui.io:443";
 
 const suiClient = new SuiClient({ url: SUI_NETWORK_URL });
 
