@@ -1,5 +1,6 @@
 # Node modules
 */node_modules
+node_modules/
 
 # Environment variables
 .keys/
@@ -8,3 +9,5 @@
 
 # keys from .env.sui, etc.
 docker/workspace-data
+.DS_Store
+

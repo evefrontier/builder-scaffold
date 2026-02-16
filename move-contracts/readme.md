@@ -9,6 +9,22 @@ See the [World Contracts Architecture ADR](https://github.com/evefrontier/world-
 
 - Docker (for containerized development)
 - Sui CLI (latest version)
+- Node.js 24
+
+## Formatting & Linting
+
+From the repo root:
+
+```bash
+# Format all Move files
+pnpm fmt
+
+# Check formatting (CI)
+pnpm fmt:check
+
+# Lint (build + Move linter)
+pnpm lint
+```
 
 ## Templates To Be Included
 
