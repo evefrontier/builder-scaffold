@@ -1,5 +1,5 @@
 import { Container, Flex, Heading, Text } from "@radix-ui/themes";
-import { OwnedObjects } from "./OwnedObjects";
+import { AssemblyInfo } from "./AssemblyInfo";
 import { useCurrentAccount } from "@mysten/dapp-kit-react";
 
 export function WalletStatus() {
@@ -17,7 +17,7 @@ export function WalletStatus() {
       ) : (
         <Text>Wallet not connected</Text>
       )}
-      <OwnedObjects />
+      <AssemblyInfo />
     </Container>
   );
 }
