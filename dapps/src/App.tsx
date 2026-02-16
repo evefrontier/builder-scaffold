@@ -4,7 +4,7 @@ import { abbreviateAddress, useConnection } from "@evefrontier/dapp-kit";
 import { useCurrentAccount } from "@mysten/dapp-kit-react";
 
 function App() {
-  const { handleConnect, hasEveVault, handleDisconnect } = useConnection();
+  const { handleConnect, handleDisconnect } = useConnection();
   const account = useCurrentAccount();
 
   return (
