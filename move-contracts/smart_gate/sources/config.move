@@ -19,14 +19,6 @@ public struct AdminCap has key, store {
 // eg: AlgorithmicWarfareAuth, TribalAuth, GoonCorpAuth, etc.
 public struct XAuth has drop {}
 
-public fun x_auth(): XAuth {
-    XAuth {}
-}
-
-/// Default permit expiry duration (5 days in ms). Use for gate extensions that issue JumpPermits.
-public const DEFAULT_PERMIT_EXPIRY_MS: u64 = 5 * 24 * 60 * 60 * 1000;
-
-// === Init ===
 fun init(ctx: &mut TxContext) {
     let admin_cap = AdminCap { id: object::new(ctx) };
     transfer::transfer(admin_cap, ctx.sender());
@@ -89,4 +81,9 @@ public fun remove_rule<K: copy + drop + store, V: store>(
     key: K,
 ): V {
     df::remove(&mut config.id, key)
+}
+
+/// Mint an `XAuth` witness. Restricted to this package to prevent unauthorized use.
+public(package) fun x_auth(): XAuth {
+    XAuth {}
 }

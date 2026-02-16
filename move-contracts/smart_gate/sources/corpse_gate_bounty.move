@@ -96,7 +96,9 @@ public fun bounty_type_id(extension_config: &ExtensionConfig): u64 {
 }
 
 public fun bounty_expiry_duration_ms(extension_config: &ExtensionConfig): u64 {
-    extension_config.borrow_rule<BountyConfigKey, BountyConfig>(BountyConfigKey {}).expiry_duration_ms
+    extension_config
+        .borrow_rule<BountyConfigKey, BountyConfig>(BountyConfigKey {})
+        .expiry_duration_ms
 }
 
 // === Admin Functions ===

@@ -7,7 +7,6 @@
 /// - Once configured, travelers must use `world::gate::jump_with_permit`; default `jump` is not allowed.
 /// - This extension issues permits through `issue_jump_permit`, which:
 ///   - checks a simple rule (character must belong to the configured starter `tribe`)
-///   - sets an expiry window from config (use `config::DEFAULT_PERMIT_EXPIRY_MS` for 5 days)
 ///   - calls `world::gate::issue_jump_permit<XAuth>` to mint a single-use permit to the character.
 ///
 /// Configuration for this extension is stored in the shared `ExtensionConfig` object.
@@ -37,14 +36,15 @@ public struct TribeConfigKey has copy, drop, store {}
 
 // === View Functions ===
 public fun tribe(extension_config: &ExtensionConfig): u32 {
+    assert!(extension_config.has_rule<TribeConfigKey>(TribeConfigKey {}), ENoTribeConfig);
     extension_config.borrow_rule<TribeConfigKey, TribeConfig>(TribeConfigKey {}).tribe
 }
 
 public fun expiry_duration_ms(extension_config: &ExtensionConfig): u64 {
+    assert!(extension_config.has_rule<TribeConfigKey>(TribeConfigKey {}), ENoTribeConfig);
     extension_config.borrow_rule<TribeConfigKey, TribeConfig>(TribeConfigKey {}).expiry_duration_ms
 }
 
-// === Admin Functions ===
 /// Issue a `JumpPermit` to only starter tribes
 public fun issue_jump_permit(
     extension_config: &ExtensionConfig,
@@ -74,6 +74,7 @@ public fun issue_jump_permit(
     );
 }
 
+// === Admin Functions ===
 public fun set_tribe_config(
     extension_config: &mut ExtensionConfig,
     admin_cap: &AdminCap,
