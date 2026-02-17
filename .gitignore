@@ -13,3 +13,7 @@ docker/workspace-data
 
 deployments/*
 test-resources.json
+
+dapps/frontend
+.DS_Store
+

@@ -1,0 +1,23 @@
+import { Container, Flex, Heading, Text } from "@radix-ui/themes";
+import { AssemblyInfo } from "./AssemblyInfo";
+import { useCurrentAccount } from "@mysten/dapp-kit-react";
+
+export function WalletStatus() {
+  const account = useCurrentAccount();
+
+  return (
+    <Container my="2">
+      <Heading mb="2">Wallet Status</Heading>
+
+      {account ? (
+        <Flex direction="column">
+          <Text>Wallet connected</Text>
+          <Text>Address: {account.address}</Text>
+        </Flex>
+      ) : (
+        <Text>Wallet not connected</Text>
+      )}
+      <AssemblyInfo />
+    </Container>
+  );
+}
