@@ -17,7 +17,7 @@ manifest_digest = "7AFB66695545775FBFBB2D3078ADFD084244D5002392E837FDE21D9EA1C6D
 deps = { MoveStdlib = "MoveStdlib" }
 
 [pinned.testnet.World]
-source = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "aa15075a9fd60e17337ec40f09223758a87a8adb" }
+source = { local = "../../../world-contracts/contracts/world" }
 use_environment = "testnet"
 manifest_digest = "5745706258F61D6CE210904B3E6AE87A73CE9D31A6F93BE4718C442529332A87"
 deps = { std = "MoveStdlib", sui = "Sui" }
@@ -25,5 +25,5 @@ deps = { std = "MoveStdlib", sui = "Sui" }
 [pinned.testnet.smart_gate]
 source = { root = true }
 use_environment = "testnet"
-manifest_digest = "1DE8899F516F30F521CCB9AE83327B4FFFA7640E3CD1DC5D5DC92E9A8CBD5109"
+manifest_digest = "A690391E34E31EF9DF31FAECBAD641ECA7E4802A7102A067E66A93DBC046236B"
 deps = { std = "MoveStdlib", sui = "Sui", world = "World" }
