@@ -11,3 +11,5 @@ node_modules/
 docker/workspace-data
 .DS_Store
 
+deployments/*
+test-resources.json

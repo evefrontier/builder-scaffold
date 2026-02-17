@@ -4,6 +4,8 @@ services:
     image: sui-docker
     stdin_open: true
     tty: true
+    ports:
+      - "9000:9000"   
     environment:
       - SUI_NETWORK=local
     volumes:

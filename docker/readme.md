@@ -73,6 +73,14 @@ docker volume rm docker_sui-keystore 2>/dev/null || true
 docker compose run --rm sui-local
 ```
 
+## Connect from host (e.g. world-contracts in another terminal)
+
+Port **9000** is published so you can use `sui client` on your machine against the node in the container.
+
+1. **Wait for the node** — In the container terminal, wait until you see `[sui-dev] RPC ready.`.
+2. **Point your client at the node** — On the host, use an env whose RPC is `http://127.0.0.1:9000` (e.g. `sui client switch --env localnet` if that alias is set to 127.0.0.1:9000).
+3. If you want the same addresses as in the container, import the keys from `docker/workspace-data/.env.sui` into your host’s Sui config or `.env` for scripts.
+
 ## Troubleshooting
 
 **Move.lock wrong env?** Run `rm Move.lock && sui move build -e local` (or `testnet`).
