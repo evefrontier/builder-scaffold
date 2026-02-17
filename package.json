@@ -1,0 +1,14 @@
+{
+  "name": "builder-scaffold",
+  "private": true,
+  "packageManager": "pnpm@10.17.0",
+  "scripts": {
+    "fmt": "prettier --write \"move-contracts/**/*.move\"",
+    "fmt:check": "prettier --check \"move-contracts/**/*.move\"",
+    "lint": "sh scripts/lint-move.sh"
+  },
+  "devDependencies": {
+    "@mysten/prettier-plugin-move": "^0.3.5",
+    "prettier": "^3.3.2"
+  }
+}

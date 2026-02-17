@@ -1,5 +1,6 @@
 # Node modules
 */node_modules
+node_modules/
 
 # Environment variables
 .keys/
@@ -10,3 +11,5 @@
 docker/workspace-data
 
 dapps/frontend
+.DS_Store
+

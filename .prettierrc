@@ -1,0 +1,29 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 4,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.move",
+      "options": {
+        "parser": "move",
+        "tabWidth": 4,
+        "useModuleLabel": true
+      }
+    },
+    {
+      "files": "*.{ts,tsx}",
+      "options": {
+        "tabWidth": 4,
+        "printWidth": 100
+      }
+    }
+  ],
+  "plugins": [
+    "@mysten/prettier-plugin-move"
+  ]
+}
