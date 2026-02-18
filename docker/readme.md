@@ -18,12 +18,12 @@ On first run, the container starts a local node and creates three funded account
 
 A `docker/workspace-data` directory is created and holds `.env.sui` with addresses and private keys (persists across container restarts).
 
-**Step 2:** You're now inside the container with all the tools needed for development. The full builder-scaffold repo is mounted, and a persistent volume is available for cloning world-contracts:
+**Step 2:** You're now inside the container with all the tools needed for development. The full builder-scaffold repo is mounted, and a bind mount directory is available for cloning world-contracts:
 
 ```
 /workspace/
 ├── builder-scaffold/    # full repo (syncs with host)
-├── world-contracts/     # persistent volume — clone here
+├── world-contracts/     # bind mount — clone here (syncs with host)
 ├── data/                # keys, .env.sui
 ├── docker/              # .env.testnet lives here
 └── scripts/             # entrypoint + helpers
@@ -48,9 +48,9 @@ Both modes use the same `sui-local` container. Enter with `docker compose run --
 | **Setup** | None | Add `docker/.env.testnet` with your keys |
 | **Accounts** | Pre-created ADMIN, PLAYER_A, PLAYER_B | Your own keys |
 
-**Switch network** (inside container): `./scripts/switch-network.sh [local|testnet]`
+**Switch network** (inside container): `./scripts/switch-network.sh [localnet|testnet]`
 - `testnet`: Stops local node, imports keys from `docker/.env.testnet` (aliases: testnet-ADMIN, etc.)
-- `local`: Starts fresh chain, funds from faucet, uses ADMIN/PLAYER_A/PLAYER_B keys
+- `localnet`: Starts fresh chain, funds from faucet, uses ADMIN/PLAYER_A/PLAYER_B keys
 
 For testnet, create `docker/.env.testnet` with Bech32 keys (`ADMIN_PRIVATE_KEY`, `PLAYER_A_PRIVATE_KEY`, `PLAYER_B_PRIVATE_KEY`). Do not commit this file.
 
@@ -58,14 +58,14 @@ For testnet, create `docker/.env.testnet` with Bech32 keys (`ADMIN_PRIVATE_KEY`,
 
 You can clone `world-contracts`, deploy the world, publish custom contracts, and run scripts all from inside the container. See [builder-flow-docker.md](../docs/builder-flow-docker.md) for the step-by-step guide.
 
-The `/workspace/world-contracts/` volume persists across container restarts, so you only need to clone and deploy once.
+The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host — files persist across restarts and are editable from your IDE.
 
 ## Useful commands inside the container
 
 | Task | Command |
 |------|---------|
 | View keys | `cat /workspace/data/.env.sui` |
-| Switch network | `./scripts/switch-network.sh local` or `testnet` |
+| Switch network | `./scripts/switch-network.sh localnet` or `testnet` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
@@ -84,9 +84,9 @@ docker compose build
 To reset keystore and workspace data (new keys, fix corrupted config), run from the `docker` directory:
 
 ```bash
-rm -rf workspace-data
+rm -rf workspace-data world-contracts
+docker volume rm docker_sui-keystore 2>/dev/null || true
 docker compose build
-docker volume rm docker_sui-keystore docker_world-contracts 2>/dev/null || true
 docker compose run --rm sui-local
 ```
 
@@ -100,7 +100,7 @@ Port **9000** is published so you can use `sui client` on your machine against t
 
 ## Troubleshooting
 
-**Move.lock wrong env?** Run `rm Move.lock && sui move build -e local` (or `testnet`).
+**Move.lock wrong env?** Run `rm Move.lock && sui move build -e localnet` (or `testnet`).
 
 <details>
 <summary>Windows PowerShell</summary>

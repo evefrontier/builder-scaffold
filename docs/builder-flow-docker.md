@@ -21,13 +21,13 @@ Inside the container you have:
 ```
 /workspace/
 ├── builder-scaffold/    # full repo (syncs with host)
-├── world-contracts/     # persistent volume — clone here
+├── world-contracts/     # bind mount — clone here (syncs with host)
 ├── data/                # keys, .env.sui
 ├── docker/              # .env.testnet lives here
 └── scripts/             # entrypoint + helpers
 ```
 
-## 3. Switch to testnet (skip for local)
+## 3. Switch to testnet (skip for localnet)
 
 Create `docker/.env.testnet` on your host with your funded Bech32 keys:
 
@@ -50,17 +50,15 @@ Then inside the container:
 ```bash
 cd /workspace/world-contracts
 git clone https://github.com/evefrontier/world-contracts.git .
-cp env.example .env
-# Set SUI_NETWORK=testnet (or local) and fill in your keys
-# For development, ADMIN_ADDRESS and SPONSOR_ADDRESS can be the same
-# GOVERNOR_PRIVATE_KEY is optional or can be the same as ADMIN_PRIVATE_KEY
+/workspace/scripts/generate-world-env.sh  # auto-creates .env from your keys
+# Or edit docker/world-contracts/.env on your host — the directory syncs
 pnpm install
 pnpm deploy-world testnet       # or localnet
 pnpm configure-world testnet    # or localnet
 pnpm create-test-resources testnet   # or localnet
 ```
 
-> The `/workspace/world-contracts/` volume persists across container restarts, so you only need to clone and deploy once.
+> The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host, so files persist across restarts and are editable from your IDE.
 
 ## 5. Copy world artifacts into builder-scaffold
 
@@ -78,14 +76,15 @@ cp .env.example .env
 
 Set the following in `.env`:
 - Same keys/addresses used during world deployment
-- `SUI_NETWORK=testnet` (or `local`)
+- `SUI_NETWORK=testnet` (or `localnet`)
 - `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
 
 ## 7. Publish custom contract
 
 ```bash
 cd /workspace/builder-scaffold/move-contracts/smart_gate
-sui client publish --build-env testnet
+sui client publish --build-env testnet #testnet 
+sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml #localnet
 ```
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output.
@@ -108,7 +107,7 @@ pnpm collect-corpse-bounty
 | Task | Command |
 |------|---------|
 | View keys | `cat /workspace/data/.env.sui` |
-| Switch network | `./scripts/switch-network.sh local` or `testnet` |
+| Switch network | `./scripts/switch-network.sh localnet` or `testnet` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
 
 See [docker/readme.md](../docker/readme.md) for container setup details, rebuilding, cleanup, and troubleshooting.

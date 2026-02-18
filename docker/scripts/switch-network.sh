@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Switch network: local (start node, use ADMIN keys) or testnet (stop node, import from .env.testnet).
-# Usage: ./scripts/switch-network.sh [local|testnet]
+# Switch network: localnet (start node, use ADMIN keys) or testnet (stop node, import from .env.testnet).
+# Usage: ./scripts/switch-network.sh [localnet|testnet]
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -13,10 +13,10 @@ LOCAL_RPC="http://127.0.0.1:9000"
 TESTNET_RPC="${SUI_RPC_URL:-https://fullnode.testnet.sui.io}"
 MODE="${1:-}"
 
-if [ "$MODE" != "local" ] && [ "$MODE" != "testnet" ]; then
-  echo "Usage: ./scripts/switch-network.sh [local|testnet]" >&2
-  echo "  local   - Start local node, use ADMIN/PLAYER_A/PLAYER_B keys" >&2
-  echo "  testnet - Stop local node, import keys from .env.testnet" >&2
+if [ "$MODE" != "localnet" ] && [ "$MODE" != "testnet" ]; then
+  echo "Usage: ./scripts/switch-network.sh [localnet|testnet]" >&2
+  echo "  localnet - Start local node, use ADMIN/PLAYER_A/PLAYER_B keys" >&2
+  echo "  testnet  - Stop local node, import keys from .env.testnet" >&2
   exit 1
 fi
 
@@ -30,7 +30,7 @@ keystore:
 envs:
   - alias: testnet
     rpc: "$TESTNET_RPC"
-  - alias: local
+  - alias: localnet
     rpc: "$LOCAL_RPC"
 active_env: $active_env
 active_address: "$active_addr"
@@ -101,10 +101,10 @@ if [ "$MODE" = "testnet" ]; then
   echo "[sui-dev] Switched to testnet. sui client publish -e testnet --gas-budget 100000000"
 
 else
-  # local
+  # localnet
   ADMIN=$(sui keytool export --key-identity ADMIN --json 2>/dev/null | jq -r '.key.suiAddress')
   if [ -z "$ADMIN" ] || [ "$ADMIN" = "null" ]; then
-    echo "[sui-dev] ERROR: No local keys. Run sui-local first." >&2
+    echo "[sui-dev] ERROR: No localnet keys. Run sui-local first." >&2
     exit 1
   fi
 
@@ -114,12 +114,12 @@ else
   PLAYER_A_PRIVATE_KEY=$(sui keytool export --key-identity PLAYER_A 2>/dev/null | grep -oE 'suiprivkey1[a-z0-9]+' | head -1)
   PLAYER_B_PRIVATE_KEY=$(sui keytool export --key-identity PLAYER_B 2>/dev/null | grep -oE 'suiprivkey1[a-z0-9]+' | head -1)
 
-  write_client_yaml "local" "$ADMIN"
+  write_client_yaml "localnet" "$ADMIN"
   mkdir -p "$WORKSPACE_DATA"
-  write_env_sui "local" "$LOCAL_RPC"
+  write_env_sui "localnet" "$LOCAL_RPC"
 
   if need_start_local_node; then
     start_local_node_and_fund
   fi
-  echo "[sui-dev] Switched to local. sui client publish -e local --gas-budget 100000000"
+  echo "[sui-dev] Switched to localnet. sui client publish -e localnet --gas-budget 100000000"
 fi

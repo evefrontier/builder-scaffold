@@ -9,6 +9,7 @@ node_modules/
 
 # keys from .env.sui, etc.
 docker/workspace-data
+docker/world-contracts/
 .DS_Store
 
 deployments/*
@@ -17,3 +18,4 @@ test-resources.json
 dapps/frontend
 .DS_Store
 
+.pnpm-store/

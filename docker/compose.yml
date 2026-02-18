@@ -8,14 +8,13 @@ services:
       # Exposes local Sui node RPC — for local development only
       - "9000:9000"
     environment:
-      - SUI_NETWORK=local
+      - SUI_NETWORK=localnet
     volumes:
       - sui-keystore:/root/.sui
       - ./workspace-data:/workspace/data
       - .:/workspace/docker
       - ../:/workspace/builder-scaffold
-      - world-contracts:/workspace/world-contracts
+      - ./world-contracts:/workspace/world-contracts
 
 volumes:
   sui-keystore:
-  world-contracts:

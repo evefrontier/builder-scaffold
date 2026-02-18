@@ -4,8 +4,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-if [ "$SUI_NETWORK" != "local" ]; then
-  echo "Usage: SUI_NETWORK=local (sui-local service)"
+if [ "$SUI_NETWORK" != "localnet" ]; then
+  echo "Usage: SUI_NETWORK=localnet (sui-local service)"
   exit 1
 fi
 
@@ -20,18 +20,18 @@ if need_start_local_node; then
 fi
 
 echo ""
-echo "Sui dev environment ready (local). RPC: http://127.0.0.1:9000"
+echo "Sui dev environment ready (localnet). RPC: http://127.0.0.1:9000"
 echo "Keys and addresses: $WORKSPACE_DATA/.env.sui (includes private keys for TypeScript)"
 echo ""
 echo "Layout:"
 echo "  /workspace/builder-scaffold/   – full builder-scaffold repo"
-echo "  /workspace/world-contracts/    – clone world-contracts here (persistent volume)"
+echo "  /workspace/world-contracts/    – clone world-contracts here (syncs with host)"
 echo ""
 echo "Quick start:"
 echo "  cd /workspace/builder-scaffold/move-contracts/smart_gate"
-echo "  sui move build -e local && sui client publish -e local"
+echo "  sui move build -e localnet && sui client publish -e localnet"
 echo ""
-echo "Switch network: ./scripts/switch-network.sh [local|testnet]"
+echo "Switch network: ./scripts/switch-network.sh [localnet|testnet]"
 echo ""
 
 exec "${@:-bash}"

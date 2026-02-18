@@ -54,7 +54,7 @@ fund_local_accounts() {
 # Start local node and fund. Ensures client is on local env before funding.
 start_local_node_and_fund() {
   start_local_node
-  printf 'y\n' | sui client switch --env local 2>/dev/null || true
+  printf 'y\n' | sui client switch --env localnet 2>/dev/null || true
   fund_local_accounts
 }
 

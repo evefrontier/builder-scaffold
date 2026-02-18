@@ -57,7 +57,7 @@ git clone https://github.com/evefrontier/world-contracts.git
 
 cd world-contracts
 cp env.example .env
-# Set SUI_NETWORK=testnet (or local) and fill in your keys
+# Set SUI_NETWORK=testnet (or localnet) and fill in your keys
 # For development, ADMIN_ADDRESS and SPONSOR_ADDRESS can be the same
 # GOVERNOR_PRIVATE_KEY is optional or can be the same as ADMIN_PRIVATE_KEY
 pnpm install
@@ -82,7 +82,7 @@ cp .env.example .env
 
 Set the following in `.env`:
 - Same keys/addresses as world-contracts
-- `SUI_NETWORK=testnet` (or `local`)
+- `SUI_NETWORK=testnet` (or `localnet`)
 - `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
 
 ## 6. Publish custom contract
@@ -92,6 +92,7 @@ Example using smart_gate:
 ```bash
 cd move-contracts/smart_gate
 sui client publish --build-env testnet
+sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml  #localnet
 ```
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish output.
