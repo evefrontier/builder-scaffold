@@ -18,11 +18,11 @@ Each directory has its own README for setup and usage.
 - [Docker](https://docs.docker.com/get-docker/) (optional but recommended for local dev)
 
 
-## Builder Flow
+## High Level builder Flow
 
 ### Step 1: Set up your local environment
 
-You need Sui tools and Node.js. You can do this by:
+You need Sui tools and Node.js for local development. You can do this by:
 
 **Using Docker (recommended):**
 ```bash
@@ -31,7 +31,7 @@ cd docker
 docker compose run --rm sui-local
 ```
 
-Full details: [docker/readme.md](./docker/readme.md)
+More details: [docker/readme.md](./docker/readme.md)
 
 **Or Installing on your host:**  
 Follow [Sui getting started](https://docs.sui.io/guides/developer/getting-started).
@@ -40,29 +40,31 @@ Follow [Sui getting started](https://docs.sui.io/guides/developer/getting-starte
 
 ### Step 2: Deploy an EVE Frontier world
 
-Deploy the [world contracts](https://github.com/evefrontier/world-contracts) and create test resources.
+You need the EVE Frontier world contracts deployed and configured (local or testnet) to simulate game server actions which is a pre-requisite to test custom contracts logic. 
 
-See [setup-world/readme.md](./setup-world/readme.md)
+Deploy the [world contracts](https://github.com/evefrontier/world-contracts), then copy `deployments/` and `test-resources.json` to builder-scaffold. 
+
+Refer [setup-world/readme.md](./setup-world/readme.md) for detailed instructions. 
+
+End-to-end: [docs/builder-flow.md](./docs/builder-flow.md).
+---
+
+### Step 3: Deploy a Custom Smart Assembly
+
+Write custom Move logic to change how your Smart Assembly works. For examples, refer [move-contracts](./move-contracts/smart_gate/)
+
+To Build and publish your Move package refer [move-contracts/readme.md](./move-contracts/readme.md).
 
 ---
 
-### Step 3: Extend a Smart Assembly
+### Step 4: Test your custom logic
+You can write scripts either in typescript or rust using the `@mysten/sui` sdks to call the custom contracts functions.
 
-Write custom Move logic to change how your Smart Assembly works.
+You can also build PTB's to call the custom contract functions
 
-See [move-contracts](./move-contracts/readme.md) for example custom logic to extend [Smart Storage Unit](./move-contracts/storage_unit/), 
-[Smart Gate](./move-contracts/gate/) and [Smart Turret](./move-contracts/turret/) 
+See [ts-scripts/readme.md](./ts-scripts/readme.md) to see the existing examples. 
 
----
-
-### Step 4: Deploy and test your logic
-
-1. Build and publish your Move package.
-2. Authorize it for a Smart Assembly you own.
-3. Run interaction scripts (TypeScript or Rust) against your environment.
-
-See [ts-scripts/readme.md](./ts-scripts/readme.md) or [rust-scripts/readme.md](./rust-scripts/readme.md)
-
+End to end local/testnet flows: [docs/builder-flow.md](./docs/builder-flow.md).
 ---
 
 ### Step 5: Use zkLogin (optional)
@@ -83,9 +85,11 @@ Do this: See [dapps/readme.md](./dapps/readme.md)
 ## Project Structure
 ```
 builder-scaffold/
+├── docs/            # Builder flow (local, testnet)
+├── setup-world/     # World deploy + seed instructions
 ├── dapps/           # Reference dApp
 ├── docker/          # Dev containers
-├── move-contracts/  # Move extension examples
+├── move-contracts/  # custom contract for assembly examples (e.g. smart_gate)
 ├── rust-scripts/    # Rust interaction scripts
 ├── ts-scripts/      # TypeScript interaction scripts
 └── zklogin/         # zkLogin automation

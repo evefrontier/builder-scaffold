@@ -2,8 +2,6 @@
 
 ## Why
 
-You need the EVE Frontier world contracts deployed (local or testnet) to simulate game server actions, configure your custom contracts on in-game Smart Assemblies, and test your logic.
-
 In the real game, players create a **Smart Character** (an on-chain identity that owns all their assemblies), build a **Network Node** (the power source that burns fuel to produce energy), and deploy assemblies like **Smart Storage Units** and **Smart Gates**. All assemblies need energy to function.
 
 During development, the deploy and seed steps recreate this on a local (or test) network so you have real on-chain objects to build and test against.
@@ -39,7 +37,8 @@ Note: This will be fixed later by using mvr and environemnt specific deployed pa
 ```bash
 git clone https://github.com/evefrontier/world-contracts.git
 cd world-contracts
-cp env.example .env   # fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
+# fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
+cp env.example .env   # use your own funded keys for testnet and use keys from `/workspace-data/.env.sui`
 pnpm install
 pnpm deploy-world localnet   # or testnet
 pnpm configure-world localnet
@@ -65,7 +64,8 @@ cp test-resources.json ../builder-scaffold/test-resources.json
 ```
 
 - `deployments/<network>/extracted-object-ids.json` — world package ID and shared object IDs
-- `test-resources.json` — item IDs used to derive on-chain object IDs
+- `test-resources.json` — item IDs used to derive on-chain object IDs. Read more about object id derivation [here]() 
+<!-- TODO: add documentation link -->
 
 ---
 
