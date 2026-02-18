@@ -4,7 +4,7 @@ import { bcs } from "@mysten/sui/bcs";
 import { devInspectMoveCallFirstReturnValueBytes } from "../utils/dev-inspect";
 
 export async function getOwnerCap(
-    assemblyId: string,
+    storageUnitId: string,
     client: SuiClient,
     config: ReturnType<typeof getConfig>,
     senderAddress?: string
@@ -13,7 +13,7 @@ export async function getOwnerCap(
         const bytes = await devInspectMoveCallFirstReturnValueBytes(client, {
             target: `${config.packageId}::${MODULES.STORAGE_UNIT}::owner_cap_id`,
             senderAddress,
-            arguments: (tx) => [tx.object(assemblyId)],
+            arguments: (tx) => [tx.object(storageUnitId)],
         });
 
         if (!bytes) {

@@ -27,6 +27,7 @@ export interface InitializedContext {
     keypair: Ed25519Keypair;
     config: WorldConfig;
     address: string;
+    network: Network;
 }
 
 export const DELAY_MS = Number(process.env.DELAY_SECONDS ?? 2) * 1000; // 2 seconds
@@ -34,6 +35,9 @@ export const DELAY_MS = Number(process.env.DELAY_SECONDS ?? 2) * 1000; // 2 seco
 export function fromHex(hex: string): Uint8Array {
     const stripped = hex.startsWith("0x") ? hex.slice(2) : hex;
     const normalized = stripped.length % 2 === 0 ? stripped : "0" + stripped;
+    if (!/^[0-9a-fA-F]*$/.test(normalized)) {
+        throw new Error(`Invalid hex string: ${hex}`);
+    }
     const bytes = new Uint8Array(normalized.length / 2);
     for (let i = 0; i < normalized.length; i += 2) {
         bytes[i / 2] = parseInt(normalized.substring(i, i + 2), 16);
@@ -94,7 +98,7 @@ export function initializeContext(network: Network, privateKey: string): Initial
     if (fromExtracted) config.packageId = fromExtracted;
     const address = keypair.getPublicKey().toSuiAddress();
 
-    return { client, keypair, config, address };
+    return { client, keypair, config, address, network };
 }
 
 export function extractEvent<T = unknown>(
@@ -117,7 +121,7 @@ export async function hydrateWorldConfig(ctx: InitializedContext): Promise<Hydra
         !!ctx.config.gateConfig;
 
     if (!hasManualIds) {
-        const network = (process.env.SUI_NETWORK as Network) || "localnet";
+        const network = ctx.network;
         const extracted = loadExtractedObjectIds(network);
         if (!extracted?.world || extracted.world.packageId !== ctx.config.packageId) {
             const filePath = getExtractedObjectIdsPath(network);

@@ -79,7 +79,7 @@ async function collectCorpseBounty(
             tx.object(characterId),
             ownerCap,
             tx.pure.u64(ITEM_A_TYPE_ID),
-            tx.pure(bcs.vector(bcs.u8()).serialize(hexToBytes(proofHex))),
+            tx.pure(bcs.vector(bcs.u8()).serialize(Array.from(hexToBytes(proofHex)))),
             tx.object(CLOCK_OBJECT_ID),
         ],
     });

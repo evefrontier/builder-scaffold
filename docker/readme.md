@@ -1,6 +1,6 @@
 # Sui development environment (Docker)
 
-One container with **Sui CLI**, **Node.js**, **pnpm**, and a local Sui node. No need to install anything on your machine everything runs inside Docker.
+One container with **Sui CLI**, **Node.js**, **pnpm**, and a local Sui node. No need to install anything on your machine, everything runs inside Docker.
 
 ## Prerequisites
 
