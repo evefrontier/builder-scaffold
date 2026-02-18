@@ -20,8 +20,8 @@ On first run, the container will start a local node and create three funded acco
 
 ```bash
 # Build a Move package
-cd /workspace/contracts/gate
-sui move build -e local
+cd /workspace/contracts/smart_gate
+sui move build -e testnet
 ```
 
 Your `move-contracts` and `ts-scripts` folders are mounted—edit files on your host and run commands in the container.
@@ -48,8 +48,8 @@ For testnet, create `docker/.env.testnet` with Bech32 keys (ADMIN_PRIVATE_KEY, P
 
 | Task | Command |
 |------|---------|
-| Build Move | `cd /workspace/contracts/gate && sui move build -e local` |
-| Publish Move | `sui client publish -e local --gas-budget 100000000` |
+| Build Move | `cd /workspace/contracts/gate && sui move build -e [local|testnet]` |
+| Publish Move | `sui client publish -e [local|testnet] --gas-budget 100000000` |
 | Run TypeScript | `cd /workspace/ts-scripts && npm install && npm run <script>` |
 | View keys | `cat /workspace/data/.env.sui` |
 | Switch network | `./scripts/switch-network.sh local` or `./scripts/switch-network.sh testnet` |
@@ -75,7 +75,7 @@ docker compose run --rm sui-local
 
 ## Troubleshooting
 
-**Move.lock wrong env?** Run `rm Move.lock && sui move build -e local` (or `testnet`).
+**Move.lock wrong env?** Run `rm Move.lock && sui move build -e [local|testnet]`.
 
 <details>
 <summary>Windows PowerShell</summary>
