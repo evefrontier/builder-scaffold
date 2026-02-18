@@ -15,11 +15,11 @@ export async function executeSponsoredTransaction(
     const gasCoins = await client.getCoins({
         owner: adminAddress,
         coinType: "0x2::sui::SUI",
-        limit: 1,
+        limit: 5,
     });
 
     if (gasCoins.data.length === 0) {
-        throw new Error("Admin has no gas coins to sponsor the transaction");
+        throw new Error("Admin has no SUI gas coins to sponsor the transaction");
     }
 
     const gasPayment = gasCoins.data.map((coin) => ({

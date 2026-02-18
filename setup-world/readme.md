@@ -63,8 +63,7 @@ cp test-resources.json ../builder-scaffold/test-resources.json
 ```
 
 - `deployments/<network>/extracted-object-ids.json` — world package ID and shared object IDs
-- `test-resources.json` — item IDs used to derive on-chain object IDs. Read more about object id derivation [here]() 
-<!-- TODO: add documentation link -->
+- `test-resources.json` — item IDs used to derive on-chain object IDs. Read more about object id derivation [here](https://docs.evefrontier.com/smart-contracts/object-model)
 
 ---
 

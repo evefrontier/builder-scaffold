@@ -1,9 +1,9 @@
 import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { requireEnv } from "./helper";
 
 function resolveDevInspectSender(senderAddress?: string): string {
-    return senderAddress || requireEnv("ADMIN_ADDRESS") || "0x";
+    if (senderAddress) return senderAddress;
+    return process.env.ADMIN_ADDRESS || "0x0";
 }
 
 export async function devInspectMoveCallFirstReturnValueBytes(

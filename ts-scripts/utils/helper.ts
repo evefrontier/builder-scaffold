@@ -31,12 +31,12 @@ export interface InitializedContext {
 
 export const DELAY_MS = Number(process.env.DELAY_SECONDS ?? 2) * 1000; // 2 seconds
 
-export function hexToBytes(hexString: string): Uint8Array {
-    const hex = hexString.startsWith("0x") ? hexString.slice(2) : hexString;
-    const normalizedHex = hex.length % 2 === 0 ? hex : "0" + hex;
-    const bytes = new Uint8Array(normalizedHex.length / 2);
-    for (let i = 0; i < normalizedHex.length; i += 2) {
-        bytes[i / 2] = parseInt(normalizedHex.substring(i, i + 2), 16);
+export function fromHex(hex: string): Uint8Array {
+    const stripped = hex.startsWith("0x") ? hex.slice(2) : hex;
+    const normalized = stripped.length % 2 === 0 ? stripped : "0" + stripped;
+    const bytes = new Uint8Array(normalized.length / 2);
+    for (let i = 0; i < normalized.length; i += 2) {
+        bytes[i / 2] = parseInt(normalized.substring(i, i + 2), 16);
     }
     return bytes;
 }
@@ -50,14 +50,8 @@ export function toHex(bytes: Uint8Array): string {
     );
 }
 
-export function fromHex(hex: string): Uint8Array {
-    const cleanHex = hex.startsWith("0x") ? hex.slice(2) : hex;
-    const bytes = new Uint8Array(cleanHex.length / 2);
-    for (let i = 0; i < cleanHex.length; i += 2) {
-        bytes[i / 2] = parseInt(cleanHex.slice(i, i + 2), 16);
-    }
-    return bytes;
-}
+/** @deprecated Use fromHex instead */
+export const hexToBytes = fromHex;
 
 export function handleError(error: unknown): never {
     console.error("\n=== Error ===");
@@ -82,8 +76,6 @@ export function getEnvConfig(): EnvConfig {
         throw new Error("WORLD_PACKAGE_ID is required");
     }
     const adminExportedKey = requireEnv("ADMIN_PRIVATE_KEY");
-
-    process.env.SUI_RPC_URL = rpcUrl;
 
     return {
         network,

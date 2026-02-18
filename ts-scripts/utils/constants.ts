@@ -19,8 +19,17 @@ type TestResources = {
 
 function loadTestResources(): TestResources {
     const filePath = path.resolve(process.cwd(), "test-resources.json");
-    const raw = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(raw) as TestResources;
+    if (!fs.existsSync(filePath)) {
+        throw new Error(
+            `Missing ${filePath}. Copy test-resources.json from world-contracts after running create-test-resources.`
+        );
+    }
+    try {
+        const raw = fs.readFileSync(filePath, "utf8");
+        return JSON.parse(raw) as TestResources;
+    } catch (err) {
+        throw new Error(`Failed to parse ${filePath}: ${err instanceof Error ? err.message : err}`);
+    }
 }
 
 const res = loadTestResources();

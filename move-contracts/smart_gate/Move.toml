@@ -6,7 +6,7 @@ edition = "2024"    # edition = "legacy" to use legacy (pre-2024) Move
 
 [dependencies]
 # world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "main" }
-# TODO: This will be changed to use the mvr to automatically resolve the depedacies based on the chain. 
+# TODO: This will be changed to use the mvr to automatically resolve the dependencies based on the chain. 
 # For now, we resolve the dependencies locally for fast iteration.
 world = { local = "../../../world-contracts/contracts/world" }
 

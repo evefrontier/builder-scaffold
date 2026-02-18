@@ -15,16 +15,16 @@ DELAY_SECONDS="${DELAY_SECONDS:-2}"
 cd "$WORLD_DIR"
 
 echo "=== Deploying world contracts ($NETWORK) ==="
-pnpm install
-pnpm deploy-world "$NETWORK"
+pnpm install || { echo "ERROR: pnpm install failed"; exit 1; }
+pnpm deploy-world "$NETWORK" || { echo "ERROR: deploy-world failed"; exit 1; }
 sleep "$DELAY_SECONDS"
 
 echo "=== Configuring world ==="
-pnpm configure-world "$NETWORK"
+pnpm configure-world "$NETWORK" || { echo "ERROR: configure-world failed"; exit 1; }
 sleep "$DELAY_SECONDS"
 
 echo "=== Seeding test resources ==="
-pnpm create-test-resources "$NETWORK"
+pnpm create-test-resources "$NETWORK" || { echo "ERROR: create-test-resources failed"; exit 1; }
 
 echo ""
 echo "Done. Deployment output: $WORLD_DIR/deployments/$NETWORK/"
