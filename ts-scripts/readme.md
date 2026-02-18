@@ -1,4 +1,4 @@
-# TypeScript Scripts
+# TypeScript scripts
 
 Interact with your deployed extension contracts from TypeScript.
 
@@ -16,9 +16,9 @@ cp .env.example .env    # fill in keys, WORLD_PACKAGE_ID, BUILDER_PACKAGE_ID
 pnpm install
 ```
 
-Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID` and other evironment variables needed in `.env` from your extension pacakge deployment output.
+Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output.
 
-## Example Interaction with custom Smart Gate
+## Example: interact with custom Smart Gate
 
 After publishing `move-contracts/smart_gate/`, run the scripts in order:
 
@@ -30,10 +30,10 @@ pnpm configure-rules
 pnpm authorise-gate
 pnpm authorise-storage-unit
 
-# 3. Issue a jump permit (tribe-based) (Ideally this happens in a dapp)
+# 3. Issue a jump permit (tribe-based) — typically happens in a dApp
 pnpm issue-tribe-jump-permit
 
-# 4. Jump using the permit (Ideally this happens in the game UI)
+# 4. Jump using the permit — typically happens in the game UI
 pnpm jump-with-permit
 
 # 5. Collect corpse bounty for a jump permit
@@ -49,7 +49,7 @@ pnpm collect-corpse-bounty
 
 Use the existing scripts as templates. The key utilities:
 
-- `utils/helper.ts` -- env config, context initialization, world config hydration
-- `utils/derive-object-id.ts` -- derive Sui object IDs from game item IDs
-- `utils/proof.ts` -- generate location proofs for proximity verification
-- `helpers/` -- query OwnerCap objects for gates, storage units, characters
+- `utils/helper.ts` — env config, context initialization, world config hydration
+- `utils/derive-object-id.ts` — derive Sui object IDs from game item IDs
+- `utils/proof.ts` — generate location proofs for proximity verification
+- `helpers/` — query OwnerCap objects for gates, storage units, characters

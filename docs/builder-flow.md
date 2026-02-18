@@ -1,6 +1,6 @@
 # Builder flow
 
-End-to-end flow to test builder-scaffold against world-contracts as a builder.
+End-to-end flow to test builder-scaffold against world-contracts.
 
-- **Testnet:** [builder-flow-testnet.md](./builder-flow-testnet.md) — run on host or in Docker after switching network.
-- **Local:** [builder-flow-local.md](./builder-flow-local.md) — run inside the [Docker](../docker/readme.md) container (same steps; paths and keys are for the container).
+- **Docker:** [builder-flow-docker.md](./builder-flow-docker.md) — full flow inside a container (local or testnet), no host tooling required.
+- **Host:** [builder-flow-host.md](./builder-flow-host.md) — run on host with Sui CLI and Node.js installed (local or testnet).

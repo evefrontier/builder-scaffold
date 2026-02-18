@@ -5,15 +5,16 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "9000:9000"   
+      - "9000:9000"
     environment:
       - SUI_NETWORK=local
     volumes:
       - sui-keystore:/root/.sui
       - ./workspace-data:/workspace/data
       - .:/workspace/docker
-      - ../move-contracts:/workspace/contracts
-      - ../ts-scripts:/workspace/ts-scripts
+      - ../:/workspace/builder-scaffold
+      - world-contracts:/workspace/world-contracts
 
 volumes:
   sui-keystore:
+  world-contracts:

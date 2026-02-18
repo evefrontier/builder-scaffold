@@ -1,6 +1,6 @@
 # Sui development environment (Docker)
 
-One container with **Sui CLI**, **Node.js**, and a local Sui node will be available. No need to install anything on your machine—everything runs inside Docker.
+One container with **Sui CLI**, **Node.js**, **pnpm**, and a local Sui node. No need to install anything on your machine everything runs inside Docker.
 
 ## Prerequisites
 
@@ -8,26 +8,35 @@ One container with **Sui CLI**, **Node.js**, and a local Sui node will be availa
 
 ## Quick start
 
-**Step 1:** To start the containerised environment,  execute 
+**Step 1:** Start the containerised environment:
 
 ```bash
 docker compose run --rm sui-local
 ```
 
-On first run, the container will start a local node and create three funded accounts: `ADMIN`, `PLAYER_A`, and `PLAYER_B`. This takes a minute or two.
+On first run, the container starts a local node and creates three funded accounts: `ADMIN`, `PLAYER_A`, and `PLAYER_B`. This takes a minute or two.
 
-A `docker/workspace-data` is created and holds `.env.sui` with addresses and private keys (persists across container restarts).
+A `docker/workspace-data` directory is created and holds `.env.sui` with addresses and private keys (persists across container restarts).
 
-**Step 2:** Now You’re inside the docker container with all the tools needed for development.
-Your `move-contracts` and `ts-scripts` folders are mounted—edit files on your host and run commands in the container. At the prompt, try:
+**Step 2:** You're now inside the container with all the tools needed for development. The full builder-scaffold repo is mounted, and a persistent volume is available for cloning world-contracts:
 
-```bash
-# Build a Move package
-cd /workspace/contracts/gate
-sui client test-publish --build-env testnet 
+```
+/workspace/
+├── builder-scaffold/    # full repo (syncs with host)
+├── world-contracts/     # persistent volume — clone here
+├── data/                # keys, .env.sui
+├── docker/              # .env.testnet lives here
+└── scripts/             # entrypoint + helpers
 ```
 
-You can build, test and publilsh contracts in this containerised environment. You can also execute npm commands to interact with the deployed contracts. 
+Edit files on your host and run commands in the container. At the prompt, try:
+
+```bash
+cd /workspace/builder-scaffold/move-contracts/smart_gate
+sui move build --build-env testnet
+```
+
+You can build, test, and publish contracts in this containerised environment. You can also run pnpm commands to interact with deployed contracts.
 
 ## Local vs testnet
 
@@ -43,18 +52,26 @@ Both modes use the same `sui-local` container. Enter with `docker compose run --
 - `testnet`: Stops local node, imports keys from `docker/.env.testnet` (aliases: testnet-ADMIN, etc.)
 - `local`: Starts fresh chain, funds from faucet, uses ADMIN/PLAYER_A/PLAYER_B keys
 
-For testnet, create `docker/.env.testnet` with Bech32 keys (ADMIN_PRIVATE_KEY, PLAYER_A_PRIVATE_KEY, PLAYER_B_PRIVATE_KEY). Do not commit.
+For testnet, create `docker/.env.testnet` with Bech32 keys (`ADMIN_PRIVATE_KEY`, `PLAYER_A_PRIVATE_KEY`, `PLAYER_B_PRIVATE_KEY`). Do not commit this file.
+
+## Running the full flow inside Docker
+
+You can clone `world-contracts`, deploy the world, publish custom contracts, and run scripts all from inside the container. See [builder-flow-docker.md](../docs/builder-flow-docker.md) for the step-by-step guide.
+
+The `/workspace/world-contracts/` volume persists across container restarts, so you only need to clone and deploy once.
 
 ## Useful commands inside the container
 
 | Task | Command |
 |------|---------|
 | View keys | `cat /workspace/data/.env.sui` |
-| Switch network | `./scripts/switch-network.sh local` or `./scripts/switch-network.sh testnet` |
+| Switch network | `./scripts/switch-network.sh local` or `testnet` |
+| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
+| Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
-Env vars, addresses, and private keys are in `/workspace/data/.env.sui`. 
+Env vars, addresses, and private keys are in `/workspace/data/.env.sui`.
 
-For TypeScript interaction you can copy the keys from `source /workspace/data/.env.sui`. Do not commit `workspace-data`.
+For TypeScript interaction you can source the keys with `source /workspace/data/.env.sui`. Do not commit `workspace-data`.
 
 ## Rebuild the image
 
@@ -62,14 +79,14 @@ For TypeScript interaction you can copy the keys from `source /workspace/data/.e
 docker compose build
 ```
 
-## Clean up / Fresh start
+## Clean up / fresh start
 
-To reset keystore and workspace data (new keys, fix corrupted config). Run from the `docker` directory:
+To reset keystore and workspace data (new keys, fix corrupted config), run from the `docker` directory:
 
 ```bash
 rm -rf workspace-data
 docker compose build
-docker volume rm docker_sui-keystore 2>/dev/null || true
+docker volume rm docker_sui-keystore docker_world-contracts 2>/dev/null || true
 docker compose run --rm sui-local
 ```
 
@@ -78,8 +95,8 @@ docker compose run --rm sui-local
 Port **9000** is published so you can use `sui client` on your machine against the node in the container.
 
 1. **Wait for the node** — In the container terminal, wait until you see `[sui-dev] RPC ready.`.
-2. **Point your host at the node** — On the host, use an env whose RPC is `http://127.0.0.1:9000` (e.g. `sui client switch --env localnet` if that alias is set to 127.0.0.1:9000).
-3. If you want the same addresses as in the container, import the keys from `docker/workspace-data/.env.sui` into your host’s Sui config or `.env` for scripts.
+2. **Point your host at the node** — On the host, use an env whose RPC is `http://127.0.0.1:9000` (e.g. `sui client switch --env localnet` if that alias is set to `127.0.0.1:9000`).
+3. If you want the same addresses as in the container, import the keys from `docker/workspace-data/.env.sui` into your host's Sui config or `.env` for scripts.
 
 ## Troubleshooting
 

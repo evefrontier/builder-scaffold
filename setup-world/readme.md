@@ -1,4 +1,4 @@
-# Setup EVE Frontier World
+# Setup EVE Frontier world
 
 ## Why
 
@@ -28,17 +28,16 @@ For more info on Smart Character, Network Node, and Storage Unit, see the [world
 
 ## Quick start (deploy + seed resources)
 
-Assumes `world-contracts` and `builder-scaffold` are sibling directories; adjust paths if your layout differs. 
+Assumes `world-contracts` and `builder-scaffold` are sibling directories; adjust paths if your layout differs.
 
-Note: This will be fixed later by using mvr and environemnt specific deployed pacakges for dependancy
+> **Coming soon:** These manual steps (clone, deploy, configure, seed, copy artifacts) will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
 
 ### 1. Clone and deploy the world
 
 ```bash
 git clone https://github.com/evefrontier/world-contracts.git
 cd world-contracts
-# fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
-cp env.example .env   # use your own funded keys for testnet and use keys from `/workspace-data/.env.sui`
+cp env.example .env   # fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
 pnpm install
 pnpm deploy-world localnet   # or testnet
 pnpm configure-world localnet

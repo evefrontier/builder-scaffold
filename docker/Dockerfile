@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix \
     && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g pnpm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Sui CLI via suiup (native binary for build arch – works on ARM and x86)
