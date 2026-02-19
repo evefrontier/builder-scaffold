@@ -29,7 +29,7 @@ echo "  /workspace/world-contracts/    – clone world-contracts here (syncs wit
 echo ""
 echo "Quick start:"
 echo "  cd /workspace/builder-scaffold/move-contracts/smart_gate"
-echo "  sui move build -e localnet && sui client publish -e localnet"
+echo " sui move build -e testnet"
 echo ""
 echo "Switch network: ./scripts/switch-network.sh [localnet|testnet]"
 echo ""

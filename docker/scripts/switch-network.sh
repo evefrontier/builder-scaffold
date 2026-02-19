@@ -121,5 +121,5 @@ else
   if need_start_local_node; then
     start_local_node_and_fund
   fi
-  echo "[sui-dev] Switched to localnet. sui client publish -e localnet --gas-budget 100000000"
+  echo "[sui-dev] Switched to localnet"
 fi

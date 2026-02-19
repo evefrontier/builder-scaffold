@@ -11,11 +11,6 @@ edition = "2024"    # edition = "legacy" to use legacy (pre-2024) Move
 world = { local = "../../../world-contracts/contracts/world" }
 
 
-# Local net: use `sui move build -e local` / `sui client publish -e local` (chain ID changes each run)
-[environments]
-local = "0x0"
-
-
 # Read more about the package management system options:
 # https://docs.sui.io/guides/developer/sui-101/move-package-management
 [addresses]
