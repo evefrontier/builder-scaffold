@@ -43,7 +43,7 @@ sui client publish --build-env testnet --pubfile-path ../../../world-contracts/c
 
 For more details see [package management](https://docs.sui.io/guides/developer/packages/move-package-management).
 
-**In Docker:** contracts are mounted at `/workspace/contracts`. From inside the container you can publish the same way on either local or testnet.
+**In Docker:** contracts are at `/workspace/builder-scaffold/move-contracts/`. From inside the container you can publish the same way on either local or testnet.
 
 From the publish output, set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in the repo `.env`. Then run the [TypeScript scripts](../ts-scripts/readme.md) in order. Full flow: [docs/builder-flow.md](../docs/builder-flow.md).
 

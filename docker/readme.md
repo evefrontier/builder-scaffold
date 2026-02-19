@@ -86,7 +86,11 @@ Wait until the container logs `[sui-dev] RPC ready.` before connecting. Import k
 
 1. Move.lock wrong env? `rm Move.lock && sui move build --build-env testnet`
 
-2. "Unpublished dependencies: World"? Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#4-deploy-world-and-create-test-resources)), then pass its publication file:
+2. "Unpublished dependencies: World"?
+
+![publish error](../images/publish-error.png)
+
+Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#4-deploy-world-and-create-test-resources)), then pass its publication file:
 
 ```bash
 sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml
