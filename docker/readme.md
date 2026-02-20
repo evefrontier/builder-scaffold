@@ -40,8 +40,8 @@ The container starts on **localnet**, but you can use testnet the same way you w
 ```bash
 sui client switch --env testnet
 
-# Fund your local keys on testnet by requesting gas
-https://faucet.sui.io/
+# Fund your local keys on testnet: https://faucet.sui.io/
+sui client faucet
 
 # Or import separate testnet keys if you prefer
 sui keytool import <your-private-key> ed25519
