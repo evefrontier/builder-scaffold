@@ -63,7 +63,7 @@ For TS scripts and world-contracts, manually fill in the `.env` files with your 
 
 | Task | Command |
 |------|---------|
-| View keys | `cat docker/.env.sui` |
+| View keys | `cat /workspace/builder-scaffold/docker/.env.sui` |
 | List addresses | `sui client addresses` |
 | Switch network | `sui client switch --env testnet` |
 | Import a key | `sui keytool import <key> ed25519` |

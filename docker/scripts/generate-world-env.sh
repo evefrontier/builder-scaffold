@@ -13,6 +13,10 @@ TARGET_ENV="$TARGET_DIR/.env"
 
 set -a; source <(sed 's/\r$//' "$ENV_SUI"); set +a
 
+for var in ADMIN_ADDRESS ADMIN_PRIVATE_KEY PLAYER_A_PRIVATE_KEY PLAYER_B_PRIVATE_KEY; do
+  [ -n "${!var}" ] || { echo "ERROR: $var is empty in $ENV_SUI" >&2; exit 1; }
+done
+
 cp "$ENV_EXAMPLE" "$TARGET_ENV"
 sed -i "s|^SUI_NETWORK=.*|SUI_NETWORK=${SUI_NETWORK:-localnet}|" "$TARGET_ENV"
 sed -i "s|^ADMIN_ADDRESS=.*|ADMIN_ADDRESS=$ADMIN_ADDRESS|" "$TARGET_ENV"
