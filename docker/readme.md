@@ -9,19 +9,20 @@ One container with **Sui CLI**, **Node.js**, and **pnpm**. No host tooling neede
 ## Quick start
 
 ```bash
-docker compose run --rm sui-local
+cd docker
+docker compose run --rm sui-dev
 ```
 
-On first run the container starts a local Sui node and creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys are saved to `docker/workspace-data/.env.sui`.
+On first run the container creates three ed25519 keypairs (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts via a Docker volume.
 
-Once inside the container, the workspace layout is:
+Every start spins up a fresh local Sui node and funds the accounts from the faucet.
+
+## Workspace layout
 
 ```
 /workspace/
 ├── builder-scaffold/    # full repo (syncs with host)
-├── world-contracts/     # bind mount — clone here (syncs with host)
-├── data/                # keys, .env.sui
-└── scripts/             # entrypoint + helpers
+└── world-contracts/     # bind mount — clone here on host, visible inside container
 ```
 
 Edit files on your host, run commands in the container:
@@ -30,45 +31,46 @@ Edit files on your host, run commands in the container:
 cd /workspace/builder-scaffold/move-contracts/smart_gate
 sui move build -e testnet
 ```
+> **Why `-e testnet` even for local builds?** The localnet chain ID changes on every restart, so you can't pin it in `Move.toml`. Using testnet as the build environment resolves dependencies correctly while publishing to your local node via [ephemeral publication](https://docs.sui.io/guides/developer/packages/move-package-management#test-publish).
 
-## Testnet and local
+## Using testnet
 
-The container starts on **localnet** by default, but **testnet is the practical default for building** — world package addresses resolve automatically with `--build-env testnet`.
-
-| | Testnet | Local |
-|---|---------|-------|
-| **Use when** | Building and testing contracts | Offline iteration (requires world-contracts deployed locally) |
-| **Setup** | Add `docker/.env.testnet` with your Bech32 keys | Deploy world-contracts to local node first |
-| **Accounts** | Your own keys | Pre-created ADMIN, PLAYER_A, PLAYER_B |
-
-> **Why `--build-env testnet` even for local builds?** The localnet chain ID changes on every restart, so you can't pin it in `Move.toml`. Using testnet as the build environment resolves dependencies correctly while publishing to your local node via [ephemeral publication](https://docs.sui.io/guides/developer/packages/move-package-management#test-publish).
-
-**Switch network** (inside container):
+The container starts on **localnet**, but you can use testnet the same way you would on your host machine:
 
 ```bash
-./scripts/switch-network.sh testnet    # stops local node, imports keys from docker/.env.testnet
-./scripts/switch-network.sh localnet   # starts fresh chain, funds from faucet
+sui client switch --env testnet
+
+# Fund your local keys on testnet by requesting gas
+https://faucet.sui.io/
+
+# Or import separate testnet keys if you prefer
+sui keytool import <your-private-key> ed25519
 ```
 
-For testnet, create `docker/.env.testnet` with `ADMIN_PRIVATE_KEY`, `PLAYER_A_PRIVATE_KEY`, `PLAYER_B_PRIVATE_KEY`. Do not commit this file.
+## Bring your own keys
+
+If you want to use existing keys instead of the auto-generated ones:
+
+```bash
+sui keytool import <your-private-key> ed25519 --alias my-key
+sui client switch --env testnet
+sui client switch --address <your-address>
+```
+
+For TS scripts and world-contracts, manually fill in the `.env` files with your own keys and addresses instead of using `generate-world-env.sh`.
 
 ## Useful commands
 
 | Task | Command |
 |------|---------|
-| View keys | `cat /workspace/data/.env.sui` |
-| Switch network | `./scripts/switch-network.sh testnet` |
+| View keys | `cat docker/.env.sui` |
+| List addresses | `sui client addresses` |
+| Switch network | `sui client switch --env testnet` |
+| Import a key | `sui keytool import <key> ed25519` |
+| Stop local node | `pkill -f "sui start"` |
+| Generate world-contracts .env | `./scripts/generate-world-env.sh` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
-
-## Clean up / fresh start
-
-```bash
-rm -rf workspace-data world-contracts
-docker volume rm docker_sui-keystore 2>/dev/null || true
-docker compose build
-docker compose run --rm sui-local
-```
 
 ## Connect to local node from host
 
@@ -79,10 +81,18 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 sui client switch --env localnet
 ```
 
-Wait until the container logs `[sui-dev] RPC ready.` before connecting. Import keys from `docker/workspace-data/.env.sui` if needed.
+Wait until the container logs `RPC ready` before connecting. Import keys from `docker/.env.sui` if needed.
+
+## Clean up / fresh start
+
+```bash
+docker volume rm docker_sui-config 2>/dev/null || true
+docker compose build
+docker compose run --rm sui-dev
+```
 
 <details>
-<summary>Troubleshooting </summary>
+<summary>Troubleshooting</summary>
 
 1. Move.lock wrong env? `rm Move.lock && sui move build --build-env testnet`
 

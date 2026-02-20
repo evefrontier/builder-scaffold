@@ -1,5 +1,4 @@
 readme.md
-.env
-.env.*
-.env.testnet
+.env.sui
 workspace-data
+world-contracts

@@ -28,7 +28,7 @@ You need Sui tools and Node.js for local development.
 ```bash
 # From repo root
 cd docker
-docker compose run --rm sui-local
+docker compose run --rm sui-dev
 ```
 
 More details: [docker/readme.md](./docker/readme.md)

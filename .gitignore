@@ -7,8 +7,8 @@ node_modules/
 .env
 .env.testnet
 
-# keys from .env.sui, etc.
-docker/workspace-data
+# generated keys
+docker/.env.sui
 docker/world-contracts/
 .DS_Store
 

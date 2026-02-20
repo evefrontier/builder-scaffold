@@ -5,42 +5,32 @@ Run the full builder-scaffold flow (e.g. `smart_gate`) entirely inside Docker �
 ## 1. Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) installed
-- Funded testnet accounts for testnet flow (e.g. from [Sui testnet faucet](https://faucet.sui.io/))
 
 ## 2. Start the container
 
 ```bash
 cd docker
-docker compose run --rm sui-local
+docker compose run --rm sui-dev
 ```
 
-On first run the container starts a local node and creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). This takes a minute or two.
+On first run the container creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts. Every start spins up a fresh local node and funds the accounts.
 
 Inside the container you have:
 
 ```
 /workspace/
 ├── builder-scaffold/    # full repo (syncs with host)
-├── world-contracts/     # bind mount — clone here (syncs with host)
-├── data/                # keys, .env.sui
-├── docker/              # .env.testnet lives here
-└── scripts/             # entrypoint + helpers
+└── world-contracts/     # bind mount — clone here (syncs with host)
 ```
 
-## 3. Switch to testnet (skip for localnet)
+## 3. Switch to testnet (optional)
 
-Create `docker/.env.testnet` on your host with your funded Bech32 keys:
-
-```
-ADMIN_PRIVATE_KEY=suiprivkey1...
-PLAYER_A_PRIVATE_KEY=suiprivkey1...
-PLAYER_B_PRIVATE_KEY=suiprivkey1...
-```
-
-Then inside the container:
+You can use testnet the same way you would on your host
 
 ```bash
-./scripts/switch-network.sh testnet
+sui client switch --env testnet
+sui keytool import <your-private-key> ed25519
+sui client faucet
 ```
 
 ## 4. Deploy world and create test resources
@@ -50,12 +40,11 @@ Then inside the container:
 ```bash
 cd /workspace/world-contracts
 git clone https://github.com/evefrontier/world-contracts.git .
-/workspace/scripts/generate-world-env.sh  # auto-creates .env from your keys
-# Or edit docker/world-contracts/.env on your host — the directory syncs
+/workspace/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys
 pnpm install
-pnpm deploy-world testnet       # or localnet
-pnpm configure-world testnet    # or localnet
-pnpm create-test-resources testnet   # or localnet
+pnpm deploy-world localnet       # or testnet
+pnpm configure-world localnet    # or testnet
+pnpm create-test-resources localnet   # or testnet
 ```
 
 > The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host, so files persist across restarts and are editable from your IDE.
@@ -83,8 +72,8 @@ Set the following in `.env`:
 
 ```bash
 cd /workspace/builder-scaffold/move-contracts/smart_gate
-sui client publish --build-env testnet #testnet 
 sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml #localnet
+sui client publish --build-env testnet #testnet 
 ```
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output.
@@ -106,8 +95,10 @@ pnpm collect-corpse-bounty
 
 | Task | Command |
 |------|---------|
-| View keys | `cat /workspace/data/.env.sui` |
-| Switch network | `./scripts/switch-network.sh localnet` or `testnet` |
+| View keys | `cat /workspace/builder-scaffold/docker/.env.sui` |
+| List addresses | `sui client addresses` |
+| Switch network | `sui client switch --env testnet` |
+| Import a key | `sui keytool import <key> ed25519` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
 
 See [docker/readme.md](../docker/readme.md) for container setup details, rebuilding, cleanup, and troubleshooting.

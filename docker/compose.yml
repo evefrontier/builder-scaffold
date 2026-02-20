@@ -1,20 +1,15 @@
 services:
-  sui-local:
+  sui-dev:
     build: .
-    image: sui-docker
     stdin_open: true
     tty: true
     ports:
       # Exposes local Sui node RPC — for local development only
       - "9000:9000"
-    environment:
-      - SUI_NETWORK=localnet
     volumes:
-      - sui-keystore:/root/.sui
-      - ./workspace-data:/workspace/data
-      - .:/workspace/docker
+      - sui-config:/root/.sui
       - ../:/workspace/builder-scaffold
       - ./world-contracts:/workspace/world-contracts
 
 volumes:
-  sui-keystore:
+  sui-config:

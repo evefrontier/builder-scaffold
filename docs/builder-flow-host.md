@@ -23,10 +23,10 @@ Run the builder-scaffold flow (e.g. `smart_gate`) on your host machine, targetin
 
 ```bash
 cd docker
-docker compose run --rm --service-ports sui-local
+docker compose run --rm --service-ports sui-dev
 ```
 
-Import the container's keys from `docker/workspace-data/.env.sui` into your host config.
+Import the container's keys from `docker/.env.sui` into your host config.
 
 **Using Sui CLI directly:**
 
