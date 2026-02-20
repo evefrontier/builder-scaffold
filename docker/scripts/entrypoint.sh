@@ -41,6 +41,7 @@ fi
 echo "[sui-dev] Starting local Sui node..."
 sui start --with-faucet --force-regenesis &
 NODE_PID=$!
+trap 'kill "$NODE_PID" 2>/dev/null || true' EXIT
 
 echo "[sui-dev] Waiting for RPC on port 9000..."
 for i in $(seq 1 30); do
