@@ -21,6 +21,12 @@ import {
   transformToAssembly,
 } from "@evefrontier/dapp-kit";
 
+/**
+ * STEP 5 (optional) — When useSmartObject isn't enough.
+ * getAssemblyWithOwner() for assembly + character;
+ * transformToAssembly() for typed Assembly from raw move object.
+ * Other helpers: executeGraphQLQuery, getOwnedObjectsByType, getObjectsByType, getSingletonObjectByType.
+ */
 async function fetchAssemblyInfo(assemblyId: string) {
   // 1. Fetch raw data from GraphQL
   const { moveObject, character } = await getAssemblyWithOwner(assemblyId);
@@ -44,6 +50,7 @@ async function fetchAssemblyInfo(assemblyId: string) {
   return { assembly, character };
 }
 
+/** STEP 5 — getObjectWithJson() for object by ID with JSON. */
 async function fetchObjectData(objectId: string) {
   const result = await getObjectWithJson(objectId);
 
@@ -56,6 +63,7 @@ async function fetchObjectData(objectId: string) {
   return json;
 }
 
+/** STEP 5 — getOwnedObjectsByType() for owned objects by type and wallet address. */
 async function fetchUserAssemblies(
   walletAddress: string,
   assemblyType: string,
