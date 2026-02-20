@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import {
     createClient,
@@ -23,7 +23,7 @@ export interface EnvConfig {
 }
 
 export interface InitializedContext {
-    client: SuiClient;
+    client: SuiJsonRpcClient;
     keypair: Ed25519Keypair;
     config: WorldConfig;
     address: string;

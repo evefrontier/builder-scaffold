@@ -1,6 +1,7 @@
 {
   "name": "builder-scaffold",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.17.0",
   "scripts": {
     "fmt": "prettier --write \"move-contracts/**/*.move\"",
@@ -15,7 +16,7 @@
     "collect-corpse-bounty": "tsx ts-scripts/smart_gate/collect-corpse-bounty.ts"
   },
   "dependencies": {
-    "@mysten/sui": "^1.45.2",
+    "@mysten/sui": "^2.0.0",
     "@noble/hashes": "^1.8.0",
     "dotenv": "^17.2.3"
   },
