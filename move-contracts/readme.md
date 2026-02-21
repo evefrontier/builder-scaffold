@@ -36,10 +36,10 @@ Since the local network is short-lived, you need to manually resolve to the publ
 
 ```bash
 cd move-contracts/smart_gate
-sui client publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml
+sui client publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 
-> **Note:** This assumes `world-contracts` and `builder-scaffold` are sibling directories. Adjust the path if your layout differs.
+> **Note:** This assumes `Pub.localnet.toml` was copied into `deployments/localnet/` during the artifact copy step. See the builder-flow docs for details.
 
 For more details see [package management](https://docs.sui.io/guides/developer/packages/move-package-management).
 
