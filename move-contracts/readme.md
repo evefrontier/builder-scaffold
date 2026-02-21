@@ -36,7 +36,7 @@ Since the local network is short-lived, you need to manually resolve to the publ
 
 ```bash
 cd move-contracts/smart_gate
-sui client publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 
 > **Note:** This assumes `Pub.localnet.toml` was copied into `deployments/localnet/` during the artifact copy step. See the builder-flow docs for details.

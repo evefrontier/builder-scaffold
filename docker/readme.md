@@ -10,7 +10,7 @@ One container with **Sui CLI**, **Node.js**, and **pnpm**. No host tooling neede
 
 ```bash
 cd docker
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 On first run the container creates three ed25519 keypairs (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts via a Docker volume.
@@ -88,7 +88,7 @@ Wait until the container logs `RPC ready` before connecting. Import keys from `d
 ```bash
 docker volume rm docker_sui-config 2>/dev/null || true
 docker compose build
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 <details>

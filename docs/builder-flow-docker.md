@@ -10,7 +10,7 @@ Run the full builder-scaffold flow (e.g. `smart_gate`) entirely inside Docker â€
 
 ```bash
 cd docker
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 On first run the container creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts. Every start spins up a fresh local node and funds the accounts.
