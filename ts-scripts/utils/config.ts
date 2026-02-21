@@ -1,5 +1,5 @@
 import path from "node:path";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 
@@ -51,14 +51,14 @@ export function getPublishOutputPath(network: string): string {
     return path.resolve(process.cwd(), "deployments", network, PUBLISH_OUTPUT_FILENAME);
 }
 
-export function createClient(network: Network = "localnet"): SuiClient {
+export function createClient(network: Network = "localnet"): SuiJsonRpcClient {
     const config = getConfig(network);
-    return new SuiClient({ url: config.url });
+    return new SuiJsonRpcClient({ url: config.url, network });
 }
 
 export function keypairFromPrivateKey(privateKey: string): Ed25519Keypair {
-    const { schema, secretKey } = decodeSuiPrivateKey(privateKey);
-    if (schema !== "ED25519") {
+    const { scheme, secretKey } = decodeSuiPrivateKey(privateKey);
+    if (scheme !== "ED25519") {
         throw new Error("Only ED25519 keys are supported");
     }
     return Ed25519Keypair.fromSecretKey(secretKey);

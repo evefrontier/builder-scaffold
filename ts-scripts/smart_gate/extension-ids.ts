@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { requireEnv } from "../utils/helper";
 import { MODULE } from "./modules";
 
@@ -17,7 +17,7 @@ export function requireBuilderPackageId(): string {
  * - BUILDER_PACKAGE_ID and EXTENSION_CONFIG_ID come from .env (set after publishing)
  */
 export async function resolveSmartGateExtensionIds(
-    client: SuiClient,
+    client: SuiJsonRpcClient,
     ownerAddress: string
 ): Promise<SmartGateExtensionIds> {
     const builderPackageId = requireBuilderPackageId();

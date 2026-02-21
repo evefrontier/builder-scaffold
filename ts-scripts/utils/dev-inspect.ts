@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 
 function resolveDevInspectSender(senderAddress?: string): string {
@@ -7,7 +7,7 @@ function resolveDevInspectSender(senderAddress?: string): string {
 }
 
 export async function devInspectMoveCallFirstReturnValueBytes(
-    client: SuiClient,
+    client: SuiJsonRpcClient,
     params: {
         target: string;
         typeArguments?: string[];
