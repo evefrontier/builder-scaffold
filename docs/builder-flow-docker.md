@@ -10,7 +10,7 @@ Run the full builder-scaffold flow (e.g. `smart_gate`) entirely inside Docker â€
 
 ```bash
 cd docker
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 On first run the container creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts. Every start spins up a fresh local node and funds the accounts.
@@ -54,6 +54,7 @@ pnpm create-test-resources localnet   # or testnet
 ```bash
 cp -r deployments/* /workspace/builder-scaffold/deployments/
 cp test-resources.json /workspace/builder-scaffold/test-resources.json
+cp contracts/world/Pub.localnet.toml /workspace/builder-scaffold/deployments/localnet/Pub.localnet.toml
 ```
 
 ## 6. Configure builder-scaffold .env
@@ -72,7 +73,7 @@ Set the following in `.env`:
 
 ```bash
 cd /workspace/builder-scaffold/move-contracts/smart_gate
-sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml #localnet
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml #localnet
 sui client publish --build-env testnet #testnet 
 ```
 

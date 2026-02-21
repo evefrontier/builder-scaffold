@@ -10,7 +10,7 @@ One container with **Sui CLI**, **Node.js**, and **pnpm**. No host tooling neede
 
 ```bash
 cd docker
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 On first run the container creates three ed25519 keypairs (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts via a Docker volume.
@@ -40,8 +40,8 @@ The container starts on **localnet**, but you can use testnet the same way you w
 ```bash
 sui client switch --env testnet
 
-# Fund your local keys on testnet: https://faucet.sui.io/
-sui client faucet
+# Fund your local keys on testnet by requesting gas
+https://faucet.sui.io/
 
 # Or import separate testnet keys if you prefer
 sui keytool import <your-private-key> ed25519
@@ -88,7 +88,7 @@ Wait until the container logs `RPC ready` before connecting. Import keys from `d
 ```bash
 docker volume rm docker_sui-config 2>/dev/null || true
 docker compose build
-docker compose run --rm sui-dev
+docker compose run --rm --service-ports sui-dev
 ```
 
 <details>
@@ -103,7 +103,7 @@ docker compose run --rm sui-dev
 Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#4-deploy-world-and-create-test-resources)), then pass its publication file:
 
 ```bash
-sui client test-publish --build-env testnet --pubfile-path ../../../world-contracts/contracts/world/Pub.localnet.toml
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 
 </details>
