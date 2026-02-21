@@ -57,10 +57,10 @@ pnpm create-test-resources localnet   # use same network as deploy/configure
 
 ```bash
 # From world-contracts directory
-mkdir -p ../builder-scaffold/deployments/
-cp contracts/world/Pub.localnet.toml ../builder-scaffold/deployments/Pub.localnet.toml
+mkdir -p ../builder-scaffold/deployments/localnet/   # or testnet
 cp -r deployments/* ../builder-scaffold/deployments/
 cp test-resources.json ../builder-scaffold/test-resources.json
+cp contracts/world/Pub.localnet.toml ../builder-scaffold/deployments/localnet/Pub.localnet.toml   # localnet only
 ```
 
 - `deployments/<network>/extracted-object-ids.json` — world package ID and shared object IDs

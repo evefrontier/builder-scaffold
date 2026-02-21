@@ -52,9 +52,10 @@ pnpm create-test-resources localnet   # or testnet
 ## 5. Copy world artifacts into builder-scaffold
 
 ```bash
+mkdir -p /workspace/builder-scaffold/deployments/localnet/   # or testnet
 cp -r deployments/* /workspace/builder-scaffold/deployments/
 cp test-resources.json /workspace/builder-scaffold/test-resources.json
-cp contracts/world/Pub.localnet.toml /workspace/builder-scaffold/deployments/Pub.localnet.toml
+cp contracts/world/Pub.localnet.toml /workspace/builder-scaffold/deployments/localnet/Pub.localnet.toml   # localnet only
 ```
 
 ## 6. Configure builder-scaffold .env
