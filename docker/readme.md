@@ -103,7 +103,7 @@ docker compose run --rm --service-ports sui-dev
 Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#4-deploy-world-and-create-test-resources)), then pass its publication file:
 
 ```bash
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml
 ```
 
 </details>

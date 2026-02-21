@@ -71,7 +71,7 @@ pnpm create-test-resources testnet   # or localnet
 ```bash
 cp -r deployments/* ../builder-scaffold/deployments/
 cp test-resources.json ../builder-scaffold/test-resources.json
-cp contracts/world/Pub.localnet.toml ../builder-scaffold/deployments/localnet/Pub.localnet.toml
+cp contracts/world/Pub.localnet.toml ../builder-scaffold/deployments/Pub.localnet.toml
 ```
 
 ## 5. Configure builder-scaffold .env
@@ -93,7 +93,7 @@ Example using smart_gate:
 ```bash
 cd move-contracts/smart_gate
 sui client publish --build-env testnet
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml  #localnet
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml  #localnet
 ```
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish output.
