@@ -7,7 +7,7 @@ export function WalletStatus() {
   const account = useCurrentAccount();
 
   /** STEP 7 — useDAppKit() (@mysten/dapp-kit-react) → signAndExecuteTransaction, signTransaction, signPersonalMessage. */
-  const dAppKit = useDAppKit();
+  const _dAppKit = useDAppKit();
 
   return (
     <Container my="2">
@@ -23,7 +23,6 @@ export function WalletStatus() {
         <Text>Wallet not connected</Text>
       )}
 
-      <Flex direction="column"></Flex>
       <AssemblyInfo />
     </Container>
   );

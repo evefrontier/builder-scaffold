@@ -12,7 +12,7 @@ Client dApp using the following tools:
   wallets and loading data
 - [pnpm](https://pnpm.io/) for package management
 
-## Demo steps (features and where to find them)
+## Features and where to find them
 
 | Step | Feature | What to use | Where |
 |------|--------|-------------|--------|

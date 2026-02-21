@@ -4,7 +4,7 @@ export function AssemblyInfo() {
   /**
    * STEP 4 — useSmartObject() (@evefrontier/dapp-kit) uses VITE_ITEM_ID / URL params and the kit's GraphQL. Returns assembly, character, loading, error, refetch, optional setSelectedObjectId. Render name, type, state, id, owner character.
    */
-  const { assembly, character, loading, error, refetch } = useSmartObject();
+  const { assembly, character, loading, error } = useSmartObject();
 
   if (loading) return <div>Loading assembly...</div>;
   if (error) return <div>Error: {error}</div>;
