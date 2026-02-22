@@ -14,7 +14,7 @@
   "packageManager": "pnpm@10.17.0",
   "dependencies": {
     "@mysten/sui": "^1.45.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "jwt-decode": "^4.0.0",
     "typescript": "^5.9.3"
   },
