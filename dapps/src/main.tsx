@@ -9,6 +9,7 @@ import { EveFrontierProvider } from "@evefrontier/dapp-kit";
 
 const queryClient = new QueryClient();
 
+/** STEP 1 — EveFrontierProvider(queryClient) wraps App; composes QueryClientProvider (React Query), DAppKitProvider (Mysten Sui client + wallet), VaultProvider (EVE wallet/connection), SmartObjectProvider (GraphQL assembly/context), NotificationProvider (toasts). */
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Theme appearance="dark">
