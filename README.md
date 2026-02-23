@@ -4,7 +4,7 @@ Templates and tools for building on EVE Frontier.
 
 ## Quickstart
 
-**1. Clone the repo** :
+**1. Clone the repo**:
 
 ```bash
 mkdir -p workspace && cd workspace
