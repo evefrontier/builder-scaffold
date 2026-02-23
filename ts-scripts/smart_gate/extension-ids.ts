@@ -13,16 +13,28 @@ export function requireBuilderPackageId(): string {
 }
 
 /**
- * Resolve smart_gate extension IDs.
- * - BUILDER_PACKAGE_ID and EXTENSION_CONFIG_ID come from .env (set after publishing)
+ * Resolve builder package and extension config IDs from env only (no AdminCap).
+ * Use for entry points that don't need admin, e.g. issue_jump_permit.
+ */
+export function resolveSmartGateExtensionId(): {
+    builderPackageId: string;
+    extensionConfigId: string;
+} {
+    return {
+        builderPackageId: requireBuilderPackageId(),
+        extensionConfigId: requireEnv("EXTENSION_CONFIG_ID"),
+    };
+}
+
+/**
+ * Resolve smart_gate extension IDs (env + AdminCap for the given owner).
+ * BUILDER_PACKAGE_ID and EXTENSION_CONFIG_ID come from .env (set after publishing).
  */
 export async function resolveSmartGateExtensionIds(
     client: SuiJsonRpcClient,
     ownerAddress: string
 ): Promise<SmartGateExtensionIds> {
-    const builderPackageId = requireBuilderPackageId();
-    const extensionConfigId = requireEnv("EXTENSION_CONFIG_ID");
-
+    const { builderPackageId, extensionConfigId } = resolveSmartGateExtensionId();
     const adminCapType = `${builderPackageId}::${MODULE.CONFIG}::AdminCap`;
     const result = await client.getOwnedObjects({
         owner: ownerAddress,

@@ -74,7 +74,7 @@ Set the following in `.env`:
 
 ```bash
 cd /workspace/builder-scaffold/move-contracts/smart_gate
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml #localnet
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml #localnet
 sui client publish --build-env testnet #testnet 
 ```
 
