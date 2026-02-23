@@ -15,7 +15,6 @@ The seed step simulates those in-game actions automatically:
 3. A **Smart Storage Unit** — online, with test items deposited
 4. Two **Smart Gates** — online and linked for jumping
 
-<!--TODO  change link -->
 For more info on Smart Character, Network Node, and Storage Unit, see the [world-contracts](https://github.com/evefrontier/world-contracts) repo and docs.
 
 ---

@@ -43,6 +43,8 @@ sui keytool import <your-private-key> ed25519
 sui client faucet
 ```
 
+<a id="deploy-world-and-create-test-resources"></a>
+
 ## 5. Deploy world and create test resources
 
 > **Coming soon:** These manual steps (clone, deploy, configure, seed, copy artifacts) will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).

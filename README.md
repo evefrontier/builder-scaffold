@@ -37,18 +37,6 @@ By the end you’ll have a deployed world, a published custom contract (e.g. `sm
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
 
-## Project structure
-
-```
-builder-scaffold/
-├── docs/            # End-to-end flows (Docker, host)
-├── setup-world/     # World deploy + seed
-├── dapps/           # Reference dApp
-├── docker/          # Dev containers
-├── move-contracts/  # Custom contract examples (e.g. smart_gate)
-├── ts-scripts/      # TypeScript scripts
-└── zklogin/         # zkLogin automation
-```
 
 ## Contributing
 
