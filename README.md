@@ -8,18 +8,18 @@ Run the full flow (world deploy → custom contract → scripts) in one of two w
 
 | Path | When to use |
 |------|--------------|
-| **[Docker](docs/builder-flow-docker.md)** | No Sui/Node on host; run everything in a container (local or testnet). |
-| **[Host](docs/builder-flow-host.md)** | Sui CLI + Node.js on your machine; target local or testnet. |
+| **[Docker](./docs/builder-flow-docker.md)** | No Sui/Node on host; run everything in a container (local or testnet). |
+| **[Host](./docs/builder-flow-host.md)** | Sui CLI + Node.js on your machine; target local or testnet. |
 
-By the end you'll have a deployed world (local or testnet), a published custom contract (e.g. smart_gate), and scripts that call it.
+By the end you'll have a deployed world (local or testnet), a published custom contract (e.g. `smart_gate`), and scripts that call it.
 
 ## What's included
 
 - **Docker** – Local dev environment (Sui CLI + Node.js)
-- **Move contracts** – Extend Smart Assemblies (e.g. [smart_gate](move-contracts/smart_gate/))
-- **TypeScript scripts** – Interact with deployed contracts ([ts-scripts/readme.md](ts-scripts/readme.md))
-- **dApp template** – Extension use cases ([dapps/readme.md](dapps/readme.md))
-- **zkLogin CLI** – OAuth-based signing ([zklogin/readme.md](zklogin/readme.md))
+- **Move contracts** – Extend Smart Assemblies (e.g. [smart_gate](./move-contracts/smart_gate/))
+- **TypeScript scripts** – Interact with deployed contracts ([ts-scripts/readme.md](./ts-scripts/readme.md))
+- **dApp template** – Extension use cases ([dapps/readme.md](./dapps/readme.md))
+- **zkLogin CLI** – OAuth-based signing ([zklogin/readme.md](./zklogin/readme.md))
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ By the end you'll have a deployed world (local or testnet), a published custom c
 
 ## High-level builder flow
 
-The steps below are the same flow as the [Docker](docs/builder-flow-docker.md) and [Host](docs/builder-flow-host.md) guides; use those for detailed commands.
+The steps below are the same flow as the [Docker](./docs/builder-flow-docker.md) and [Host](./docs/builder-flow-host.md) guides; use those for detailed commands.
 
 ### Step 1: Set up your local environment
 
@@ -52,7 +52,7 @@ Follow [Sui getting started](https://docs.sui.io/guides/developer/getting-starte
 
 ### Step 2: Deploy an EVE Frontier world
 
-You need the EVE Frontier world contracts deployed and configured (local or testnet) to simulate game-server actions, which is a prerequisite for testing custom contract logic. See the [Docker](docs/builder-flow-docker.md) or [Host](docs/builder-flow-host.md) flow (deploy world step) or [setup-world/readme.md](setup-world/readme.md) for how to do it.
+You need the EVE Frontier world contracts deployed and configured (local or testnet) to simulate game-server actions, which is a prerequisite for testing custom contract logic. See the [Docker](./docs/builder-flow-docker.md) or [Host](./docs/builder-flow-host.md) flow (deploy world step) or [setup-world/readme.md](./setup-world/readme.md) for how to do it.
 
 ---
 
@@ -94,11 +94,11 @@ builder-scaffold/
 ├── setup-world/     # World deploy + seed
 ├── dapps/           # Reference dApp
 ├── docker/          # Dev containers
-├── move-contracts/  # Custom contracts examples (e.g. smart_gate)
+├── move-contracts/  # Custom contract examples (e.g. smart_gate)
 ├── ts-scripts/      # TypeScript scripts
 └── zklogin/         # zkLogin automation
 ```
 
 ## Contributing
 
-Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) and open an issue or feature request before submitting PRs.
+Contributions welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and open an issue or feature request before submitting PRs.
