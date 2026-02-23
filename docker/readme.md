@@ -100,7 +100,7 @@ docker compose run --rm --service-ports sui-dev
 
 ![publish error](../images/publish-error.png)
 
-Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#4-deploy-world-and-create-test-resources)), then pass its publication file:
+Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#5-deploy-world-and-create-test-resources)), then pass its publication file:
 
 ```bash
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml
