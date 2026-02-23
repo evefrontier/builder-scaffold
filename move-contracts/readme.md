@@ -28,6 +28,7 @@ On testnet the published world package is automatically resolved when deploying 
 ```bash
 cd move-contracts/smart_gate
 sui move build -e testnet
+sui client publish -e testnet
 ```
 
 **Local**

@@ -29,7 +29,7 @@ By the end you'll have a deployed world (local or testnet), a published custom c
 
 ## High-level builder flow
 
-The steps below are the same flow as the [Docker](./docs/builder-flow-docker.md) and [Host](./docs/builder-flow-host.md) guides; use those for detailed commands.
+The steps below are a high-level outline of the same flow; for detailed commands, see the [Docker](./docs/builder-flow-docker.md) and [Host](./docs/builder-flow-host.md) guides. 
 
 ### Step 1: Set up your local environment
 
