@@ -16,7 +16,7 @@ export function requireBuilderPackageId(): string {
  * Resolve builder package and extension config IDs from env only (no AdminCap).
  * Use for entry points that don't need admin, e.g. issue_jump_permit.
  */
-export function resolveSmartGateExtensionId(): {
+export function resolveSmartGateExtensionIdsFromEnv(): {
     builderPackageId: string;
     extensionConfigId: string;
 } {
@@ -34,7 +34,7 @@ export async function resolveSmartGateExtensionIds(
     client: SuiJsonRpcClient,
     ownerAddress: string
 ): Promise<SmartGateExtensionIds> {
-    const { builderPackageId, extensionConfigId } = resolveSmartGateExtensionId();
+    const { builderPackageId, extensionConfigId } = resolveSmartGateExtensionIdsFromEnv();
     const adminCapType = `${builderPackageId}::${MODULE.CONFIG}::AdminCap`;
     const result = await client.getOwnedObjects({
         owner: ownerAddress,
