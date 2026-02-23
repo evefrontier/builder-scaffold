@@ -50,6 +50,8 @@ sui client switch --env testnet   # or localnet
 
 > **Coming soon:** These manual steps will be simplified into a single setup command. See [setup-world/readme.md](../setup-world/readme.md) for details.
 
+If you already have builder-scaffold cloned, create a parent directory (e.g. `workspace`), put builder-scaffold there, and clone only world-contracts as a sibling. Otherwise, from an empty workspace:
+
 ```bash
 mkdir -p workspace && cd workspace
 git clone https://github.com/evefrontier/builder-scaffold.git
