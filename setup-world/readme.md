@@ -26,11 +26,11 @@ For more info on Smart Character, Network Node, and Storage Unit, see the [world
 
 ---
 
-## Quick start (deploy + seed resources)
+## Quick start (world only)
 
-Assumes `world-contracts` and `builder-scaffold` are sibling directories; adjust paths if your layout differs.
+For the **full** builder flow (environment → world → contract → scripts), follow one guide: [Docker](../docs/builder-flow-docker.md) or [Host](../docs/builder-flow-host.md). The steps below cover only the world-contracts part; assume `world-contracts` and `builder-scaffold` are sibling directories.
 
-> **Coming soon:** These manual steps (clone, deploy, configure, seed, copy artifacts) will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
+> **Coming soon:** Clone, deploy, configure, seed, and copy will be simplified into a single setup command. Move package dependencies will resolve via [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
 
 ### 1. Clone and deploy the world
 
@@ -72,4 +72,5 @@ cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet
 ## Next steps
 
 - [Move contracts](../move-contracts/readme.md) — build and publish your extension (e.g. `smart_gate`)
-- [TypeScript scripts](../ts-scripts/readme.md) — authorize and run scripts against the seeded resources
+- [TypeScript scripts](../ts-scripts/readme.md) — run scripts against the seeded resources
+- Full flow in one place: [Docker](../docs/builder-flow-docker.md) or [Host](../docs/builder-flow-host.md)
