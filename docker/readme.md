@@ -28,7 +28,7 @@ Every start spins up a fresh local Sui node and funds the accounts from the fauc
 Edit files on your host, run commands in the container:
 
 ```bash
-cd /workspace/builder-scaffold/move-contracts/smart_gate
+cd /workspace/builder-scaffold/move-contracts/smart_gate_extension
 sui move build -e testnet
 ```
 > **Why `-e testnet` even for local builds?** The localnet chain ID changes on every restart, so you can't pin it in `Move.toml`. Using testnet as the build environment resolves dependencies correctly while publishing to your local node via [ephemeral publication](https://docs.sui.io/guides/developer/packages/move-package-management#test-publish).
@@ -69,7 +69,7 @@ For TS scripts and world-contracts, manually fill in the `.env` files with your 
 | Import a key | `sui keytool import <key> ed25519` |
 | Stop local node | `pkill -f "sui start"` |
 | Generate world-contracts .env | `/workspace/scripts/generate-world-env.sh` |
-| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
+| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate_extension && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
 ## Connect to local node from host

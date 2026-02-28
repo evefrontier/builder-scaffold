@@ -118,7 +118,7 @@ echo "  /workspace/builder-scaffold/   – repo (syncs with host)"
 echo "  /workspace/world-contracts/    – mount for world-contracts (syncs with host)"
 echo ""
 echo "Quick start:"
-echo "  cd /workspace/builder-scaffold/move-contracts/smart_gate"
+echo "  cd /workspace/builder-scaffold/move-contracts/smart_gate_extension"
 echo "  sui move build -e testnet"
 echo ""
 

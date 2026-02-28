@@ -46,7 +46,7 @@ export async function resolveSmartGateExtensionIds(
     if (!adminCapId) {
         throw new Error(
             `AdminCap not found for ${ownerAddress}. ` +
-                `Make sure this address published the smart_gate package.`
+                `Make sure this address published the smart_gate_extension package.`
         );
     }
 

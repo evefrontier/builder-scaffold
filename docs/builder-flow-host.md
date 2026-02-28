@@ -1,6 +1,6 @@
 # Builder flow: host
 
-Run the builder-scaffold flow on your host machine, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate**, **storage_unit**, or your own); this guide uses **smart_gate** for the publish and run-scripts steps.
+Run the builder-scaffold flow on your host machine, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); this guide uses **smart_gate_extension** for the publish and run-scripts steps.
 
 > **Prefer Docker?** See [builder-flow-docker.md](./builder-flow-docker.md) to run the full flow inside a container with no host tooling required.
 
@@ -100,10 +100,10 @@ Set the following in `.env`:
 
 ## 7. Publish custom contract
 
-Pick an example (e.g. **smart_gate** or **storage_unit**); use its folder in `move-contracts/`:
+Pick an example (e.g. **smart_gate_extension** or **storage_unit_extension**); use its folder in `move-contracts/`:
 
 ```bash
-cd move-contracts/smart_gate   # or storage_unit, or your package
+cd move-contracts/smart_gate_extension   # or storage_unit_extension, or your package
 sui client publish --build-env testnet   # testnet
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml   # localnet
 ```
@@ -112,7 +112,7 @@ Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish ou
 
 ## 8. Run scripts
 
-For the **smart_gate** example (scripts are in the repo root):
+For the **smart_gate_extension** example (scripts are in the repo root):
 
 ```bash
 cd ../..   # builder-scaffold root

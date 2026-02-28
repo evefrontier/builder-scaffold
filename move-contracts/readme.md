@@ -4,8 +4,8 @@ Build custom contracts to change the default behaviour of Smart Assemblies. You 
 
 Examples for extending EVE Frontier Smart Assemblies by defining a typed struct in a custom contract and calling the extendable world functions:
 
-- [Smart Gate example](./smart_gate/)
-- [Smart Storage Unit example](./storage_unit/)
+- [Smart Gate extension example](./smart_gate_extension/)
+- [Smart Storage Unit extension example](./storage_unit_extension/)
 <!-- - [Smart Turret example](./turret/) -->
 
 More standalone contracts (multisig, token, DAO) will be added.
@@ -17,7 +17,16 @@ See [typed witness pattern](https://github.com/evefrontier/world-contracts/blob/
 - Sui CLI or [Docker](../docker/readme.md)
 - [Deployed world](../setup-world/readme.md)
 
-## Build and publish (e.g. smart_gate)
+## World package setup
+
+Extensions depend on the [world-contracts](https://github.com/evefrontier/world-contracts) package. For **localnet**, you deploy world yourself; for **testnet/devnet**, you integrate with whatever is already deployed.
+
+**Pinning world-contracts version (local only):**
+
+- **Local path** (default in Move.toml): The extension uses whatever is checked out in your world-contracts clone. To pin: `cd world-contracts && git checkout <branch-or-commit>` before deploying.
+- **Optional config:** Set `WORLD_CONTRACTS_BRANCH` (default `main`) and `WORLD_CONTRACTS_COMMIT` (optional; defaults to latest on branch) in `.env`, then run `./scripts/setup-world-with-version.sh` to checkout, deploy, and copy artifacts in one step.
+
+## Build and publish (e.g. smart_gate_extension)
 
 Custom contracts depend on the world contract being published on either local or testnet.
 
@@ -26,7 +35,7 @@ Custom contracts depend on the world contract being published on either local or
 On testnet the published world package is automatically resolved when deploying the custom contract:
 
 ```bash
-cd move-contracts/smart_gate
+cd move-contracts/smart_gate_extension
 sui move build -e testnet
 sui client publish -e testnet
 ```
@@ -36,7 +45,7 @@ sui client publish -e testnet
 Since the local network is short-lived, you need to manually resolve to the published world package address by providing the path to the published ephemeral file:
 
 ```bash
-cd move-contracts/smart_gate
+cd move-contracts/smart_gate_extension
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 
