@@ -87,7 +87,7 @@ Wait until the container logs `RPC ready` before connecting. Import keys from `d
 
 The compose setup includes PostgreSQL indexer and GraphQL support via `docker-compose.override.yml`.
 
-**GraphQL endpoint**: `http://localhost:9125`
+**GraphQL endpoint**: `http://localhost:9125/graphql`
 
 The indexer database is **automatically reset** on each container start to match the `--force-regenesis` behavior, ensuring the blockchain and indexer state stay synchronized.
 
