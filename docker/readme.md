@@ -104,7 +104,7 @@ Or use a GraphQL client like [Altair](https://altairgraphql.dev/) or [Insomnia](
 ## Clean up / fresh start
 
 ```bash
-docker compose down --rm --volumes
+docker compose down --volumes
 docker compose build
 docker compose run --rm --service-ports sui-dev
 ```
