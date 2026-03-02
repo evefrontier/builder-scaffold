@@ -1,0 +1,13 @@
+[package]
+name = "tribe_token"
+edition = "2024"
+
+[dependencies]
+World = { local = "../../../world-contracts/contracts/world" }
+
+[addresses]
+tribe_token = "0x0"
+
+# Use -e local for build/publish (local chain ID changes each run)
+[environments]
+local = "0x0"

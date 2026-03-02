@@ -8,48 +8,48 @@ import {
     initializeContext,
     requireEnv,
 } from "../utils/helper";
+import { deriveObjectId } from "../utils/derive-object-id";
+import { GAME_CHARACTER_C_ID, ITEM_A_TYPE_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
 import { requireStorageUnitExtensionPackageId, resolveMarketplaceId } from "./extension-ids";
 import { getCharacterOwnerCap } from "../helpers/character";
 import { MODULE } from "./modules";
 
 /**
- * Seller lists an item with a price. Item moves from ephemeral to main (escrow).
+ * Player C (seller) lists an item with a price. Item moves from ephemeral to main (escrow).
+ * Player C's character-owned inventory must be seeded first (run seed-owned-inventory).
  *
- * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, MARKETPLACE_ID, STORAGE_UNIT_ID
- *      SELLER_CHARACTER_ID, SELLER_OWNER_CAP_ID (Character OwnerCap for seller)
- *      LISTED_TYPE_ID, LISTED_QUANTITY, PAYMENT_TYPE_ID, PAYMENT_QUANTITY
- *      PLAYER_A_PRIVATE_KEY (seller)
+ * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, MARKETPLACE_ID (or runtime-object-ids.json)
+ *      LISTED_TYPE_ID (default: 446), LISTED_QUANTITY (default: 5)
+ *      PAYMENT_TYPE_ID (default: 446), PAYMENT_QUANTITY (default: 5)
+ *      PLAYER_C_PRIVATE_KEY (seller)
  */
 async function main() {
     console.log("============= List Item (Marketplace) ==============\n");
 
     try {
         const env = getEnvConfig();
-        const playerKey = requireEnv("PLAYER_A_PRIVATE_KEY");
+        const playerKey = requireEnv("PLAYER_C_PRIVATE_KEY");
         const ctx = initializeContext(env.network, playerKey);
         await hydrateWorldConfig(ctx);
 
         const packageId = requireStorageUnitExtensionPackageId();
         const marketplaceId = resolveMarketplaceId();
-        const storageUnitId = requireEnv("STORAGE_UNIT_ID");
-        const sellerCharacterId = requireEnv("SELLER_CHARACTER_ID");
+        const storageUnitId = deriveObjectId(ctx.config.objectRegistry, STORAGE_A_ITEM_ID, ctx.config.packageId);
+        const sellerCharacterId = deriveObjectId(ctx.config.objectRegistry, BigInt(GAME_CHARACTER_C_ID), ctx.config.packageId);
 
-        let sellerOwnerCapId = process.env.SELLER_OWNER_CAP_ID;
+        const sellerOwnerCapId = await getCharacterOwnerCap(
+            sellerCharacterId,
+            ctx.client,
+            ctx.config,
+            ctx.address
+        ) ?? undefined;
         if (!sellerOwnerCapId) {
-            sellerOwnerCapId = await getCharacterOwnerCap(
-                sellerCharacterId,
-                ctx.client,
-                ctx.config,
-                ctx.address
-            ) ?? undefined;
-        }
-        if (!sellerOwnerCapId) {
-            throw new Error("SELLER_OWNER_CAP_ID required, or Character must have OwnerCap");
+            throw new Error("OwnerCap not found for seller character. Make sure PLAYER_A_PRIVATE_KEY owns the character.");
         }
 
-        const listedTypeId = BigInt(process.env.LISTED_TYPE_ID ?? "88070");
+        const listedTypeId = BigInt(process.env.LISTED_TYPE_ID ?? String(ITEM_A_TYPE_ID));
         const listedQuantity = Number(process.env.LISTED_QUANTITY ?? "5");
-        const paymentTypeId = BigInt(process.env.PAYMENT_TYPE_ID ?? "88069");
+        const paymentTypeId = BigInt(process.env.PAYMENT_TYPE_ID ?? String(ITEM_A_TYPE_ID));
         const paymentQuantity = Number(process.env.PAYMENT_QUANTITY ?? "5");
 
         const tx = new Transaction();

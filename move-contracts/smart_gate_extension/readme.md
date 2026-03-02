@@ -10,6 +10,7 @@ Examples for extending the Gate assembly on EVE Frontier. Demonstrates custom ju
 |----------------|-----------------------------------------------------------------------------|
 | **Corpse bounty** | Collect a character corpse as bounty; deposit to owner storage; issue JumpPermit |
 | **Tribe permit**  | Issue JumpPermit only to characters in a configured starter tribe           |
+| **Tribe OR Bounty permit** | Combined extension: tribe members jump free, others pay a corpse bounty |
 
 ---
 
@@ -93,15 +94,76 @@ flowchart LR
 
 ---
 
+---
+
+## Tribe OR Bounty Permit
+
+A combined extension that provides two independent access paths on a single gate, sharing one `ExtensionConfig`:
+
+- **Tribe path** (`issue_via_tribe`): Characters in the configured tribe jump for free — no payment.
+- **Bounty path** (`issue_via_bounty`): Any character may jump by submitting a corpse item as payment.
+
+Gate owners configure each path independently. Both paths use the same `XAuth` witness, so only one `authorize_extension<XAuth>` call is needed per gate.
+
+### Overview
+
+1. **set_tribe_config** – Admin sets allowed `tribe` and `expiry_duration_ms` via `ExtensionConfig`.
+2. **set_bounty_config** – Admin sets `bounty_type_id` and `expiry_duration_ms` via `ExtensionConfig`.
+3. **issue_via_tribe** – Character tribe is checked; if it matches, a `JumpPermit` is issued (no payment).
+4. **issue_via_bounty** – Corpse item is withdrawn from the player's ephemeral inventory, deposited to the owner's storage unit, and a `JumpPermit` is issued.
+
+### Flow
+
+```mermaid
+flowchart LR
+    subgraph tribe [issue_via_tribe]
+        T1[Character] -->|tribe check| T2[Extension]
+        T2 -->|tribe matches| T3[issue_jump_permit]
+        T3 --> T4[JumpPermit to character]
+    end
+
+    subgraph bounty [issue_via_bounty]
+        B1[Player ephemeral] -->|withdraw_by_owner| B2[Corpse Item]
+        B2 -->|validate type_id| B3[Extension]
+        B3 -->|deposit_item| B4[Owner main storage]
+        B3 -->|issue_jump_permit| B5[JumpPermit to character]
+    end
+```
+
+### Extension Data Layer
+
+- **ExtensionConfig** – Shared object. Holds both `TribeConfig` (under `TribeConfigKey`) and `BountyConfig` (under `BountyConfigKey`) as dynamic fields.
+- **TribeConfig** – `tribe: u32`, `expiry_duration_ms: u64`.
+- **BountyConfig** – `bounty_type_id: u64`, `expiry_duration_ms: u64`.
+- **AdminCap** – Required for `set_tribe_config` and `set_bounty_config`.
+
+### Prerequisites
+
+- Gate owner authorizes `XAuth` on the gate via `authorize_extension<XAuth>`.
+- Gate owner authorizes `XAuth` on the storage unit (for `deposit_item` in bounty path).
+- Admin calls `set_tribe_config` and/or `set_bounty_config` before players use the paths.
+
+### Scripts
+
+- `pnpm configure-rules` – Sets both tribe and bounty config (run once after publish).
+- `pnpm authorise-gate` – Authorizes `XAuth` on the gate.
+- `pnpm authorise-storage-unit` – Authorizes `XAuth` on the storage unit (required for bounty path).
+- `pnpm issue-tribe-jump-permit` – Issues a permit via the tribe path.
+- `pnpm collect-corpse-bounty` – Issues a permit via the bounty path (player pays corpse).
+
+---
+
 ## Shared Configuration
 
-Both examples use the same `ExtensionConfig` shared object and `AdminCap`:
+All three examples use the same `ExtensionConfig` shared object and `AdminCap`:
 
 | Component      | Purpose                                                                 |
 |----------------|-------------------------------------------------------------------------|
 | **ExtensionConfig** | Shared object with dynamic fields for per-extension rules (TribeConfig, BountyConfig) |
 | **AdminCap**       | Transferred to publisher at init; gates `set_tribe_config` and `set_bounty_config`   |
 | **XAuth**          | Typed witness authorized on gate and storage unit; used for `issue_jump_permit` and `deposit_item` |
+
+All three examples share the same `ExtensionConfig` and `AdminCap` — only one `authorize_extension<XAuth>` call is needed per gate regardless of which path(s) you use.
 
 ---
 

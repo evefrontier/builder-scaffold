@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Transaction } from "@mysten/sui/transactions";
-import { MODULES } from "../utils/config";
+import { MODULES, readRuntimeObjectIds, writeRuntimeObjectIds } from "../utils/config";
 import {
     getEnvConfig,
     handleError,
@@ -8,15 +8,17 @@ import {
     initializeContext,
     requireEnv,
 } from "../utils/helper";
+import { deriveObjectId } from "../utils/derive-object-id";
+import { GAME_CHARACTER_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
 import { requireStorageUnitExtensionPackageId } from "./extension-ids";
 import { getOwnerCap as getStorageUnitOwnerCap } from "../helpers/storage-unit";
 import { MODULE } from "./modules";
 
 /**
  * Create marketplace for a storage unit and authorize MarketAuth.
- * Run as storage unit owner.
+ * Run as Player A (storage unit owner).
  *
- * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, STORAGE_UNIT_ID, CHARACTER_ID
+ * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID (or extracted-object-ids.json)
  *      PLAYER_A_PRIVATE_KEY (storage unit owner)
  */
 async function main() {
@@ -29,8 +31,8 @@ async function main() {
         await hydrateWorldConfig(ctx);
 
         const packageId = requireStorageUnitExtensionPackageId();
-        const storageUnitId = requireEnv("STORAGE_UNIT_ID");
-        const characterId = requireEnv("CHARACTER_ID");
+        const storageUnitId = deriveObjectId(ctx.config.objectRegistry, STORAGE_A_ITEM_ID, ctx.config.packageId);
+        const characterId = deriveObjectId(ctx.config.objectRegistry, BigInt(GAME_CHARACTER_ID), ctx.config.packageId);
 
         const storageUnitOwnerCapId = await getStorageUnitOwnerCap(
             storageUnitId,
@@ -80,7 +82,11 @@ async function main() {
 
         console.log("Marketplace created!");
         if (marketplaceId) {
-            console.log("Add to .env: MARKETPLACE_ID=" + marketplaceId);
+            const runtime = readRuntimeObjectIds(env.network);
+            runtime.storage_unit_extension = { ...runtime.storage_unit_extension, marketplaceId };
+            writeRuntimeObjectIds(env.network, runtime);
+            console.log(`Marketplace ID written to runtime-object-ids.json`);
+            console.log("Add to .env (or rely on runtime-object-ids.json): MARKETPLACE_ID=" + marketplaceId);
         }
         console.log("Transaction digest:", result.digest);
     } catch (error) {

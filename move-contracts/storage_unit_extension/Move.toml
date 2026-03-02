@@ -7,7 +7,7 @@ edition = "2024"      # edition = "legacy" to use legacy (pre-2024) Move
 [dependencies]
 # Pinned to feature/extension-for-owned. Run: WORLD_CONTRACTS_BRANCH=feature/extension-for-owned pnpm setup-world-with-version
 World = { local = "../../../world-contracts/contracts/world" }
-tokens = { local = "../tokens" }
+currency_token = { local = "../currency_token" }
 
 [addresses]
 storage_unit_extension = "0x0"

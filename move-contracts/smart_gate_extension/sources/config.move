@@ -87,3 +87,8 @@ public fun remove_rule<K: copy + drop + store, V: store>(
 public(package) fun x_auth(): XAuth {
     XAuth {}
 }
+
+#[test_only]
+public fun init_for_testing(ctx: &mut TxContext) {
+    init(ctx);
+}

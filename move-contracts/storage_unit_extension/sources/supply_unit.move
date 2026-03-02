@@ -6,8 +6,8 @@
 /// are configured per supply unit.
 module storage_unit_extension::supply_unit;
 
+use currency_token::currency_token::CURRENCY_TOKEN;
 use sui::coin;
-use tokens::currency_token::CURRENCY_TOKEN;
 use world::{character::Character, storage_unit::StorageUnit};
 
 public struct SupplyAuth has drop {}

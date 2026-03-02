@@ -6,9 +6,18 @@ Run the builder-scaffold flow on your host machine, targeting **testnet** or a *
 
 ## 1. Prerequisites
 
-- Sui CLI, Node.js, and pnpm installed on your host
+- **Sui CLI (latest)**, Node.js, and pnpm installed on your host
 - For testnet: funded accounts (e.g. from [Sui testnet faucet](https://faucet.sui.io/))
 - For local: a running Sui local node (see below)
+
+> **Sui CLI version:** The Docker node and world-contracts scripts require the latest Sui CLI. Install or upgrade via [suiup](https://github.com/MystenLabs/suiup):
+> ```bash
+> curl -sSfL https://raw.githubusercontent.com/MystenLabs/suiup/main/install.sh | sh
+> suiup install sui     # install latest
+> # or to upgrade:
+> suiup update sui
+> sui --version
+> ```
 
 ## 2. Clone builder-scaffold (if needed)
 
@@ -29,16 +38,25 @@ cd builder-scaffold
 <details>
 <summary>Local node setup</summary>
 
-**Using Docker:**
+**Node in Docker, commands on host (common):**
 
-```bash
-cd docker
-docker compose run --rm --service-ports sui-dev
-```
+1. Start the container (in one terminal); it exposes port 9000:
 
-Import the container's keys from `docker/.env.sui` into your host config.
+   ```bash
+   cd docker
+   docker compose run --rm --service-ports sui-dev
+   ```
 
-**Using Sui CLI directly:**
+2. In another terminal, configure your host Sui CLI to use the node:
+
+   ```bash
+   sui client new-env --alias localnet --rpc http://127.0.0.1:9000
+   sui client switch --env localnet
+   ```
+
+3. `pnpm setup-world-with-version` handles the rest automatically — it imports the admin key from `docker/.env.sui` and switches the active address before deploying. Wait for the container to log `RPC ready` first.
+
+**Using Sui CLI directly (node on host):**
 
 ```bash
 sui start --with-faucet --force-regenesis
@@ -58,7 +76,22 @@ sui client switch --env testnet   # or localnet
 
 ## 4. Deploy world and create test resources
 
-> **Coming soon:** These manual steps will be simplified into a single setup command. See [setup-world/readme.md](../setup-world/readme.md) for details.
+**Option A: Automated (recommended)**
+
+From builder-scaffold root, set `WORLD_CONTRACTS_BRANCH` (and optional `WORLD_CONTRACTS_COMMIT`) in `.env`, then:
+
+```bash
+cd builder-scaffold
+pnpm setup-world-with-version
+```
+
+The script clones world-contracts (if needed), checkouts the branch, deploys, configures, seeds, and copies artifacts. See [setup-world/readme.md](../setup-world/readme.md).
+
+**First run after clone:** If world-contracts was just cloned and has no `.env`, the script copies `env.example` to `.env` and exits. Fill in `ADMIN_ADDRESS`, `SPONSOR_ADDRESS`, and `GOVERNOR_PRIVATE_KEY` (or `ADMIN_PRIVATE_KEY`) in `world-contracts/.env`, then run again.
+
+**Clean rebuild (new branch/commit):** Run `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` to remove stale artifacts before deploy.
+
+**Option B: Manual**
 
 From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` as a sibling and deploy:
 
@@ -77,6 +110,8 @@ pnpm create-test-resources testnet   # or localnet
 ```
 
 ## 5. Copy world artifacts into builder-scaffold
+
+*(Skip if you used Option A — the script already copies.)*
 
 ```bash
 NETWORK=localnet   # or testnet
@@ -108,7 +143,7 @@ sui client publish --build-env testnet   # testnet
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml   # localnet
 ```
 
-Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish output.
+Set `GATE_EXTENSION_PACKAGE_ID` and `GATE_EXTENSION_CONFIG_ID` in `.env` from the publish output (or run `pnpm publish-smart-gate-extension` to capture them automatically).
 
 ## 8. Run scripts
 

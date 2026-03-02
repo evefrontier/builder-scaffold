@@ -21,12 +21,12 @@ cd builder-scaffold
 
 By the end you’ll have a deployed world, a published custom contract (e.g. `smart_gate_extension`), and scripts that call it.
 
-**Local development — pin world-contracts version:** For localnet, set `WORLD_CONTRACTS_BRANCH` (default `main`) and optional `WORLD_CONTRACTS_COMMIT` in `.env`, then run `pnpm setup-world-with-version` to checkout, deploy, and copy artifacts in one step.
+**Local development — pin world-contracts version:** Set `WORLD_CONTRACTS_BRANCH` (default `main`) and optional `WORLD_CONTRACTS_COMMIT` in `.env`, then run `pnpm setup-world-with-version`. The script clones world-contracts if needed, checkouts the branch, deploys, configures, seeds, and copies artifacts. Use `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` when switching branches for a clean rebuild.
 
 ## Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
+- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI (latest)](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path) — install/upgrade via [suiup](https://github.com/MystenLabs/suiup)
 
 ## What's in this repo
 
@@ -45,7 +45,8 @@ By the end you’ll have a deployed world, a published custom contract (e.g. `sm
 |----------|----------|---------|
 | **Gate** | Corpse bounty, Tribe permit | [smart_gate_extension readme](./move-contracts/smart_gate_extension/readme.md) |
 | **Storage Unit** | Marketplace, Supply Unit | [storage_unit_extension readme](./move-contracts/storage_unit_extension/readme.md) |
-| **Tokens** | Open currency (CURRENCY_TOKEN), Tribe token | [tokens readme](./move-contracts/tokens/readme.md) |
+| **Tokens** | Open currency (CURRENCY_TOKEN) | [currency_token readme](./move-contracts/currency_token/readme.md) |
+| **Tokens** | Tribe-gated token (TRIBE_TOKEN) | [tribe_token readme](./move-contracts/tribe_token/readme.md) |
 
 
 ## Contributing

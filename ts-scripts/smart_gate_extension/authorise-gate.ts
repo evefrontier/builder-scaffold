@@ -12,7 +12,7 @@ import {
     delay,
     DELAY_MS,
 } from "../utils/helper";
-import { requireBuilderPackageId } from "./extension-ids";
+import { requireGateExtensionPackageId } from "./extension-ids";
 import { getOwnerCap as getGateOwnerCap } from "../helpers/gate";
 import { MODULE } from "./modules";
 
@@ -22,7 +22,7 @@ async function authoriseGate(
     characterItemId: bigint
 ) {
     const { client, keypair, config, address } = ctx;
-    const builderPackageId = requireBuilderPackageId();
+    const builderPackageId = requireGateExtensionPackageId();
 
     const characterId = deriveObjectId(config.objectRegistry, characterItemId, config.packageId);
     const gateId = deriveObjectId(config.objectRegistry, gateItemId, config.packageId);

@@ -28,8 +28,8 @@ EOF
 
   printf 'y\n' | sui client switch --env localnet 2>/dev/null || true
 
-  echo "[sui-dev] Creating keypairs: ADMIN, PLAYER_A, PLAYER_B..."
-  for alias in ADMIN PLAYER_A PLAYER_B; do
+  echo "[sui-dev] Creating keypairs: ADMIN, PLAYER_A, PLAYER_B, PLAYER_C..."
+  for alias in ADMIN PLAYER_A PLAYER_B PLAYER_C; do
     printf '\n' | sui client new-address ed25519 "$alias" \
       || { echo "[sui-dev] ERROR: failed to create $alias" >&2; exit 1; }
   done
@@ -59,7 +59,7 @@ echo "[sui-dev] RPC ready."
 # ---------- fund accounts ----------
 printf 'y\n' | sui client switch --env localnet 2>/dev/null || true
 echo "[sui-dev] Funding accounts from faucet..."
-for alias in ADMIN PLAYER_A PLAYER_B; do
+for alias in ADMIN PLAYER_A PLAYER_B PLAYER_C; do
   sui client switch --address "$alias"
   for attempt in 1 2 3; do
     sui client faucet 2>&1 && break
@@ -82,12 +82,14 @@ require_val() {
 ADMIN_ADDRESS=$(get_address ADMIN)
 PLAYER_A_ADDRESS=$(get_address PLAYER_A)
 PLAYER_B_ADDRESS=$(get_address PLAYER_B)
+PLAYER_C_ADDRESS=$(get_address PLAYER_C)
 ADMIN_PRIVATE_KEY=$(get_key ADMIN)
 PLAYER_A_PRIVATE_KEY=$(get_key PLAYER_A)
 PLAYER_B_PRIVATE_KEY=$(get_key PLAYER_B)
+PLAYER_C_PRIVATE_KEY=$(get_key PLAYER_C)
 
-for var in ADMIN_ADDRESS PLAYER_A_ADDRESS PLAYER_B_ADDRESS \
-           ADMIN_PRIVATE_KEY PLAYER_A_PRIVATE_KEY PLAYER_B_PRIVATE_KEY; do
+for var in ADMIN_ADDRESS PLAYER_A_ADDRESS PLAYER_B_ADDRESS PLAYER_C_ADDRESS \
+           ADMIN_PRIVATE_KEY PLAYER_A_PRIVATE_KEY PLAYER_B_PRIVATE_KEY PLAYER_C_PRIVATE_KEY; do
   require_val "$var" "${!var}"
 done
 
@@ -99,9 +101,11 @@ SUI_RPC_URL=http://127.0.0.1:9000
 ADMIN_ADDRESS=$ADMIN_ADDRESS
 PLAYER_A_ADDRESS=$PLAYER_A_ADDRESS
 PLAYER_B_ADDRESS=$PLAYER_B_ADDRESS
+PLAYER_C_ADDRESS=$PLAYER_C_ADDRESS
 ADMIN_PRIVATE_KEY=$ADMIN_PRIVATE_KEY
 PLAYER_A_PRIVATE_KEY=$PLAYER_A_PRIVATE_KEY
 PLAYER_B_PRIVATE_KEY=$PLAYER_B_PRIVATE_KEY
+PLAYER_C_PRIVATE_KEY=$PLAYER_C_PRIVATE_KEY
 EOF
 chmod 600 "$ENV_FILE"
 

@@ -23,16 +23,28 @@ manifest_digest = "5F75228E403340DD70556AFD567899C8C2E4BB556771AF4C11F408D875984
 deps = { std = "MoveStdlib", sui = "Sui" }
 
 [pinned.testnet.MoveStdlib]
-source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib", rev = "563c15820b27dec9cbe75f826a3b6243ef44da1a" }
+source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib", rev = "655576caa3d7faaed39ebbc15d1bcc91d0761aee" }
+use_environment = "testnet"
+manifest_digest = "C4FE4C91DE74CBF223B2E380AE40F592177D21870DC2D7EB6227D2D694E05363"
+deps = {}
+
+[pinned.testnet.MoveStdlib_1]
+source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib", rev = "a9a6825eaf6273cc819ee3bcf65fd4909f7624a9" }
 use_environment = "testnet"
 manifest_digest = "C4FE4C91DE74CBF223B2E380AE40F592177D21870DC2D7EB6227D2D694E05363"
 deps = {}
 
 [pinned.testnet.Sui]
-source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "563c15820b27dec9cbe75f826a3b6243ef44da1a" }
+source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "655576caa3d7faaed39ebbc15d1bcc91d0761aee" }
 use_environment = "testnet"
 manifest_digest = "7AFB66695545775FBFBB2D3078ADFD084244D5002392E837FDE21D9EA1C6D01C"
 deps = { MoveStdlib = "MoveStdlib" }
+
+[pinned.testnet.Sui_1]
+source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "a9a6825eaf6273cc819ee3bcf65fd4909f7624a9" }
+use_environment = "testnet"
+manifest_digest = "7AFB66695545775FBFBB2D3078ADFD084244D5002392E837FDE21D9EA1C6D01C"
+deps = { MoveStdlib = "MoveStdlib_1" }
 
 [pinned.testnet.World]
 source = { local = "../../../world-contracts/contracts/world" }
@@ -40,14 +52,14 @@ use_environment = "testnet"
 manifest_digest = "5745706258F61D6CE210904B3E6AE87A73CE9D31A6F93BE4718C442529332A87"
 deps = { std = "MoveStdlib", sui = "Sui" }
 
+[pinned.testnet.currency_token]
+source = { local = "../currency_token" }
+use_environment = "testnet"
+manifest_digest = "0532D72C4F42A4472D331C54E2F8FB1595A305815D58568D26C6F8A4AC9BBFCE"
+deps = { Sui = "Sui_1" }
+
 [pinned.testnet.storage_unit_extension]
 source = { root = true }
 use_environment = "testnet"
-manifest_digest = "824BA6F79A2C6234AB73F200D4A90464FCE3BF1570A66D0D4612886F6182E339"
-deps = { World = "World", std = "MoveStdlib", sui = "Sui", tokens = "tokens" }
-
-[pinned.testnet.tokens]
-source = { local = "../tokens" }
-use_environment = "testnet"
-manifest_digest = "8E387A434C851015848497BA981643B89C570188789F76520AD1080EA35FD998"
-deps = { World = "World", std = "MoveStdlib", sui = "Sui" }
+manifest_digest = "1F9ED68A49A4A34DADADA17894B94E2DCAC5E49B7B886AA0EF28F30468DCF183"
+deps = { World = "World", currency_token = "currency_token", std = "MoveStdlib", sui = "Sui" }

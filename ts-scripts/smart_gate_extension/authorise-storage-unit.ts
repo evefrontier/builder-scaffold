@@ -10,7 +10,7 @@ import {
     initializeContext,
     requireEnv,
 } from "../utils/helper";
-import { requireBuilderPackageId } from "./extension-ids";
+import { requireGateExtensionPackageId } from "./extension-ids";
 import { getOwnerCap as getStorageUnitOwnerCap } from "../helpers/storage-unit";
 import { MODULE } from "./modules";
 
@@ -20,7 +20,7 @@ async function authoriseStorageUnit(
     characterItemId: bigint
 ) {
     const { client, keypair, config, address } = ctx;
-    const builderPackageId = requireBuilderPackageId();
+    const builderPackageId = requireGateExtensionPackageId();
 
     const characterId = deriveObjectId(config.objectRegistry, characterItemId, config.packageId);
     const storageUnitId = deriveObjectId(

@@ -13,7 +13,7 @@ cd docker
 docker compose run --rm --service-ports sui-dev
 ```
 
-On first run the container creates three ed25519 keypairs (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts via a Docker volume.
+On first run the container creates four ed25519 keypairs (`ADMIN`, `PLAYER_A`, `PLAYER_B`, `PLAYER_C`). Keys persist across container restarts via a Docker volume.
 
 Every start spins up a fresh local Sui node and funds the accounts from the faucet.
 
@@ -22,8 +22,10 @@ Every start spins up a fresh local Sui node and funds the accounts from the fauc
 ```
 /workspace/
 ├── builder-scaffold/    # full repo (syncs with host)
-└── world-contracts/     # bind mount — clone here on host, visible inside container
+└── world-contracts/     # bind mount — docker/world-contracts on host, visible inside container
 ```
+
+**Bind mount:** `world-contracts` is bind-mounted from `docker/world-contracts` on your host. Whatever branch you have checked out there is what gets deployed when you run `deploy-world`. The [setup-world-with-version](../scripts/setup-world-with-version.sh) script checks out a branch in this directory, deploys, and copies artifacts — ensuring the deployed world matches the version your extensions build against.
 
 Edit files on your host, run commands in the container:
 
@@ -68,7 +70,7 @@ For TS scripts and world-contracts, manually fill in the `.env` files with your 
 | Switch network | `sui client switch --env testnet` |
 | Import a key | `sui keytool import <key> ed25519` |
 | Stop local node | `pkill -f "sui start"` |
-| Generate world-contracts .env | `/workspace/scripts/generate-world-env.sh` |
+| Generate world-contracts .env | `/workspace/builder-scaffold/docker/scripts/generate-world-env.sh` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate_extension && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
@@ -85,11 +87,18 @@ Wait until the container logs `RPC ready` before connecting. Import keys from `d
 
 ## Clean up / fresh start
 
+To fully reset — including regenerating all keypairs and picking up any changes to `entrypoint.sh`:
+
 ```bash
-docker volume rm docker_sui-config 2>/dev/null || true
-docker compose build
+cd docker
+docker compose down -v          # stop container and delete the sui-config volume
 docker compose run --rm --service-ports sui-dev
 ```
+
+- `down -v` removes the `sui-config` volume so the next start is treated as first-run (new keys generated).
+- `--build` is optional and only needed if `Dockerfile` or `scripts/entrypoint.sh` has changed since the image was last built. Omit it for faster restarts when you only want to reset the chain state and keys.
+
+> **Example:** after pulling a builder-scaffold update that adds a new player key to `entrypoint.sh`, add `--build` so the new image is built before the volume is recreated.
 
 <details>
 <summary>Troubleshooting</summary>

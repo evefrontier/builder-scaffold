@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Transaction } from "@mysten/sui/transactions";
-import { MODULES } from "../utils/config";
+import { MODULES, readRuntimeObjectIds, writeRuntimeObjectIds } from "../utils/config";
 import {
     getEnvConfig,
     handleError,
@@ -8,16 +8,18 @@ import {
     initializeContext,
     requireEnv,
 } from "../utils/helper";
+import { deriveObjectId } from "../utils/derive-object-id";
+import { GAME_CHARACTER_ID, ITEM_A_TYPE_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
 import { requireStorageUnitExtensionPackageId } from "./extension-ids";
 import { getOwnerCap as getStorageUnitOwnerCap } from "../helpers/storage-unit";
 import { MODULE } from "./modules";
 
 /**
  * Create supply unit config and authorize SupplyAuth.
- * Run as storage unit owner.
+ * Run as Player A (storage unit owner).
  *
- * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, STORAGE_UNIT_ID, CHARACTER_ID
- *      COLLECTION_ADDRESS, PRICE_PER_ITEM, ITEM_TYPE_ID
+ * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID (or extracted-object-ids.json)
+ *      PLAYER_A_ADDRESS (collection address), PRICE_PER_ITEM, ITEM_TYPE_ID
  *      PLAYER_A_PRIVATE_KEY (storage unit owner)
  */
 async function main() {
@@ -30,11 +32,11 @@ async function main() {
         await hydrateWorldConfig(ctx);
 
         const packageId = requireStorageUnitExtensionPackageId();
-        const storageUnitId = requireEnv("STORAGE_UNIT_ID");
-        const characterId = requireEnv("CHARACTER_ID");
-        const collectionAddress = requireEnv("COLLECTION_ADDRESS");
+        const storageUnitId = deriveObjectId(ctx.config.objectRegistry, STORAGE_A_ITEM_ID, ctx.config.packageId);
+        const characterId = deriveObjectId(ctx.config.objectRegistry, BigInt(GAME_CHARACTER_ID), ctx.config.packageId);
+        const collectionAddress = requireEnv("PLAYER_A_ADDRESS");
         const pricePerItem = BigInt(process.env.PRICE_PER_ITEM ?? "100");
-        const itemTypeId = BigInt(process.env.ITEM_TYPE_ID ?? "88070");
+        const itemTypeId = BigInt(process.env.ITEM_TYPE_ID ?? String(ITEM_A_TYPE_ID));
 
         const storageUnitOwnerCapId = await getStorageUnitOwnerCap(
             storageUnitId,
@@ -90,7 +92,11 @@ async function main() {
 
         console.log("Supply unit created!");
         if (supplyUnitId) {
-            console.log("Add to .env: SUPPLY_UNIT_ID=" + supplyUnitId);
+            const runtime = readRuntimeObjectIds(env.network);
+            runtime.storage_unit_extension = { ...runtime.storage_unit_extension, supplyUnitId };
+            writeRuntimeObjectIds(env.network, runtime);
+            console.log(`Supply unit ID written to runtime-object-ids.json`);
+            console.log("Add to .env (or rely on runtime-object-ids.json): SUPPLY_UNIT_ID=" + supplyUnitId);
         }
         console.log("Transaction digest:", result.digest);
     } catch (error) {

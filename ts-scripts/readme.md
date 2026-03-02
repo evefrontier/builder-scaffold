@@ -8,15 +8,17 @@ Interact with your deployed extension contracts from TypeScript.
 2. `deployments/` and `test-resources.json` copied to this repo's root
 3. Your extension package published (e.g. `smart_gate_extension`)
 
+> **Redeploying?** If you need to republish contracts (e.g. after switching branches or restarting localnet), run `pnpm rebuild-world` first. This clears stale artifacts and `Pub.localnet.toml` so publish scripts don't fail with "already published".
+
 ## Setup
 
 ```bash
 # From repo root
-cp .env.example .env    # fill in keys, WORLD_PACKAGE_ID, BUILDER_PACKAGE_ID
+cp .env.example .env    # fill in keys, WORLD_PACKAGE_ID, GATE_EXTENSION_PACKAGE_ID
 pnpm install
 ```
 
-Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output.
+Set `WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output (or use `pnpm publish-smart-gate-extension` / `pnpm publish-currency-token` / `pnpm publish-tribe-token` to capture them automatically).
 
 ## Example: interact with custom Smart Gate
 
@@ -40,6 +42,28 @@ pnpm jump-with-permit
 pnpm collect-corpse-bounty
 ```
 
+## Example: Token Scripts
+
+After publishing `move-contracts/tokens/` (currency_token and tribe_token):
+
+```bash
+# Publish tokens
+pnpm publish-currency-token
+pnpm publish-tribe-token
+
+# Mint CURRENCY_TOKEN — defaults to Player B address
+pnpm mint-currency-token
+
+# Ensure Player B has at least TRANSFER_AMOUNT tokens (default: 10000).
+# Checks existing balance; mints the shortfall only. Safe to run multiple times.
+pnpm transfer-currency-token
+
+# Tribe token (requires configure first)
+pnpm configure-tribe-token
+pnpm mint-tribe-token
+pnpm transfer-tribe-token   # needs TOKEN_OBJECT_ID, RECIPIENT_ADDRESS, RECIPIENT_CHARACTER_ID
+```
+
 ## Example: interact with Storage Unit Extension
 
 After publishing `move-contracts/storage_unit_extension/` and tokens:
@@ -59,10 +83,14 @@ pnpm buy-item
 pnpm create-supply-unit
 # Add SUPPLY_UNIT_ID to .env from output
 
-# 4. Stock (admin must have items in ephemeral first)
+# 4. Ensure buyer (Player B) has CURRENCY_TOKEN — run before order-items
+pnpm mint-currency-token        # mint 1 000 000 tokens directly to Player B
+# or: pnpm transfer-currency-token  # top-up to 10 000 minimum (safe if already funded)
+
+# 5. Stock (admin must have items in ephemeral first)
 pnpm stock-supply-unit
 
-# 5. Order (buyer needs CURRENCY_TOKEN from mint-currency-token)
+# 6. Order (Player B's coin is auto-selected from their wallet)
 pnpm order-items
 ```
 

@@ -1,10 +1,10 @@
 #[test_only]
 module storage_unit_extension::supply_unit_tests;
 
+use currency_token::currency_token::CURRENCY_TOKEN;
 use std::{string::utf8, unit_test::assert_eq};
 use storage_unit_extension::supply_unit::{Self, SupplyAuth};
 use sui::{clock, coin, test_scenario as ts};
-use tokens::currency_token::CURRENCY_TOKEN;
 use world::{
     access::{OwnerCap, AdminACL},
     character::{Self, Character},

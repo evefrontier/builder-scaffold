@@ -47,19 +47,49 @@ sui client faucet
 
 ## 5. Deploy world and create test resources
 
-> **Coming soon:** These manual steps (clone, deploy, configure, seed, copy artifacts) will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
+**Bind mount:** `/workspace/world-contracts/` in the container is a bind mount of `docker/world-contracts/` on your host. Whatever branch you have checked out there is what gets deployed. Files persist across restarts and are editable from your IDE.
+
+### Option A: Automated (recommended)
+
+Use `pnpm setup-world-with-version` to pin a specific branch/commit, deploy, and copy artifacts in one step. See [setup-world-with-version](#setup-world-with-version-script) below.
+
+### Option B: Manual
+
+If you prefer not to use the script, clone (or ensure `docker/world-contracts` exists for the bind mount), then:
 
 ```bash
 cd /workspace/world-contracts
-git clone https://github.com/evefrontier/world-contracts.git .
-/workspace/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys
+git clone https://github.com/evefrontier/world-contracts.git .   # if empty
+git checkout feature/extension-for-owned   # or your target branch
+/workspace/builder-scaffold/docker/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys (if available)
 pnpm install
 pnpm deploy-world localnet       # or testnet
 pnpm configure-world localnet    # or testnet
 pnpm create-test-resources localnet   # or testnet
 ```
 
-> The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host, so files persist across restarts and are editable from your IDE.
+### setup-world-with-version script
+
+The script ensures the world you deploy matches the version your extensions build against. It:
+
+1. **Clones** world-contracts to `WORLD_CONTRACTS_DIR` if it doesn't exist (or the directory is empty)
+2. **Checkouts** `WORLD_CONTRACTS_BRANCH` (and optionally `WORLD_CONTRACTS_COMMIT`) in `.env`
+3. **Creates** world-contracts `.env` from `docker/.env.sui` when missing (first run after clone)
+4. **Deploys** to the local node (or testnet if configured)
+5. **Copies** `deployments/`, `test-resources.json`, `Pub.localnet.toml` into builder-scaffold
+
+**With the bind mount:** The script operates on `WORLD_CONTRACTS_DIR` (default `../world-contracts`). Inside the container, that resolves to `/workspace/world-contracts`. If the bind mount is empty, the script clones into it. Run from builder-scaffold root:
+
+```bash
+cd /workspace/builder-scaffold
+# Set in .env: WORLD_CONTRACTS_BRANCH=feature/extension-for-owned
+# Optional: WORLD_CONTRACTS_DIR=/workspace/world-contracts (needed if default path differs)
+pnpm setup-world-with-version
+```
+
+The script checks out the branch in the bind-mounted directory, then deploys from it. The container and host both see the same updated clone.
+
+**Clean rebuild (new branch/commit):** Run `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` to remove stale artifacts before deploy. For a fully fresh localnet, restart the container first.
 
 ## 6. Copy world artifacts into builder-scaffold
 
@@ -93,7 +123,7 @@ sui client test-publish --build-env testnet --pubfile-path ../../deployments/loc
 sui client publish --build-env testnet   # testnet
 ```
 
-Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output.
+Set `GATE_EXTENSION_PACKAGE_ID` and `GATE_EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output (or run `pnpm publish-smart-gate-extension` to capture them automatically).
 
 ## 9. Run scripts
 
@@ -118,6 +148,7 @@ pnpm collect-corpse-bounty
 | List addresses | `sui client addresses` |
 | Switch network | `sui client switch --env testnet` |
 | Import a key | `sui keytool import <key> ed25519` |
+| Clean rebuild world | `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` |
 | Build a contract | `cd /workspace/builder-scaffold/move-contracts/<example> && sui move build -e testnet` |
 
 See [docker/readme.md](../docker/readme.md) for container setup details, rebuilding, cleanup, and troubleshooting.
