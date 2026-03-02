@@ -145,6 +145,48 @@ PLAYER_B_PRIVATE_KEY=$PLAYER_B_PRIVATE_KEY
 EOF
 chmod 600 "$ENV_FILE"
 
+# ---------- reset indexer DB (optional) ----------
+# Only runs when SUI_INDEXER_DB_URL is provided (e.g. in testnet/CI compose profiles).
+if [ -n "${SUI_INDEXER_DB_URL:-}" ]; then
+
+  # Parse the database name from the URL.
+  # Supports:  postgresql://user:pass@host:port/dbname
+  #            postgresql://user:pass@host:port/dbname?options
+  DB_NAME="$(printf '%s' "$SUI_INDEXER_DB_URL" | sed -E 's|.*://[^/]*/([^?]*).*|\1|')"
+
+  # Guard 1: DB_NAME must be non-empty (URL parse failure).
+  if [ -z "$DB_NAME" ]; then
+    echo "[sui-dev] ERROR: could not parse a database name from SUI_INDEXER_DB_URL" >&2
+    exit 1
+  fi
+
+  # Guard 2: only allow safe identifiers — letters, digits, underscores,
+  # first character must not be a digit.  Rejects hyphens, spaces, injection, etc.
+  if ! printf '%s' "$DB_NAME" | grep -qE '^[a-zA-Z_][a-zA-Z0-9_]{0,62}$'; then
+    echo "[sui-dev] ERROR: parsed DB_NAME '$DB_NAME' is not a valid identifier." >&2
+    echo "          Use only letters, digits and underscores; must not start with a digit; max 63 chars." >&2
+    exit 1
+  fi
+
+  # Build an admin connection URL that targets the always-present 'postgres' database
+  # so we can DROP / CREATE the target database while no one is connected to it.
+  ADMIN_DB_URL="$(printf '%s' "$SUI_INDEXER_DB_URL" | sed -E 's|(://[^/]*)/[^?]*|\1/postgres|')"
+
+  echo "[sui-dev] Resetting indexer database '$DB_NAME'..."
+
+  # Use psql's :"variable" identifier-quoting to avoid SQL injection and to
+  # correctly handle any identifier that would require quoting (e.g. mixed case).
+  # ON_ERROR_STOP=1 ensures non-zero exit on SQL errors.
+  # stderr is intentionally NOT redirected so failures are fully visible.
+  psql "$ADMIN_DB_URL" \
+    --variable="dbname=$DB_NAME" \
+    --set ON_ERROR_STOP=1 \
+    -c 'DROP DATABASE IF EXISTS :"dbname"' \
+    -c 'CREATE DATABASE :"dbname"'
+
+  echo "[sui-dev] Indexer database '$DB_NAME' ready."
+fi
+
 # ---------- ready ----------
 echo ""
 echo "================================================"
