@@ -63,11 +63,13 @@ For a fully fresh localnet, restart the container or local node first (it spins 
 
 ### Manual: Clone and deploy the world
 
-Use a **stable tag** so builder-scaffold stays compatible if world-contracts has breaking changes on `main`. 
-**Stable tag:** `v0.0.14`
+Use a **stable tag** so the builder-scaffold stays compatible if world-contracts has breaking changes on `main`.
+
+> **Check the latest stable tag** before cloning: [github.com/evefrontier/world-contracts/tags](https://github.com/evefrontier/world-contracts/tags)  
+> Substitute `<latest-tag>` below with the most recent tag (e.g. `v0.0.15`).
 
 ```bash
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
+git clone -b <latest-tag> https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env   # fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
 pnpm install

@@ -10,9 +10,12 @@ Run the full builder-scaffold flow entirely inside Docker — no Sui tools neede
 
 If you haven’t already, run the [common clone step](../README.md#quickstart) from the main README:
 
+> **Check the latest stable tag** before cloning: [github.com/evefrontier/world-contracts/tags](https://github.com/evefrontier/world-contracts/tags)  
+> Substitute `<latest-tag>` with the most recent tag (e.g. `v0.0.15`).
+
 ```bash
 mkdir -p workspace && cd workspace
-git clone https://github.com/evefrontier/builder-scaffold.git
+git clone -b <latest-tag> https://github.com/evefrontier/builder-scaffold.git
 cd builder-scaffold
 ```
 
