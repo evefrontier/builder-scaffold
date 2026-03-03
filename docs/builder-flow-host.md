@@ -6,7 +6,9 @@ Run the builder-scaffold flow on your host machine, targeting **testnet** or a *
 
 ## 1. Prerequisites
 
-- Sui CLI, Node.js, and pnpm installed on your host
+- [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install), Node.js, and pnpm installed on your host
+  - suiup is recommended for easy upgrades on sui versions
+  - Install pnpm `npm i -g pnpm`
 - For testnet: funded accounts (e.g. from [Sui testnet faucet](https://faucet.sui.io/))
 - For local: a running Sui local node (see below)
 
@@ -56,11 +58,43 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 sui client switch --env testnet   # or localnet
 ```
 
+Create and use a local Sui wallet
+```bash
+sui client new-address ed25519 ALIAS
+sui client switch --address ALIAS
+```
+
+Fund your wallet with the faucet `localnet` or `devnet` only
+```bash
+sui client faucet
+```
+Go to [Sui faucet](https://faucet.sui.io/) for testnet and enter the active local wallet:
+```bash
+sui client active-address
+```
+
+Check your balance:
+```bash
+sui client balance
+```
+
 ## 4. Deploy world and create test resources
 
 > **Coming soon:** These manual steps will be simplified into a single setup command. See [setup-world/readme.md](../setup-world/readme.md) for details.
 
 From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` as a sibling and deploy:
+
+**Before running the commands below set these environment variables in these [world-contracts/.env](world-contracts/.env) file:**
+- `SUI_NETWORK` = testnet (or localnet)
+- `ADMIN_ADDRESS` = "sui client active-address"
+- `SPONSOR_ADDRESS` = "sui client active-address" can be the same as `ADMIN_ADDRESS`
+- `ADMIN_PRIVATE_KEY` = "sui keytool export --key-identity <ADMIN_ADDRESS>" and copy the `exportedPrivateKey` (`suiprivkeyXYZ`)
+- `PLAYER_A_PRIVATE_KEY` = Create another wallet and get private key and fund it
+- `PLAYER_B_PRIVATE_KEY` = Create another wallet and get private key and fund it
+- `GOVERNOR_PRIVATE_KEY` (OPTIONAL) = "sui client active-address" can be the same as `ADMIN_PRIVATE_KEY`
+
+**ATTENTION:**
+The ADMIN_PRIVATE_KEY must have at least 5 sui.
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
@@ -75,6 +109,12 @@ pnpm deploy-world testnet       # or localnet
 pnpm configure-world testnet    # or localnet
 pnpm create-test-resources testnet   # or localnet
 ```
+
+Check all the created resources in the explorer:
+- [localnet explorer](https://custom.suiscan.xyz/custom/checkpoints?network=http%3A%2F%2Flocalhost%3A9000)
+- [devnet explorer](https://suiscan.xyz/devnet/)
+- [testnet explorer](https://suiscan.xyz/testnet/)
+- [mainnet explorer](https://suiscan.xyz/)
 
 ## 5. Copy world artifacts into builder-scaffold
 
@@ -102,6 +142,9 @@ Set the following in `.env`:
 
 Pick an example (e.g. **smart_gate** or **storage_unit**); use its folder in `move-contracts/`:
 
+1. In `Move.toml` replace `"../../../world-contracts/contracts/world"` with the `source.local` value in `deployments/localnet/Pub.localnet.toml`
+2. Delete the `Move.lock` file
+
 ```bash
 cd move-contracts/smart_gate   # or storage_unit, or your package
 sui client publish --build-env testnet   # testnet
@@ -109,6 +152,9 @@ sui client test-publish --build-env testnet --pubfile-path ../../deployments/loc
 ```
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish output.
+Those values are in the output of the publish command:
+1. `BUILDER_PACKAGE_ID` = changed_objects.objectId where objectType === "package"
+2. `EXTENSION_CONFIG_ID` = changed_objects.objectId where objectType ends with "config::ExtensionConfig"
 
 ## 8. Run scripts
 
