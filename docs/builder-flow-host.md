@@ -93,11 +93,11 @@ The script clones world-contracts (if needed), checkouts the branch, deploys, co
 
 **Option B: Manual**
 
-From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` as a sibling and deploy:
+From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` at the stable tag as a sibling and deploy:
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
-git clone https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env
 # Set SUI_NETWORK=testnet (or localnet) and fill in your keys

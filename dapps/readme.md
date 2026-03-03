@@ -8,8 +8,9 @@ Client dApp using the following tools:
 - [Vite](https://vitejs.dev/) for build tooling
 - [Radix UI](https://www.radix-ui.com/) for pre-built UI components
 - [ESLint](https://eslint.org/)
-- [`@mysten/dapp-kit`](https://sdk.mystenlabs.com/dapp-kit) for connecting to
-  wallets and loading data
+- [`@evefrontier/dapp-kit`](https://sui-docs.evefrontier.com/) for connecting to
+  wallets and loading Frontier data
+- [`@mysten/dapp-kit-react`](https://sdk.mystenlabs.com/dapp-kit) for extended Sui React hooks
 - [pnpm](https://pnpm.io/) for package management
 
 ## Features and where to find them

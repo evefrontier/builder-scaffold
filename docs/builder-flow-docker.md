@@ -82,7 +82,7 @@ The script ensures the world you deploy matches the version your extensions buil
 
 ```bash
 cd /workspace/builder-scaffold
-# WORLD_CONTRACTS_BRANCH defaults to main — no change needed unless pinning a specific branch/commit
+# Set in .env: WORLD_CONTRACTS_BRANCH defaults to main — no change needed unless pinning a specific branch/commit
 # Optional: WORLD_CONTRACTS_DIR=/workspace/world-contracts (needed if default path differs)
 pnpm setup-world-with-version
 ```
