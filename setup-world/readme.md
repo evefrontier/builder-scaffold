@@ -33,7 +33,8 @@ For the **full** builder flow (environment → world → contract → scripts), 
 
 ### 1. Clone and deploy the world
 
-Use the stable tag so builder-scaffold stays compatible if world-contracts has breaking changes on `main`:
+Use a **stable tag** so builder-scaffold stays compatible if world-contracts has breaking changes on `main`. 
+**Stable tag:** `v0.0.14`
 
 ```bash
 git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git

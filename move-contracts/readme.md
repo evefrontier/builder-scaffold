@@ -35,6 +35,8 @@ sui client publish -e testnet
 
 Since the local network is short-lived, you need to manually resolve to the published world package address by providing the path to the published ephemeral file:
 
+> NOTE: If the contracts are dependant on the world pacakge, make sure the world is deployed first
+
 ```bash
 cd move-contracts/smart_gate
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
