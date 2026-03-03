@@ -2,7 +2,7 @@
 
 Extensions for Storage Units on EVE Frontier: **Marketplace** (async trading) and **Supply Unit** (pay-to-supply vending).
 
-**Pinned to:** [world-contracts `feature/extension-for-owned`](https://github.com/evefrontier/world-contracts/tree/feature/extension-for-owned)
+**World dependency:** Local path `../../../world-contracts/contracts/world` (see [setup-world-with-version](../../scripts/setup-world-with-version.sh))
 
 ---
 
@@ -84,14 +84,13 @@ flowchart LR
 
 - Sui CLI
 - [world-contracts](https://github.com/evefrontier/world-contracts) at `../../../world-contracts/contracts/world`
-- World on `feature/extension-for-owned` branch
 - World deployed and configured (see [setup-world](../setup-world/readme.md))
 
 **Pin world version:**
 
 ```bash
-cd ../world-contracts && git checkout feature/extension-for-owned
-# Or: WORLD_CONTRACTS_BRANCH=feature/extension-for-owned pnpm setup-world-with-version
+# Set WORLD_CONTRACTS_BRANCH=main in .env (default), then:
+pnpm setup-world-with-version
 ```
 
 ## Build
@@ -123,4 +122,4 @@ After publishing, the storage unit owner must call `create_marketplace` once per
 ## See Also
 
 - [Typed witness pattern](https://github.com/evefrontier/world-contracts/blob/main/docs/architechture.md#layer-3-player-extensions-moddability)
-- [world-contracts feature/extension-for-owned](https://github.com/evefrontier/world-contracts/tree/feature/extension-for-owned)
+- [world-contracts](https://github.com/evefrontier/world-contracts)

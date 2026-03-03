@@ -4,7 +4,6 @@
 /// Listing data (price, payment type) lives in the extension's shared object.
 /// Main storage is used only for escrow until a buyer completes the trade.
 ///
-/// Adapted from extension-deposit-owned for feature/extension-for-owned:
 /// - No withdraw_from_owned: seller/buyer use withdraw_by_owner with OwnerCap
 /// - Item object model: Item carries parent_id; deposit checks parent_id == storage_unit_id
 ///

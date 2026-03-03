@@ -60,7 +60,7 @@ If you prefer not to use the script, clone (or ensure `docker/world-contracts` e
 ```bash
 cd /workspace/world-contracts
 git clone https://github.com/evefrontier/world-contracts.git .   # if empty
-git checkout feature/extension-for-owned   # or your target branch
+git checkout main   # or your target branch
 /workspace/builder-scaffold/docker/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys (if available)
 pnpm install
 pnpm deploy-world localnet       # or testnet
@@ -82,7 +82,7 @@ The script ensures the world you deploy matches the version your extensions buil
 
 ```bash
 cd /workspace/builder-scaffold
-# Set in .env: WORLD_CONTRACTS_BRANCH=feature/extension-for-owned
+# WORLD_CONTRACTS_BRANCH defaults to main — no change needed unless pinning a specific branch/commit
 # Optional: WORLD_CONTRACTS_DIR=/workspace/world-contracts (needed if default path differs)
 pnpm setup-world-with-version
 ```
