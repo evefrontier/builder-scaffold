@@ -5,8 +5,9 @@ edition = "2024"    # edition = "legacy" to use legacy (pre-2024) Move
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
 [dependencies]
-# world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "main" }
-# TODO: This will be changed to use the mvr to automatically resolve the dependencies based on the chain. 
+# When using git instead of local, use the stable tag (e.g. v0.0.14) so main breaking changes don't break the scaffold:
+# world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "v0.0.14" }
+# TODO: This will be changed to use the mvr to automatically resolve the dependencies based on the chain.
 # For now, we resolve the dependencies locally for fast iteration.
 world = { local = "../../../world-contracts/contracts/world" }
 
