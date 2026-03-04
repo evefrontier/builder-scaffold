@@ -22,7 +22,7 @@ Thanks for your interest in contributing. This project is open source and we wel
 2. **Discuss first** — For anything beyond typos or trivial fixes, open an issue or feature request so we can align before you invest time.
 3. **Keep PRs focused** — Prefer several small PRs over one large one. Aim for a single logical change (e.g. one new extension example, or one QoL improvement). Smaller PRs are easier to review and merge.
 4. **Run checks** — Run the linter and any tests (see repo docs or `package.json` scripts) before submitting.
-5. **Follow the template** — When opening the PR, use the description template and fill in the steps it asks for.
+5. **Write a clear description** — When opening the PR, describe what you changed, why you changed it, and how you tested it (including any relevant environment details).
 
 ## Code and documentation guidelines
 
