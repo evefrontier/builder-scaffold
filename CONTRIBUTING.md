@@ -30,7 +30,7 @@ Thanks for your interest in contributing. This project is open source and we wel
 
 **By Folder:**
 
-- **Move contracts** (`move-contracts/`) — Follow [Sui Move conventions](https://docs.sui.io/concepts/sui-move-concepts/conventions) and the [Move code quality checklist](https://move-book.com/guides/code-quality-checklist). 
+- **Move contracts** (`move-contracts/`) — Follow [Sui Move conventions](https://docs.sui.io/concepts/sui-move-concepts/conventions) and the [Move code quality checklist](https://move-book.com/guides/code-quality-checklist).
 
 - For design context, see [evefrontier/world-contracts](https://github.com/evefrontier/world-contracts) and its [architecture docs](https://github.com/evefrontier/world-contracts/blob/main/docs/architechture.md) where relevant.
 
