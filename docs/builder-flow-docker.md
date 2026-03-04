@@ -26,7 +26,19 @@ cd docker
 docker compose run --rm --service-ports sui-dev
 ```
 
-On first run the container creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts. Every start spins up a fresh local node and funds the accounts.
+On first run the container creates four funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`, `PLAYER_C`) and writes their keys to `docker/.env.sui`. Keys are stored in the `sui-config` named Docker volume and **persist across container restarts**.
+
+To regenerate keys (full fresh start), remove the volume first:
+
+```bash
+docker compose down -v   # removes the sui-config volume — wipes keys and node state
+docker compose run --rm --service-ports sui-dev   # new keys generated, new .env.sui written
+```
+
+> **After `down -v`:** The new container starts a fresh chain with a new chain ID. You must use `pnpm rebuild-world` (not bare `setup-world-with-version`) — it removes the entire `deployments/localnet/` directory first, clearing `extracted-object-ids.json`, `runtime-object-ids.json`, and `seed-resources.json`. Without this, stale IDs from the previous chain survive and cause errors like `dynamic_field::borrow_child_object_mut abort code 1`.
+> 1. Update `.env` with the new keys/addresses from `docker/.env.sui`
+> 2. Run `pnpm rebuild-world` — clears all stale artifacts, redeploys world, and re-runs `pnpm seed`
+> 3. Re-publish all extensions and re-create runtime objects (`pnpm create-marketplace`, `pnpm create-supply-unit`, etc.)
 
 Inside the container you have:
 
@@ -63,7 +75,9 @@ If you prefer not to use the script, clone (or ensure `docker/world-contracts` e
 ```bash
 cd /workspace/world-contracts
 git clone https://github.com/evefrontier/world-contracts.git .   # if empty
-git checkout main   # or your target branch
+git checkout main          # branch — equivalent to WORLD_CONTRACTS_BRANCH=main in .env
+# or: git checkout v0.0.15  # tag   — equivalent to WORLD_CONTRACTS_COMMIT=v0.0.15 in .env
+# or: git checkout abc1234  # SHA   — equivalent to WORLD_CONTRACTS_COMMIT=abc1234 in .env
 /workspace/builder-scaffold/docker/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys (if available)
 pnpm install
 pnpm deploy-world localnet       # or testnet
@@ -76,7 +90,7 @@ pnpm create-test-resources localnet   # or testnet
 The script ensures the world you deploy matches the version your extensions build against. It:
 
 1. **Clones** world-contracts to `WORLD_CONTRACTS_DIR` if it doesn't exist (or the directory is empty)
-2. **Checkouts** `WORLD_CONTRACTS_BRANCH` (and optionally `WORLD_CONTRACTS_COMMIT`) in `.env`
+2. **Checkouts** `WORLD_CONTRACTS_BRANCH` (default `main`) in `.env`; if `WORLD_CONTRACTS_COMMIT` is also set it takes precedence — accepts a commit SHA or a tag (e.g. `v0.0.15`; see [tags](https://github.com/evefrontier/world-contracts/tags))
 3. **Creates** world-contracts `.env` from `docker/.env.sui` when missing (first run after clone)
 4. **Deploys** to the local node (or testnet if configured)
 5. **Copies** `deployments/`, `test-resources.json`, `Pub.localnet.toml` into builder-scaffold
@@ -85,7 +99,8 @@ The script ensures the world you deploy matches the version your extensions buil
 
 ```bash
 cd /workspace/builder-scaffold
-# Set in .env: WORLD_CONTRACTS_BRANCH defaults to main — no change needed unless pinning a specific branch/commit
+# WORLD_CONTRACTS_BRANCH defaults to main — change to pin a different branch
+# WORLD_CONTRACTS_COMMIT=v0.0.15  # optional: pin to a tag or SHA (check https://github.com/evefrontier/world-contracts/tags)
 # Optional: WORLD_CONTRACTS_DIR=/workspace/world-contracts (needed if default path differs)
 pnpm setup-world-with-version
 ```
@@ -113,8 +128,16 @@ cp .env.example .env
 
 Set the following in `.env`:
 - Same keys/addresses used during world deployment
-- `SUI_NETWORK=testnet` (or `localnet`)
-- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
+- `SUI_NETWORK=localnet` (or `testnet`)
+- `WORLD_CONTRACTS_BRANCH` (default `main`) — set if targeting a different branch
+- `WORLD_CONTRACTS_COMMIT` — optional; set to a tag (e.g. `v0.0.15`) or SHA to pin a specific release
+
+All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, `MARKETPLACE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
+- `deployments/<network>/extracted-object-ids.json` — populated by `setup-world-with-version` and each `pnpm publish-*` script
+- `deployments/<network>/runtime-object-ids.json` — populated by `pnpm create-marketplace` / `create-supply-unit`
+- `deployments/<network>/seed-resources.json` — populated by `pnpm seed` (runs automatically via `setup-world-with-version`); tracks local seeding state
+
+Set a variable in `.env` only if you need to override the file-based value.
 
 ## 8. Publish custom contract
 
@@ -126,7 +149,7 @@ sui client test-publish --build-env testnet --pubfile-path ../../deployments/loc
 sui client publish --build-env testnet   # testnet
 ```
 
-Set `GATE_EXTENSION_PACKAGE_ID` and `GATE_EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output (or run `pnpm publish-smart-gate-extension` to capture them automatically).
+Run `pnpm publish-smart-gate-extension` to publish and automatically capture IDs into `extracted-object-ids.json` — no `.env` update needed.
 
 ## 9. Run scripts
 

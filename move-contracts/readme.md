@@ -23,7 +23,7 @@ Extensions depend on the [world-contracts](https://github.com/evefrontier/world-
 
 **Pinning world-contracts version (local only):**
 
-- **Local path** (default in Move.toml): The extension uses whatever is checked out in your world-contracts clone. To pin: `cd world-contracts && git checkout <branch-or-commit>` before deploying.
+- **Local path** (default in Move.toml): The extension uses whatever is checked out in your world-contracts clone. To pin: `cd world-contracts && git checkout <branch|tag|SHA>` before deploying. This is the manual equivalent of setting `WORLD_CONTRACTS_BRANCH` / `WORLD_CONTRACTS_COMMIT` in `.env`.
 - **Optional config:** Set `WORLD_CONTRACTS_BRANCH` (default `main`) and `WORLD_CONTRACTS_COMMIT` (optional; defaults to latest on branch) in `.env`, then run `./scripts/setup-world-with-version.sh` to checkout, deploy, and copy artifacts in one step.
 
 ## Build and publish (e.g. smart_gate_extension)

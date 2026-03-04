@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Transaction } from "@mysten/sui/transactions";
-import { MODULES } from "../utils/config";
+import { MODULES, readSeedResources } from "../utils/config";
 import {
     getEnvConfig,
     handleError,
@@ -9,17 +9,18 @@ import {
     requireEnv,
 } from "../utils/helper";
 import { deriveObjectId } from "../utils/derive-object-id";
-import { GAME_CHARACTER_ID, ITEM_A_TYPE_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
+import { GAME_CHARACTER_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
 import { requireStorageUnitExtensionPackageId, resolveSupplyUnitId } from "./extension-ids";
 import { getCharacterOwnerCap } from "../helpers/character";
 import { MODULE } from "./modules";
 
 /**
  * Player A stocks supply unit by withdrawing items from their character-owned inventory.
- * Player A's character-owned inventory must be seeded first (run seed-owned-inventory).
+ * Player A's character-owned inventory is seeded automatically by pnpm seed (via setup-world-with-version).
+ * itemTypeId defaults to seeds.playerAInventory.typeId from seed-resources.json.
  *
  * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, SUPPLY_UNIT_ID (or runtime-object-ids.json)
- *      ITEM_TYPE_ID (default: 446), ITEM_QUANTITY (default: 5)
+ *      ITEM_TYPE_ID (default: from seed-resources.json), ITEM_QUANTITY (default: 5)
  *      PLAYER_A_PRIVATE_KEY
  */
 async function main() {
@@ -27,6 +28,15 @@ async function main() {
 
     try {
         const env = getEnvConfig();
+
+        const seeds = readSeedResources(env.network);
+        if (!seeds.playerAInventory) {
+            throw new Error(
+                "Player A inventory not seeded. Run: pnpm seed\n" +
+                "(setup-world-with-version does this automatically — re-run it or run pnpm seed manually)"
+            );
+        }
+
         const adminKey = requireEnv("PLAYER_A_PRIVATE_KEY");
         const ctx = initializeContext(env.network, adminKey);
         await hydrateWorldConfig(ctx);
@@ -35,7 +45,8 @@ async function main() {
         const supplyUnitId = resolveSupplyUnitId();
         const storageUnitId = deriveObjectId(ctx.config.objectRegistry, STORAGE_A_ITEM_ID, ctx.config.packageId);
         const adminCharacterId = deriveObjectId(ctx.config.objectRegistry, BigInt(GAME_CHARACTER_ID), ctx.config.packageId);
-        const itemTypeId = BigInt(process.env.ITEM_TYPE_ID ?? String(ITEM_A_TYPE_ID));
+        const seededTypeId = BigInt((seeds.playerAInventory as { typeId: number }).typeId);
+        const itemTypeId = BigInt(process.env.ITEM_TYPE_ID ?? String(seededTypeId));
         const quantity = Number(process.env.ITEM_QUANTITY ?? "5");
 
         const adminOwnerCapId = await getCharacterOwnerCap(

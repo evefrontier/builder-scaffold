@@ -237,9 +237,9 @@ public fun withdraw_item<Auth: drop>(
 }
 
 /// Extension-authorized deposit into a player's owned inventory.
-/// Unlike `deposit_by_owner`, the target player does NOT need to be the transaction sender.
-/// The target's owned inventory is derived from `target.owner_cap_id()`, ensuring the
-/// target is a valid, existing Character.
+/// Unlike `deposit_by_owner`, the recipient (the `character` argument) does NOT need to be
+/// the transaction sender. The recipient's owned inventory is derived from
+/// `character.owner_cap_id()`, ensuring the character is a valid, existing Character.
 /// Creates the owned inventory if it doesn't exist yet.
 public fun deposit_to_owned<Auth: drop>(
     storage_unit: &mut StorageUnit,
@@ -254,8 +254,9 @@ public fun deposit_to_owned<Auth: drop>(
         EExtensionNotAuthorized,
     );
     assert!(storage_unit.status.is_online(), ENotOnline);
-    assert!(inventory::tenant(&item) == storage_unit.key.tenant(), ETenantMismatch);
-    assert!(inventory::parent_id(&item) == storage_unit_id, EItemParentMismatch);
+    assert!(item.tenant() == storage_unit.key.tenant(), ETenantMismatch);
+    assert!(character.tenant() == storage_unit.key.tenant(), ETenantMismatch);
+    assert!(item.parent_id() == storage_unit_id, EItemParentMismatch);
 
     let owner_cap_id = character.owner_cap_id();
 
@@ -458,10 +459,7 @@ public fun update_energy_source_connected_storage_unit(
     storage_unit: &mut StorageUnit,
     mut update_energy_sources: UpdateEnergySources,
     network_node: &NetworkNode,
-    admin_acl: &AdminACL,
-    ctx: &TxContext,
 ): UpdateEnergySources {
-    admin_acl.verify_sponsor(ctx);
     if (update_energy_sources.update_energy_sources_ids_length() > 0) {
         let storage_unit_id = object::id(storage_unit);
         let found = update_energy_sources.remove_energy_sources_assembly_id(

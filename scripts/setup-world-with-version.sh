@@ -27,9 +27,9 @@
 #   # or: ./scripts/setup-world-with-version.sh [--clean]
 #
 # Requires: .env with WORLD_CONTRACTS_BRANCH (default: main), optional WORLD_CONTRACTS_COMMIT
+#           WORLD_CONTRACTS_COMMIT can be a commit SHA or a tag (e.g. v0.0.15); it overrides BRANCH
+#           Latest stable tags: https://github.com/evefrontier/world-contracts/tags
 #           WORLD_CONTRACTS_DIR (default: ../world-contracts) — path to world-contracts clone
-#           PLAYER_C_PRIVATE_KEY + PLAYER_C_ADDRESS (optional; if set, Player C character is
-#           created and inventories are seeded automatically as the final step)
 
 set -euo pipefail
 
@@ -134,10 +134,13 @@ echo ""
 echo "Done. World at $REV deployed. Artifacts copied to $BUILDER_ROOT/deployments/"
 if [ -n "$WORLD_PKG_ID" ]; then
     echo ""
-    echo "Add to .env:"
     echo "WORLD_PACKAGE_ID=$WORLD_PKG_ID"
+    echo "(auto-read from deployments/$NETWORK/extracted-object-ids.json — update .env only if you need to override this value manually)"
 else
-    echo "Set WORLD_PACKAGE_ID in .env from deployments/$NETWORK/extracted-object-ids.json (world.packageId)"
+    echo "WORLD_PACKAGE_ID not found in extracted-object-ids.json. Set it manually in .env if needed."
 fi
 
+echo ""
+echo "==> Running local seeding (pnpm seed)..."
 cd "$BUILDER_ROOT"
+pnpm seed

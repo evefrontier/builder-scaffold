@@ -68,7 +68,7 @@ async function main() {
 
         const treasuryCapId = findId(`coin::TreasuryCap<${packageId}::tribe_token`);
         const tokenPolicyCapId = findId(`token::TokenPolicyCap`);
-        const tokenPolicyId = findId(`token::TokenPolicy`);
+        const tokenPolicyId = findId(`token::TokenPolicy<`);
 
         const ids = { packageId, treasuryCapId, tokenPolicyCapId, tokenPolicyId };
 

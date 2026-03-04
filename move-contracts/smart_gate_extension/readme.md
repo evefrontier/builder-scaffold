@@ -176,8 +176,13 @@ All three examples share the same `ExtensionConfig` and `AdminCap` — only one 
 **Pin world version:**
 
 ```bash
-# Or: WORLD_CONTRACTS_BRANCH=main pnpm setup-world-with-version
-cd ../world-contracts && git checkout main
+# Automated (recommended): set in .env and run:
+#   WORLD_CONTRACTS_BRANCH=main            → tracks branch tip
+#   WORLD_CONTRACTS_COMMIT=v0.0.15         → pins to tag (detached HEAD, no -b flag needed)
+pnpm setup-world-with-version
+
+# Manual equivalent:
+cd ../world-contracts && git checkout main      # or: git checkout v0.0.15
 ```
 
 ---

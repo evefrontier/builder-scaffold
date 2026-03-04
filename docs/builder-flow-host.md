@@ -78,7 +78,7 @@ sui client switch --env testnet   # or localnet
 
 **Option A: Automated (recommended)**
 
-From builder-scaffold root, set `WORLD_CONTRACTS_BRANCH` (and optional `WORLD_CONTRACTS_COMMIT`) in `.env`, then:
+From builder-scaffold root, set `WORLD_CONTRACTS_BRANCH` (default `main`) in `.env`. Optionally set `WORLD_CONTRACTS_COMMIT` to a tag or commit SHA to pin to a specific release (e.g. `v0.0.15`; see [tags](https://github.com/evefrontier/world-contracts/tags)). Then:
 
 ```bash
 cd builder-scaffold
@@ -89,7 +89,7 @@ The script clones world-contracts (if needed), checkouts the branch, deploys, co
 
 **First run after clone:** If world-contracts was just cloned and has no `.env`, the script copies `env.example` to `.env` and exits. Fill in `ADMIN_ADDRESS`, `SPONSOR_ADDRESS`, and `GOVERNOR_PRIVATE_KEY` (or `ADMIN_PRIVATE_KEY`) in `world-contracts/.env`, then run again.
 
-**Clean rebuild (new branch/commit):** Run `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` to remove stale artifacts before deploy.
+**Clean rebuild (switching branch, tag, or commit):** Run `pnpm rebuild-world` or `pnpm setup-world-with-version --clean` to remove stale artifacts before deploy.
 
 **Option B: Manual**
 
@@ -133,8 +133,16 @@ cp .env.example .env
 
 Set the following in `.env`:
 - Same keys/addresses as world-contracts
-- `SUI_NETWORK=testnet` (or `localnet`)
-- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
+- `SUI_NETWORK=localnet` (or `testnet`)
+- `WORLD_CONTRACTS_BRANCH` (default `main`) — set if targeting a different branch
+- `WORLD_CONTRACTS_COMMIT` — optional; set to a tag (e.g. `v0.0.15`) or SHA to pin a specific release
+
+All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, `MARKETPLACE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
+- `deployments/<network>/extracted-object-ids.json` — populated by `setup-world-with-version` and each `pnpm publish-*` script
+- `deployments/<network>/runtime-object-ids.json` — populated by `pnpm create-marketplace` / `create-supply-unit`
+- `deployments/<network>/seed-resources.json` — populated by `pnpm seed` (runs automatically via `setup-world-with-version`); tracks local seeding state
+
+Set a variable in `.env` only if you need to override the file-based value.
 
 ## 7. Publish custom contract
 
@@ -146,7 +154,7 @@ sui client publish --build-env testnet   # testnet
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml   # localnet
 ```
 
-Set `GATE_EXTENSION_PACKAGE_ID` and `GATE_EXTENSION_CONFIG_ID` in `.env` from the publish output (or run `pnpm publish-smart-gate-extension` to capture them automatically).
+Run `pnpm publish-smart-gate-extension` to publish and automatically capture IDs into `extracted-object-ids.json` — no `.env` update needed.
 
 ## 8. Run scripts
 

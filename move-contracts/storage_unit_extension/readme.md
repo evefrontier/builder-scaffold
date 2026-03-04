@@ -18,6 +18,11 @@ Listing data (price, payment type) lives in the extension's shared object (`Mark
 2. **list_item** – Seller lists an item with a price (`payment_type_id`, `payment_quantity`). Item moves to main (escrow); listing metadata stored in the extension.
 3. **buy_item** – Buyer purchases the listed item (seller can be offline). Extension enforces the stored price and completes the swap.
 
+**Example trade (builder-scaffold defaults):**
+- **Seller (Player C)** lists `typeId 447` items — seeded locally by `pnpm seed` into Player C's character-owned inventory
+- **Buyer (Player B)** pays with `typeId 446` items — seeded by world-contracts `create-test-resources`
+- `list-item.ts` reads the listed typeId from `deployments/<network>/seed-resources.json` automatically
+
 ### Flow
 
 ```mermaid
@@ -117,7 +122,13 @@ cd move-contracts/storage_unit_extension
 sui client publish --gas-budget 100000000
 ```
 
-After publishing, the storage unit owner must call `create_marketplace` once per storage unit to create the extension's shared object. Then sellers can list items and buyers can purchase.
+After publishing, the storage unit owner must call `create_marketplace` or `create_supply_unit` once per storage unit to create the extension's shared object.
+
+**Seeding (handled automatically by `pnpm seed` via `setup-world-with-version`):**
+- **Marketplace:** Player C's character-owned inventory is seeded with typeId 447 — no manual step needed before `pnpm list-item`.
+- **Supply unit:** Player A's character-owned inventory is seeded with typeId 446 — no manual step needed before `pnpm stock-supply-unit`. `stock-supply-unit.ts` reads the typeId from `deployments/<network>/seed-resources.json`.
+
+To re-seed without a full world rebuild: `pnpm seed` (already-completed steps are skipped — safe to re-run).
 
 ## See Also
 

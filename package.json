@@ -26,6 +26,7 @@
     "mint-tribe-token": "tsx ts-scripts/tribe_token/mint.ts",
     "transfer-tribe-token": "tsx ts-scripts/tribe_token/transfer.ts",
     "publish-storage-unit-extension": "tsx ts-scripts/storage_unit_extension/publish-storage-unit-extension.ts",
+    "seed": "tsx ts-scripts/seed.ts",
     "create-marketplace": "tsx ts-scripts/storage_unit_extension/create-marketplace.ts",
     "list-item": "tsx ts-scripts/storage_unit_extension/list-item.ts",
     "buy-item": "tsx ts-scripts/storage_unit_extension/buy-item.ts",

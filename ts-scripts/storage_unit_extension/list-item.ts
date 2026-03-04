@@ -13,13 +13,18 @@ import { GAME_CHARACTER_C_ID, ITEM_A_TYPE_ID, STORAGE_A_ITEM_ID } from "../utils
 import { requireStorageUnitExtensionPackageId, resolveMarketplaceId } from "./extension-ids";
 import { getCharacterOwnerCap } from "../helpers/character";
 import { MODULE } from "./modules";
+import { readSeedResources } from "../utils/config";
 
 /**
  * Player C (seller) lists an item with a price. Item moves from ephemeral to main (escrow).
- * Player C's character-owned inventory must be seeded first (run seed-owned-inventory).
+ * Requires Player C's character-owned inventory to be seeded (pnpm seed — runs automatically
+ * via setup-world-with-version, or manually if needed).
+ *
+ * Listed typeId defaults to seeds.playerCInventory.typeId from seed-resources.json (447).
+ * Payment typeId defaults to ITEM_A_TYPE_ID (446) — Player B's items from world-contracts seeding.
  *
  * Env: STORAGE_UNIT_EXTENSION_PACKAGE_ID, MARKETPLACE_ID (or runtime-object-ids.json)
- *      LISTED_TYPE_ID (default: 446), LISTED_QUANTITY (default: 5)
+ *      LISTED_TYPE_ID (default: from seed-resources.json), LISTED_QUANTITY (default: 5)
  *      PAYMENT_TYPE_ID (default: 446), PAYMENT_QUANTITY (default: 5)
  *      PLAYER_C_PRIVATE_KEY (seller)
  */
@@ -28,6 +33,15 @@ async function main() {
 
     try {
         const env = getEnvConfig();
+
+        const seeds = readSeedResources(env.network);
+        if (!seeds.playerCInventory) {
+            throw new Error(
+                "Player C inventory not seeded. Run: pnpm seed\n" +
+                "(setup-world-with-version does this automatically — re-run it or run pnpm seed manually)"
+            );
+        }
+
         const playerKey = requireEnv("PLAYER_C_PRIVATE_KEY");
         const ctx = initializeContext(env.network, playerKey);
         await hydrateWorldConfig(ctx);
@@ -44,10 +58,13 @@ async function main() {
             ctx.address
         ) ?? undefined;
         if (!sellerOwnerCapId) {
-            throw new Error("OwnerCap not found for seller character. Make sure PLAYER_A_PRIVATE_KEY owns the character.");
+            throw new Error("OwnerCap not found for seller character. Make sure PLAYER_C_PRIVATE_KEY owns the character.");
         }
 
-        const listedTypeId = BigInt(process.env.LISTED_TYPE_ID ?? String(ITEM_A_TYPE_ID));
+        // Listed type comes from seed-resources.json (what Player C was seeded with).
+        // Payment type is Player B's items — seeded by world-contracts (ITEM_A_TYPE_ID = 446).
+        const seededTypeId = BigInt((seeds.playerCInventory as { typeId: number }).typeId);
+        const listedTypeId = BigInt(process.env.LISTED_TYPE_ID ?? String(seededTypeId));
         const listedQuantity = Number(process.env.LISTED_QUANTITY ?? "5");
         const paymentTypeId = BigInt(process.env.PAYMENT_TYPE_ID ?? String(ITEM_A_TYPE_ID));
         const paymentQuantity = Number(process.env.PAYMENT_QUANTITY ?? "5");
