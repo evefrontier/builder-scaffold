@@ -20,6 +20,7 @@ body {
   letter-spacing: -0.02em;
   color: var(--color-text);
   background-color: var(--color-background);
+  margin: 0;
 }
 
 /* Header (e.g. Wallet Status) */
@@ -27,6 +28,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Frontier Disket Mono", "Fronter Disket Mono", monospace;
   font-weight: 400; /* Regular */
   color: var(--color-text);
+  line-height: 120%;
 }
 
 h3 {

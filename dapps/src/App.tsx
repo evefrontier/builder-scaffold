@@ -16,7 +16,7 @@ function App() {
   const account = useCurrentAccount();
 
   return (
-    <>
+    <Box style={{ padding: "20px" }}>
       <Flex
         position="sticky"
         px="4"
@@ -39,15 +39,8 @@ function App() {
         </button>
       </Flex>
       {/* STEP 3 — Same hooks (useConnection, useCurrentAccount) drive WalletStatus; state stays in sync. */}
-      <Container
-        mt="5"
-        pt="2"
-        px="4"
-        style={{ background: "var(--gray-a2)", minHeight: 500 }}
-      >
-        <WalletStatus />
-      </Container>
-    </>
+      <WalletStatus />
+    </Box>
   );
 }
 

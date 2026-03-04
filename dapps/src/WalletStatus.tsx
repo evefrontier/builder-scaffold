@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box, Container, Flex, Text } from "@radix-ui/themes";
 import { AssemblyInfo } from "./AssemblyInfo";
 import { useCurrentAccount, useDAppKit } from "@mysten/dapp-kit-react";
 
