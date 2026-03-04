@@ -24,7 +24,7 @@ cd builder-scaffold
 
 **Testnet** — no extra setup, just set your cli to the right network.
 
-**Local** — you need a local Sui node running on port 9000. 
+**Local** — you need a local Sui node running on port 9000.
 
 <details>
 <summary>Local node setup</summary>
@@ -66,9 +66,17 @@ You need the same keys in three places: Sui keytool (for publish), world-contrac
 
 **If you use your own node** (e.g. `sui start --with-faucet` on host):
 
-- Create 3 key pairs (ADMIN, Player A, Player B), import them into keytool:  
-  `sui keytool import <private-key> ed25519 --alias admin` (and similarly for player-a, player-b).
+- Create 3 accounts (ADMIN, Player A, Player B) **either** by:
+  - **Generating new addresses** with Sui CLI (recommended):
+    - `sui client new-address ed25519 --alias admin`
+    - `sui client new-address ed25519 --alias player-a`
+    - `sui client new-address ed25519 --alias player-b`
+    - These create key pairs in the Sui keystore; **no import into keytool is needed**.
+  - **Or** importing existing private keys into keytool (if you already have them):
+    - `sui keytool import <PRIVATE_KEY_BASE64> ed25519 --alias admin` (and similarly for `player-a`, `player-b`).
 - Fund all 3 accounts (local: use `sui client faucet`; testnet: [Sui testnet faucet](https://faucet.sui.io/)).
+- Get addresses for your aliases (for `.env` and for switching accounts): `sui client addresses` (or `sui keytool list`).
+- If your `.env` files need private keys, export from keytool: `sui keytool export --key admin` (and similarly for `player-a`, `player-b`).
 - Switch to the ADMIN account for publishing: `sui client switch --address <ADMIN_ADDRESS>`.
 - Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` (see steps 5 and 6).
 
