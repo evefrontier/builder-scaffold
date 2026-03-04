@@ -89,11 +89,11 @@ From your workspace directory (parent of `builder-scaffold`), clone `world-contr
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.15 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env
 # Set SUI_NETWORK=testnet (or localnet) and fill in your keys
-# For development, ADMIN_ADDRESS and SPONSOR_ADDRESS can be the same
+# For development, ADMIN_ADDRESS and SPONSOR_ADDRESSES can be the same
 # GOVERNOR_PRIVATE_KEY is optional or can be the same as ADMIN_PRIVATE_KEY
 pnpm install
 pnpm deploy-world testnet       # or localnet
