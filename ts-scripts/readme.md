@@ -4,8 +4,8 @@ Interact with your deployed extension contracts from TypeScript.
 
 ## Prerequisites
 
-1. World contracts deployed and configured (see [setup-world](../setup-world/readme.md))
-2. `deployments/` and `test-resources.json` copied to this repo's root
+1. World contracts deployed and configured (see [setup-world](../setup-world/readme.md)), or you're building on an existing world — [building-on-existing-world](../docs/building-on-existing-world.md) guide (coming soon)
+2. In both cases: `deployments/` and `test-resources.json` for that world copied to this repo's root
 3. Your extension package published (e.g. `smart_gate`)
 
 ## Setup
