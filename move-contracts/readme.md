@@ -50,6 +50,12 @@ For more details see [package management](https://docs.sui.io/guides/developer/p
 
 From the publish output, set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in the repo `.env`. Then run the [TypeScript scripts](../ts-scripts/readme.md) in order. Full step-by-step: [Docker flow](../docs/builder-flow-docker.md) or [Host flow](../docs/builder-flow-host.md).
 
+## Extension caveats
+
+- **One extension per gate** — A gate has a single extension slot; attaching a new one replaces the previous (e.g. `swap_or_fill` behavior).
+
+- **TypeName includes package ID** — Redeploying your extension (new package ID) changes the type; existing auth/configuration that references the old type will break. Update authorize scripts and any stored config after a redeploy.
+
 ## Formatting and linting
 
 From repo root:
