@@ -54,7 +54,7 @@ From the publish output, set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in t
 
 - **One extension per gate** — A gate has a single extension slot; attaching a new one replaces the previous (e.g. `swap_or_fill` behavior).
 
-- **TypeName includes package ID** — Redeploying your extension (new package ID) changes the type; existing auth/configuration that references the old type will break. Update authorize scripts and any stored config after a redeploy.
+- **TypeName includes package ID** — Redeploying your extension (new package ID) changes the type; existing auth/configuration that references the old type will break. Update authorise scripts and any stored config after a redeploy.
 
 ## Formatting and linting
 

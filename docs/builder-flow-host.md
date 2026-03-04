@@ -78,7 +78,7 @@ You need the same keys in three places: Sui keytool (for publish), world-contrac
 - Get addresses for your aliases (for `.env` and for switching accounts): `sui client addresses` (or `sui keytool list`).
 - If your `.env` files need private keys, export from keytool: `sui keytool export --key admin` (and similarly for `player-a`, `player-b`).
 - Switch to the ADMIN account for publishing: `sui client switch --address <ADMIN_ADDRESS>`.
-- Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` (see steps 5 and 6).
+- Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` (see steps 5 and 7).
 
 
 ## 5. Deploy world and create test resources
