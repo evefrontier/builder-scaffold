@@ -81,6 +81,28 @@ pnpm collect-corpse-bounty
 pnpm jump-with-permit
 ```
 
+## Example: Token Scripts
+
+Publishing and interacting with `move-contracts/currency_token/` and `move-contracts/tribe_token/`:
+
+```bash
+# Publish tokens
+pnpm publish-currency-token
+pnpm publish-tribe-token
+
+# Mint CURRENCY_TOKEN — defaults to Player B address
+pnpm mint-currency-token
+
+# Ensure Player B has at least TRANSFER_AMOUNT tokens (default: 10000).
+# Checks existing balance; mints the shortfall only. Safe to run multiple times.
+pnpm transfer-currency-token
+
+# Tribe token (requires configure first)
+pnpm configure-tribe-token
+pnpm mint-tribe-token
+pnpm transfer-tribe-token   # needs TOKEN_OBJECT_ID, RECIPIENT_ADDRESS, RECIPIENT_CHARACTER_ID
+```
+
 ## Customization
 
 - `test-resources.json` is auto-synced from world-contracts by `setup-world` — do not edit it directly. Use `.env` to override individual IDs.

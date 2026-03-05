@@ -17,7 +17,14 @@
     "authorise-gate": "tsx ts-scripts/smart_gate_extension/authorise-gate.ts",
     "issue-tribe-jump-permit": "tsx ts-scripts/smart_gate_extension/issue-tribe-jump-permit.ts",
     "jump-with-permit": "tsx ts-scripts/smart_gate_extension/jump-with-permit.ts",
-    "collect-corpse-bounty": "tsx ts-scripts/smart_gate_extension/collect-corpse-bounty.ts"
+    "collect-corpse-bounty": "tsx ts-scripts/smart_gate_extension/collect-corpse-bounty.ts",
+    "publish-currency-token": "tsx ts-scripts/currency_token/publish.ts",
+    "mint-currency-token": "tsx ts-scripts/currency_token/mint.ts",
+    "transfer-currency-token": "tsx ts-scripts/currency_token/transfer.ts",
+    "publish-tribe-token": "tsx ts-scripts/tribe_token/publish.ts",
+    "configure-tribe-token": "tsx ts-scripts/tribe_token/configure.ts",
+    "mint-tribe-token": "tsx ts-scripts/tribe_token/mint.ts",
+    "transfer-tribe-token": "tsx ts-scripts/tribe_token/transfer.ts"
   },
   "dependencies": {
     "@mysten/sui": "^2.0.0",

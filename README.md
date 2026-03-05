@@ -44,6 +44,8 @@ By the end you’ll have a deployed world, a published custom contract (e.g. `sm
 | Assembly | Examples | Details |
 |----------|----------|---------|
 | **Gate** | Corpse bounty, Tribe permit | [smart_gate_extension readme](./move-contracts/smart_gate_extension/readme.md) |
+| **Tokens** | Open currency (CURRENCY_TOKEN) | [currency_token readme](./move-contracts/currency_token/readme.md) |
+| **Tokens** | Tribe-gated token (TRIBE_TOKEN) | [tribe_token readme](./move-contracts/tribe_token/readme.md) |
 
 
 ## Contributing
