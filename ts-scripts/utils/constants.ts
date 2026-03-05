@@ -9,7 +9,7 @@ export const TENANT = process.env.TENANT || "dev";
 // Load test resource defaults from JSON (builders can customize this file)
 type TestResources = {
     locationHash: string;
-    character: { gameCharacterId: number; gameCharacterBId: number };
+    character: { gameCharacterId: number; gameCharacterBId: number; gameCharacterCId: number };
     networkNode: { typeId: number; itemId: number };
     assembly: { typeId: number; itemId: number };
     storageUnit: { typeId: number; itemId: number };
@@ -40,6 +40,7 @@ export const LOCATION_HASH = res.locationHash;
 // Character
 export const GAME_CHARACTER_ID = res.character.gameCharacterId;
 export const GAME_CHARACTER_B_ID = res.character.gameCharacterBId;
+export const GAME_CHARACTER_C_ID = res.character.gameCharacterCId;
 
 // Network Node
 export const NWN_TYPE_ID = BigInt(res.networkNode.typeId);

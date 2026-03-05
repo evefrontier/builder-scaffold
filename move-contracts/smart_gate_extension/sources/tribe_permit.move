@@ -11,9 +11,9 @@
 ///
 /// Configuration for this extension is stored in the shared `ExtensionConfig` object.
 #[allow(unused_use)]
-module smart_gate::tribe_permit;
+module smart_gate_extension::tribe_permit;
 
-use smart_gate::config::{Self, AdminCap, XAuth, ExtensionConfig};
+use smart_gate_extension::config::{Self, AdminCap, XAuth, ExtensionConfig};
 use sui::clock::Clock;
 use world::{character::Character, gate::{Self, Gate}};
 

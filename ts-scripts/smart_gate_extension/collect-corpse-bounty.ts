@@ -7,7 +7,6 @@ import {
     GATE_ITEM_ID_1,
     GATE_ITEM_ID_2,
     CLOCK_OBJECT_ID,
-    ITEM_A_TYPE_ID,
     STORAGE_A_ITEM_ID,
     GAME_CHARACTER_B_ID,
 } from "../utils/constants";
@@ -76,9 +75,7 @@ async function collectCorpseBounty(
             tx.object(sourceGateId),
             tx.object(destinationGateId),
             tx.object(characterId),
-            tx.object(config.adminAcl),
             ownerCap,
-            tx.pure.u64(ITEM_A_TYPE_ID),
             tx.object(CLOCK_OBJECT_ID),
         ],
     });

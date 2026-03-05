@@ -3,8 +3,10 @@
 # Usage: ./scripts/generate-world-env.sh [target-dir]
 set -euo pipefail
 
-TARGET_DIR="${1:-/workspace/world-contracts}"
-ENV_SUI="/workspace/builder-scaffold/docker/.env.sui"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BUILDER_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+TARGET_DIR="${1:-$BUILDER_ROOT/../world-contracts}"
+ENV_SUI="$BUILDER_ROOT/docker/.env.sui"
 ENV_EXAMPLE="$TARGET_DIR/env.example"
 TARGET_ENV="$TARGET_DIR/.env"
 
@@ -18,12 +20,16 @@ for var in ADMIN_ADDRESS ADMIN_PRIVATE_KEY PLAYER_A_PRIVATE_KEY PLAYER_B_PRIVATE
 done
 
 cp "$ENV_EXAMPLE" "$TARGET_ENV"
-sed -i "s|^SUI_NETWORK=.*|SUI_NETWORK=${SUI_NETWORK:-localnet}|" "$TARGET_ENV"
-sed -i "s|^ADMIN_ADDRESS=.*|ADMIN_ADDRESS=$ADMIN_ADDRESS|" "$TARGET_ENV"
-sed -i "s|^SPONSOR_ADDRESS=.*|SPONSOR_ADDRESS=$ADMIN_ADDRESS|" "$TARGET_ENV"
-sed -i "s|^ADMIN_PRIVATE_KEY=.*|ADMIN_PRIVATE_KEY=$ADMIN_PRIVATE_KEY|" "$TARGET_ENV"
-sed -i "s|^GOVERNOR_PRIVATE_KEY=.*|GOVERNOR_PRIVATE_KEY=$ADMIN_PRIVATE_KEY|" "$TARGET_ENV"
-sed -i "s|^PLAYER_A_PRIVATE_KEY=.*|PLAYER_A_PRIVATE_KEY=$PLAYER_A_PRIVATE_KEY|" "$TARGET_ENV"
-sed -i "s|^PLAYER_B_PRIVATE_KEY=.*|PLAYER_B_PRIVATE_KEY=$PLAYER_B_PRIVATE_KEY|" "$TARGET_ENV"
+# Portable sed (macOS BSD sed -i differs from GNU sed)
+apply_sed() {
+  sed "$1" "$TARGET_ENV" > "$TARGET_ENV.tmp" && mv "$TARGET_ENV.tmp" "$TARGET_ENV"
+}
+apply_sed "s|^SUI_NETWORK=.*|SUI_NETWORK=${SUI_NETWORK:-localnet}|"
+apply_sed "s|^ADMIN_ADDRESS=.*|ADMIN_ADDRESS=$ADMIN_ADDRESS|"
+apply_sed "s|^SPONSOR_ADDRESS=.*|SPONSOR_ADDRESS=$ADMIN_ADDRESS|"
+apply_sed "s|^ADMIN_PRIVATE_KEY=.*|ADMIN_PRIVATE_KEY=$ADMIN_PRIVATE_KEY|"
+apply_sed "s|^GOVERNOR_PRIVATE_KEY=.*|GOVERNOR_PRIVATE_KEY=$ADMIN_PRIVATE_KEY|"
+apply_sed "s|^PLAYER_A_PRIVATE_KEY=.*|PLAYER_A_PRIVATE_KEY=$PLAYER_A_PRIVATE_KEY|"
+apply_sed "s|^PLAYER_B_PRIVATE_KEY=.*|PLAYER_B_PRIVATE_KEY=$PLAYER_B_PRIVATE_KEY|"
 
 echo "Generated $TARGET_ENV from $ENV_SUI"
