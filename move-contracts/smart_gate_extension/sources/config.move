@@ -3,7 +3,7 @@
 /// This module publishes a single shared `ExtensionConfig` object at package publish time
 /// Other builder-extension modules can attach their own typed rule/config
 /// structs under that shared object using Sui dynamic fields.
-module smart_gate::config;
+module smart_gate_extension::config;
 
 use sui::dynamic_field as df;
 
@@ -86,4 +86,9 @@ public fun remove_rule<K: copy + drop + store, V: store>(
 /// Mint an `XAuth` witness. Restricted to this package to prevent unauthorized use.
 public(package) fun x_auth(): XAuth {
     XAuth {}
+}
+
+#[test_only]
+public fun init_for_testing(ctx: &mut TxContext) {
+    init(ctx);
 }

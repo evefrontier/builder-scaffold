@@ -18,25 +18,32 @@ cd builder-scaffold
 |------|--------------|
 | **[Docker](./docs/builder-flow-docker.md)** | No Sui/Node on host; run everything in a container (local or testnet). |
 | **[Host](./docs/builder-flow-host.md)** | Sui CLI + Node.js on your machine; target local or testnet. |
-| **[Building on an existing world](./docs/building-on-existing-world.md)** | World already deployed (e.g. shared server, live game); you don't deploy the world yourself. *(WIP – guide coming soon; use Docker/Host flows for now.)* |
 
-By the end you’ll have a deployed world (or use an existing one), a published custom contract (e.g. `smart_gate`), and scripts that call it.
+By the end you’ll have a deployed world, a published custom contract (e.g. `smart_gate_extension`), and scripts that call it.
+
+**Local development — pin world-contracts version:** Set `WORLD_CONTRACTS_BRANCH` (default `main`) and optional `WORLD_CONTRACTS_COMMIT` in `.env`, then run `pnpm setup-world`. The script clones world-contracts if needed, checkouts the branch, deploys, configures, seeds, and copies artifacts. Use `pnpm rebuild-world` or `pnpm setup-world --clean` when switching branches for a clean rebuild.
 
 ## Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
+- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI (latest)](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path) — install/upgrade via [suiup](https://github.com/MystenLabs/suiup)
 
 ## What's in this repo
 
 | Area | Purpose |
 |------|---------|
 | [docker/](./docker/readme.md) | Dev container (Sui CLI + Node.js) — used by the Docker flow. |
-| [move-contracts/](./move-contracts/readme.md) | Custom Smart Assembly examples (e.g. [smart_gate](./move-contracts/smart_gate/)); build & publish. |
+| [move-contracts/](./move-contracts/readme.md) | Custom Smart Assembly examples (e.g. [smart_gate_extension](./move-contracts/smart_gate_extension/), see below); build & publish. |
 | [ts-scripts/](./ts-scripts/readme.md) | TypeScript scripts to call your contracts; run after publishing. |
-| [setup-world/](./setup-world/readme.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
+| [docs/setup-world.md](./docs/setup-world.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
+
+### Extension examples
+
+| Assembly | Examples | Details |
+|----------|----------|---------|
+| **Gate** | Corpse bounty, Tribe permit | [smart_gate_extension readme](./move-contracts/smart_gate_extension/readme.md) |
 
 
 ## Contributing

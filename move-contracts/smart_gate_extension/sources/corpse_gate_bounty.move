@@ -5,22 +5,15 @@
 /// - validate it against a bounty rule (stored under `ExtensionConfig`)
 /// - deposit it into an owner `StorageUnit`
 /// - issue a `world::gate::JumpPermit` so the player can use the gate
-module smart_gate::corpse_gate_bounty;
+module smart_gate_extension::corpse_gate_bounty;
 
-use smart_gate::config::{Self, AdminCap, XAuth, ExtensionConfig};
+use smart_gate_extension::config::{Self, AdminCap, XAuth, ExtensionConfig};
 use sui::clock::Clock;
-use world::{
-    access::{AdminACL, OwnerCap},
-    character::Character,
-    gate::{Self, Gate},
-    storage_unit::StorageUnit
-};
+use world::{access::OwnerCap, character::Character, gate::{Self, Gate}, storage_unit::StorageUnit};
 
 // === Errors ===
 #[error(code = 0)]
 const ECorpseTypeIdEmpty: vector<u8> = b"Corpse type id is empty";
-#[error(code = 1)]
-const ECorpseTypeMismatch: vector<u8> = b"Corpse type id mismatch";
 #[error(code = 2)]
 const ENoBountyConfig: vector<u8> = b"Missing BountyConfig on ExtensionConfig";
 #[error(code = 3)]
@@ -36,15 +29,14 @@ public struct BountyConfig has drop, store {
 public struct BountyConfigKey has copy, drop, store {}
 
 /// Submit a corpse to get a `JumpPermit` for using the gate.
+/// Withdraws 1 item of `bounty_type_id` from the player's inventory using `withdraw_by_owner`.
 public fun collect_corpse_bounty<T: key>(
     extension_config: &ExtensionConfig,
     storage_unit: &mut StorageUnit,
     source_gate: &Gate,
     destination_gate: &Gate,
     character: &Character,
-    admin_acl: &AdminACL,
     player_inventory_owner_cap: &OwnerCap<T>,
-    corpse_item_id: u64,
     clock: &Clock,
     ctx: &mut TxContext,
 ) {
@@ -54,17 +46,14 @@ public fun collect_corpse_bounty<T: key>(
         BountyConfig,
     >(BountyConfigKey {});
 
-    // Withdraw the corpse from the player's inventory (owner-authorized).
+    // Withdraw 1 corpse of the configured bounty type from the player's inventory.
     let corpse = storage_unit.withdraw_by_owner<T>(
         character,
-        admin_acl,
         player_inventory_owner_cap,
-        corpse_item_id,
+        bounty_cfg.bounty_type_id,
+        1u32,
         ctx,
     );
-
-    // Check if the corpse is of the correct type.
-    assert!(corpse.type_id() == bounty_cfg.bounty_type_id, ECorpseTypeMismatch);
 
     storage_unit.deposit_item<XAuth>(
         character,

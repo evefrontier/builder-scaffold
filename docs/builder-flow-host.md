@@ -1,14 +1,23 @@
 # Builder flow: host
 
-Run the builder-scaffold flow on your host machine, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate**, **storage_unit**, or your own); this guide uses **smart_gate** for the publish and run-scripts steps.
+Run the builder-scaffold flow on your host machine, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); this guide uses **smart_gate_extension** for the publish and run-scripts steps.
 
 > **Prefer Docker?** See [builder-flow-docker.md](./builder-flow-docker.md) to run the full flow inside a container with no host tooling required.
 
 ## 1. Prerequisites
 
-- Sui CLI, Node.js, and pnpm installed on your host
+- **Sui CLI (latest)**, Node.js, and pnpm installed on your host
 - For testnet: funded accounts (e.g. from [Sui testnet faucet](https://faucet.sui.io/))
 - For local: a running Sui local node (see below)
+
+> **Sui CLI version:** The Docker node and world-contracts scripts require the latest Sui CLI. Install or upgrade via [suiup](https://github.com/MystenLabs/suiup):
+> ```bash
+> curl -sSfL https://raw.githubusercontent.com/MystenLabs/suiup/main/install.sh | sh
+> suiup install sui     # install latest
+> # or to upgrade:
+> suiup update sui
+> sui --version
+> ```
 
 ## 2. Clone builder-scaffold (if needed)
 
@@ -29,16 +38,25 @@ cd builder-scaffold
 <details>
 <summary>Local node setup</summary>
 
-**Using Docker:**
+**Running the SUI node in Docker, commands on host (common):**
 
-```bash
-cd docker
-docker compose run --rm --service-ports sui-dev
-```
+1. Start the container (in one terminal); it exposes port 9000:
 
-Import the container's keys from `docker/.env.sui` into your host config.
+   ```bash
+   cd docker
+   docker compose run --rm --service-ports sui-dev
+   ```
 
-**Using Sui CLI directly:**
+2. In another terminal, configure your host Sui CLI to use the node:
+
+   ```bash
+   sui client new-env --alias localnet --rpc http://127.0.0.1:9000
+   sui client switch --env localnet
+   ```
+
+3. `pnpm setup-world` handles the rest automatically — it imports the admin key from `docker/.env.sui` and switches the active address before deploying. Wait for the container to log `RPC ready` first.
+
+**Using Sui CLI directly (SUI node on host):**
 
 ```bash
 sui start --with-faucet --force-regenesis
@@ -53,43 +71,36 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 
 
 ```bash
-sui client switch --env localnet   # or testnet
+sui client switch --env testnet   # or localnet
 ```
 
-## 4. Make sure the keys are funded
+## 4. Deploy world and create test resources
 
-You need the same keys in three places: Sui keytool (for publish), world-contracts `.env`, and builder-scaffold `.env`.
+**Option A: Automated (recommended)**
 
-**If you use the Docker local node** (from step 3):
+From builder-scaffold root, set `WORLD_CONTRACTS_BRANCH` (default `main`) in `.env`. Optionally set `WORLD_CONTRACTS_COMMIT` to a tag or commit SHA to pin to a specific release (e.g. `v0.0.15`; see [tags](https://github.com/evefrontier/world-contracts/tags)). Then:
 
-- Use the 3 keys in `docker/.env.sui`; import them into keytool and copy into both `.env` files. Localnet auto-funds them; for testnet, fund all 3 via the faucet.
+```bash
+cd builder-scaffold
+pnpm setup-world
+```
 
-**If you use your own node** (e.g. `sui start --with-faucet` on host):
+The script clones world-contracts (if needed), checkouts the branch, deploys, configures, seeds, and copies artifacts. See [docs/setup-world.md](../docs/setup-world.md).
 
-- Create 3 accounts (ADMIN, Player A, Player B) **either** by:
-  - **Generating new addresses** with Sui CLI (recommended):
-    - `sui client new-address ed25519 --alias admin`
-    - `sui client new-address ed25519 --alias player-a`
-    - `sui client new-address ed25519 --alias player-b`
-    - These create key pairs in the Sui keystore; **no import into keytool is needed**.
-  - **Or** importing existing private keys into keytool (if you already have them):
-    - `sui keytool import <PRIVATE_KEY_BASE64> ed25519 --alias admin` (and similarly for `player-a`, `player-b`).
-- Fund all 3 accounts (local: use `sui client faucet`; testnet: [Sui testnet faucet](https://faucet.sui.io/)).
-- Get addresses for your aliases (for `.env` and for switching accounts): `sui client addresses` (or `sui keytool list`).
-- If your `.env` files need private keys, export from keytool: `sui keytool export --key admin` (and similarly for `player-a`, `player-b`).
-- Switch to the ADMIN account for publishing: `sui client switch --address <ADMIN_ADDRESS>`.
-- Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` (see steps 5 and 7).
+**First run after clone:** If world-contracts was just cloned and has no `.env`, the script copies `env.example` to `.env` and exits. Fill in `ADMIN_ADDRESS`, `SPONSOR_ADDRESS`, and `GOVERNOR_PRIVATE_KEY` (or `ADMIN_PRIVATE_KEY`) in `world-contracts/.env`, then run again.
 
+**Clean rebuild (switching branch, tag, or commit):** Run `pnpm rebuild-world` or `pnpm setup-world --clean` to remove stale artifacts before re-deploys.
 
-## 5. Deploy world and create test resources
+**Option B: Manual**
 
-> **Coming soon:** These manual steps will be simplified into a single setup command. See [setup-world/readme.md](../setup-world/readme.md) for details.
+From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` at a stable tag as a sibling and deploy.
 
-From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` at the stable tag as a sibling and deploy:
+> **Check the latest stable tag** before cloning: [github.com/evefrontier/world-contracts/tags](https://github.com/evefrontier/world-contracts/tags)  
+> Substitute `<latest-tag>` with the most recent tag (e.g. `v0.0.15`).
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
+git clone -b <latest-tag> https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env
 # Set SUI_NETWORK=testnet (or localnet) and fill in your keys
@@ -101,7 +112,9 @@ pnpm configure-world testnet    # or localnet
 pnpm create-test-resources testnet   # or localnet
 ```
 
-## 6. Copy world artifacts into builder-scaffold
+## 5. Copy world artifacts into builder-scaffold
+
+*(Skip if you used Option A — the script already copies.)*
 
 ```bash
 NETWORK=localnet   # or testnet
@@ -111,7 +124,9 @@ cp test-resources.json ../builder-scaffold/test-resources.json
 cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet/Pub.localnet.toml"
 ```
 
-## 7. Configure builder-scaffold .env
+## 6. Configure builder-scaffold .env
+
+*(If you used Option A and already have a `.env` from a previous setup, you can skip the `cp` — just verify the values below are set.)*
 
 ```bash
 cd ../builder-scaffold
@@ -120,31 +135,38 @@ cp .env.example .env
 
 Set the following in `.env`:
 - Same keys/addresses as world-contracts
-- `SUI_NETWORK=testnet` (or `localnet`)
-- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
+- `SUI_NETWORK=localnet` (or `testnet`)
+- `WORLD_CONTRACTS_BRANCH` (default `main`) — read by `pnpm setup-world` / `rebuild-world` to know which branch to checkout
+- `WORLD_CONTRACTS_COMMIT` — optional; set to a tag (e.g. `v0.0.15`) or SHA to pin a specific release; takes precedence over the branch tip. Required for `rebuild-world` to consistently re-deploy the same version
 
-## 8. Publish custom contract
+All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, `MARKETPLACE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
+- `deployments/<network>/extracted-object-ids.json` — populated by `setup-world` and each `pnpm publish-*` script
+- `deployments/<network>/runtime-object-ids.json` — populated by `pnpm create-marketplace` / `create-supply-unit`
+- `deployments/<network>/seed-resources.json` — populated by `pnpm seed` (runs automatically via `setup-world`); tracks local seeding state
 
-Pick an example (e.g. **smart_gate** or **storage_unit**); use its folder in `move-contracts/`:
+Set a variable in `.env` only if you need to override the file-based value.
+
+## 7. Publish custom contract
+
+Pick an example (e.g. **smart_gate_extension** or **storage_unit_extension**); use its folder in `move-contracts/`:
 
 ```bash
-cd move-contracts/smart_gate   # or storage_unit, or your package
+cd move-contracts/smart_gate_extension   # or storage_unit_extension, or your package
 sui client publish --build-env testnet   # testnet
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml   # localnet
 ```
 
-Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` from the publish output.
+Run `pnpm publish-smart-gate-extension` to publish and automatically capture IDs into `extracted-object-ids.json` — no `.env` update needed.
 
-## 9. Run scripts
+## 8. Run scripts
 
-For the **smart_gate** example (scripts are in the repo root):
+For the **smart_gate_extension** example (scripts are in the repo root):
 
 ```bash
 cd ../..   # builder-scaffold root
 pnpm install
 pnpm configure-rules
 pnpm authorise-gate
-pnpm authorise-storage-unit
 pnpm issue-tribe-jump-permit
 pnpm jump-with-permit
 pnpm collect-corpse-bounty

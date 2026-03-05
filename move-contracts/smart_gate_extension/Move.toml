@@ -1,12 +1,13 @@
 [package]
-name = "smart_gate"
+name = "smart_gate_extension"
 edition = "2024"    # edition = "legacy" to use legacy (pre-2024) Move
 # license = ""           # e.g., "MIT", "GPL", "Apache 2.0"
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
 [dependencies]
-# When using git instead of local, use the stable tag (e.g. v0.0.14) so main breaking changes don't break the scaffold:
-# world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "v0.0.14" }
+# When using git instead of local, pin to a stable tag so main breaking changes don't break the scaffold.
+# Check the latest tag at https://github.com/evefrontier/world-contracts/tags and substitute below:
+# world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "v0.0.15" }
 # TODO: This will be changed to use the mvr to automatically resolve the dependencies based on the chain.
 # For now, we resolve the dependencies locally for fast iteration.
 world = { local = "../../../world-contracts/contracts/world" }
@@ -15,4 +16,4 @@ world = { local = "../../../world-contracts/contracts/world" }
 # Read more about the package management system options:
 # https://docs.sui.io/guides/developer/sui-101/move-package-management
 [addresses]
-smart_gate = "0x0"
+smart_gate_extension = "0x0"
