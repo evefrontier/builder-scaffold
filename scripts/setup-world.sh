@@ -139,3 +139,11 @@ if [ -n "$WORLD_PKG_ID" ]; then
 else
     echo "WORLD_PACKAGE_ID not found in extracted-object-ids.json. Set it manually in .env if needed."
 fi
+
+# Run local seeding (localnet only — seeding is a local development tool)
+if [ "$NETWORK" = "localnet" ]; then
+    echo ""
+    echo "==> Running local seeding (pnpm seed)..."
+    cd "$BUILDER_ROOT"
+    pnpm seed
+fi

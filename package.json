@@ -11,6 +11,7 @@
     "setup-world": "bash scripts/setup-world.sh",
     "clean-world": "bash scripts/clean-world-artifacts.sh",
     "rebuild-world": "pnpm clean-world && pnpm setup-world",
+    "seed": "tsx ts-scripts/seed.ts",
     "publish-smart-gate-extension": "tsx ts-scripts/smart_gate_extension/publish-smart-gate-extension.ts",
     "configure-rules": "tsx ts-scripts/smart_gate_extension/configure-rules.ts",
     "authorise-gate": "tsx ts-scripts/smart_gate_extension/authorise-gate.ts",
