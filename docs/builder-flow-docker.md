@@ -35,10 +35,10 @@ docker compose down -v   # removes the sui-config volume — wipes keys and node
 docker compose run --rm --service-ports sui-dev   # new keys generated, new .env.sui written
 ```
 
-> **After `down -v`:** The new container starts a fresh chain with a new chain ID. You must use `pnpm rebuild-world` (not bare `setup-world`) — it removes the entire `deployments/localnet/` directory first, clearing `extracted-object-ids.json`, `runtime-object-ids.json`, and `seed-resources.json`. Without this, stale IDs from the previous chain survive and cause errors like `dynamic_field::borrow_child_object_mut abort code 1`.
+> **After `down -v`:** The new container starts a fresh chain with a new chain ID. You must use `pnpm rebuild-world` (not bare `setup-world`) — it removes the entire `deployments/localnet/` directory first, clearing `extracted-object-ids.json` and `seed-resources.json`. Without this, stale IDs from the previous chain survive and cause errors like `dynamic_field::borrow_child_object_mut abort code 1`.
 > 1. Update `.env` with the new keys/addresses from `docker/.env.sui`
 > 2. Run `pnpm rebuild-world` — clears all stale artifacts, redeploys world, and re-runs `pnpm seed`
-> 3. Re-publish all extensions and re-create runtime objects (`pnpm create-marketplace`, `pnpm create-supply-unit`, etc.)
+> 3. Re-publish all extensions
 
 Inside the container you have:
 
@@ -143,9 +143,8 @@ Set the following in `.env`:
 - `WORLD_CONTRACTS_BRANCH` (default `main`) — set if targeting a different branch; read by `pnpm setup-world` / `rebuild-world` to know which branch to checkout
 - `WORLD_CONTRACTS_COMMIT` — optional; set to a tag (e.g. `v0.0.15`) or SHA to pin a specific release; takes precedence over the branch tip when set. Required for `rebuild-world` to consistently re-deploy the same version
 
-All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, `MARKETPLACE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
+All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
 - `deployments/<network>/extracted-object-ids.json` — populated by `setup-world` and each `pnpm publish-*` script
-- `deployments/<network>/runtime-object-ids.json` — populated by `pnpm create-marketplace` / `create-supply-unit`
 - `deployments/<network>/seed-resources.json` — populated by `pnpm seed` (runs automatically via `setup-world`); tracks local seeding state
 
 Set a variable in `.env` only if you need to override the file-based value.

@@ -139,9 +139,8 @@ Set the following in `.env`:
 - `WORLD_CONTRACTS_BRANCH` (default `main`) — read by `pnpm setup-world` / `rebuild-world` to know which branch to checkout
 - `WORLD_CONTRACTS_COMMIT` — optional; set to a tag (e.g. `v0.0.15`) or SHA to pin a specific release; takes precedence over the branch tip. Required for `rebuild-world` to consistently re-deploy the same version
 
-All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, `MARKETPLACE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
+All package IDs and object IDs (`WORLD_PACKAGE_ID`, `GATE_EXTENSION_PACKAGE_ID`, etc.) are **auto-read from the deployment files** — no manual `.env` updates needed:
 - `deployments/<network>/extracted-object-ids.json` — populated by `setup-world` and each `pnpm publish-*` script
-- `deployments/<network>/runtime-object-ids.json` — populated by `pnpm create-marketplace` / `create-supply-unit`
 - `deployments/<network>/seed-resources.json` — populated by `pnpm seed` (runs automatically via `setup-world`); tracks local seeding state
 
 Set a variable in `.env` only if you need to override the file-based value.

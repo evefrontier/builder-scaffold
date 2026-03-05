@@ -66,6 +66,15 @@ export type RuntimeObjectIds = {
     };
 };
 
+/**
+ * Builder-scaffold seeding state. Lives in deployments/<network>/seed-resources.json.
+ * Written by seed scripts (e.g. seed-owned-inventory); cleared by rebuild-world.
+ * Builders extend this freely — add any key/value for their own seeding scripts.
+ */
+export type SeedResources = {
+    network: string;
+} & Record<string, unknown>;
+
 export function getExtractedObjectIdsPath(network: string): string {
     return path.resolve(process.cwd(), "deployments", network, EXTRACTED_OBJECT_IDS_FILENAME);
 }
@@ -88,6 +97,34 @@ export function writeRuntimeObjectIds(network: string, data: RuntimeObjectIds): 
     const filePath = getRuntimeObjectIdsPath(network);
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+export const SEED_RESOURCES_FILENAME = "seed-resources.json";
+
+export function getSeedResourcesPath(network: string): string {
+    return path.resolve(process.cwd(), "deployments", network, SEED_RESOURCES_FILENAME);
+}
+
+export function readSeedResources(network: string): SeedResources {
+    const filePath = getSeedResourcesPath(network);
+    if (!fs.existsSync(filePath)) return { network };
+    try {
+        return JSON.parse(fs.readFileSync(filePath, "utf8")) as SeedResources;
+    } catch {
+        return { network };
+    }
+}
+
+export function upsertSeedResources(
+    network: string,
+    update: (data: SeedResources) => void
+): void {
+    const filePath = getSeedResourcesPath(network);
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const data = readSeedResources(network);
+    update(data);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
