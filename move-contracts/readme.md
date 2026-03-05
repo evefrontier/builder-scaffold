@@ -5,9 +5,15 @@ Build custom contracts to change the default behaviour of Smart Assemblies. You 
 Examples for extending EVE Frontier Smart Assemblies by defining a typed struct in a custom contract and calling the extendable world functions:
 
 - [Smart Gate extension example](./smart_gate_extension/)
+- [Smart Storage Unit extension example](./storage_unit_extension/)
+
+Token contracts:
+
+- [Currency token example](./currency_token/)
+- [Tribe token example](./tribe_token/)
 
 
-More standalone contracts (multisig, token, DAO) will be added.
+More standalone contracts (multisig, DAO) will be added.
 
 See [typed witness pattern](https://github.com/evefrontier/world-contracts/blob/main/docs/architechture.md#layer-3-player-extensions-moddability) to understand how to extend the EVE Frontier world.
 
