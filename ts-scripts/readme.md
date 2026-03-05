@@ -20,6 +20,7 @@ pnpm install
 
 All package IDs and object IDs are **auto-read from deployment files**:
 - `deployments/<network>/extracted-object-ids.json` — written by `setup-world` and each `pnpm publish-*` script
+- `deployments/<network>/runtime-object-ids.json` — written by `pnpm create-marketplace` / `create-supply-unit`
 - `deployments/<network>/seed-resources.json` — written by `pnpm seed`; tracks local seeding state
 
 Set a variable in `.env` only if you need to override a file-based value or if you prefer to reference the env for your scripts rather than the `extracted-object-ids.json`.
@@ -102,6 +103,41 @@ pnpm configure-tribe-token
 pnpm mint-tribe-token
 pnpm transfer-tribe-token   # needs TOKEN_OBJECT_ID, RECIPIENT_ADDRESS, RECIPIENT_CHARACTER_ID
 ```
+
+## Example: Storage Unit Extension
+
+> **Prerequisites:** `pnpm seed` must have run at least once (called automatically by `pnpm setup-world`). It seeds Player A's inventory (needed for `stock-supply-unit`) and Player C's inventory (needed for `list-item` / `buy-item`).
+
+After publishing `move-contracts/storage_unit_extension/` and tokens:
+
+```bash
+# 1. Publish storage unit extension (IDs auto-saved to extracted-object-ids.json)
+pnpm publish-storage-unit-extension
+
+# 2. Marketplace flow (MARKETPLACE_ID auto-saved to runtime-object-ids.json)
+# Player C (seller) seeded with typeId 447 by pnpm seed (runs via setup-world)
+# Player B (buyer) pays with typeId 446 — seeded by world-contracts create-test-resources
+# list-item reads listedTypeId from deployments/<network>/seed-resources.json automatically
+pnpm create-marketplace
+pnpm list-item
+pnpm buy-item
+
+# 3. Supply unit flow (SUPPLY_UNIT_ID auto-saved to runtime-object-ids.json)
+pnpm create-supply-unit
+
+# 4. Ensure buyer (Player B) has CURRENCY_TOKEN — run before order-items
+pnpm mint-currency-token        # mint 1 000 000 tokens directly to Player B
+# or: pnpm transfer-currency-token  # top-up to 10 000 minimum (safe if already funded)
+
+# 5. Stock — Player A's inventory (typeId 446) seeded automatically by pnpm seed
+# stock-supply-unit reads typeId from deployments/<network>/seed-resources.json
+pnpm stock-supply-unit
+
+# 6. Order (Player B's coin is auto-selected from their wallet)
+pnpm order-items
+```
+
+Required env vars per script: see script headers or [storage_unit_extension readme](../move-contracts/storage_unit_extension/readme.md).
 
 ## Customization
 
