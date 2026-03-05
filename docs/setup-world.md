@@ -4,7 +4,7 @@
 
 In the real game, players create a **Smart Character** (an on-chain identity that owns all their assemblies), build a **Network Node** (the power source that burns fuel to produce energy), and deploy assemblies like **Smart Storage Units** and **Smart Gates**. All assemblies need energy to function.
 
-During development, the deploy and seed steps recreate this on a local (or test) network so you have real on-chain objects to build and test against.
+During development, the deploy and seed steps recreate this on a local network so you have real on-chain objects to build and test against.
 
 ## What gets created
 

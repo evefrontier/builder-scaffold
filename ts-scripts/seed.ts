@@ -36,7 +36,7 @@ import { readSeedResources, upsertSeedResources } from "./utils/config";
 async function seedExample(env: ReturnType<typeof getEnvConfig>): Promise<void> {
     const seeds = readSeedResources(env.network);
     if (seeds.example) {
-        console.log("  [skip] example already seeded");
+        console.log("  [skip] data already seeded");
         return;
     }
 

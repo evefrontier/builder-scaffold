@@ -26,6 +26,8 @@ Set a variable in `.env` only if you need to override a file-based value or if y
 
 ## Local seeding (`pnpm seed`)
 
+> `pnpm seed` is a **localnet development tool** — it is skipped automatically when `SUI_NETWORK` is not `localnet`.
+
 `pnpm seed` runs at the end of `pnpm setup-world` automatically and can be re-run manually at any time. **Already-completed steps in the seed script are skipped** — making the seed script safe to run multiple times wihtout overwriting or changing existing seeded data. Seeding state is tracked in `deployments/<network>/seed-resources.json`, which is cleared by `pnpm rebuild-world` so re-seeding happens automatically after a chain reset.
 
 `ts-scripts/seed.ts` is the single entry point. Add your own seeding steps as functions and call them from `main()`:
