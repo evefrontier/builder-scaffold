@@ -39,7 +39,7 @@ export function AssemblyInfo() {
           console.log("ownerCapId", ownerCapId);
 
           // const tx = authoriseSSU(assembly.id, character.id, ownerCapId);
-          const tx = authoriseGate(assembly.id, character.id, ownerCapId);
+          const tx = authoriseGate(character.id, assembly.id, ownerCapId);
           // const tx = new Transaction();
           tx.setSender(currentAccount?.address);
 
