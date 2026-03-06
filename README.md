@@ -22,6 +22,19 @@ cd builder-scaffold
 
 By the end you’ll have a deployed world (or use an existing one), a published custom contract (e.g. `smart_gate`), and scripts that call it.
 
+### Community tool: efctl
+
+[**efctl**](https://frontier.scetrov.live/links/efctl/) is a community-built CLI that automates this entire setup (env up/down, deploy world, extension init/publish, run scripts). 
+
+If you prefer a single-command workflow, install efctl and run e.g. `efctl env up` then `efctl env extension init` and `efctl env extension publish smart_gate`. 
+
+Full docs: [efctl](https://frontier.scetrov.live/links/efctl/). 
+
+For a high-level overview and deeper detail, see:
+- [Sui CLI Cookbook](https://frontier.scetrov.live/devsecops/sui-cli-cookbook/)
+- [World contracts](https://frontier.scetrov.live/develop/world-contracts/)
+- [Builder scaffold overview](https://frontier.scetrov.live/develop/builder-scaffold/)
+
 ## Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
