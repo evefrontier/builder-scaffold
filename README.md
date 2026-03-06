@@ -51,6 +51,7 @@ For a high-level overview and more detail, see:
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
 
+**Stuck?** See the [Troubleshooting guide](./troubleshooting-guide.md) for common issues and solved Discord gotchas.
 
 ## Contributing
 
