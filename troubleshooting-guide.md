@@ -9,17 +9,20 @@ Use the [World Contracts Decoder](https://evefrontier.github.io/world-contracts/
 <details><summary>Move.lock wrong env? </summary>`rm Move.lock && sui move build --build-env testnet`</details>
 
 <details><summary>Unpublished dependencies: World?</summary>
-![publish error](../images/publish-error.png)
+![publish error](./images/publish-error.png)
 
-Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#deploy-world-and-create-test-resources)), then pass its publication file:
+Deploy world-contracts first (see [builder-flow-docker.md](./docs/builder-flow-docker.md#deploy-world-and-create-test-resources)), then pass its publication file:
 
 ```bash
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml
+sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 </details>
 
-<details><summary>File permission denied for.env </summary>
+<details><summary>File permission denied for .env</summary>
+
+```bash
 chmod 600 .env
+```
 </details>
 
 <details>

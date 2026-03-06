@@ -30,7 +30,7 @@ If you prefer a single-command workflow, install efctl and run e.g. `efctl env u
 
 Full docs: [efctl](https://frontier.scetrov.live/links/efctl/). 
 
-For a high-level overview and deeper detail, see:
+For a high-level overview and more detail, see:
 - [Sui CLI Cookbook](https://frontier.scetrov.live/devsecops/sui-cli-cookbook/)
 - [World contracts](https://frontier.scetrov.live/develop/world-contracts/)
 - [Builder scaffold overview](https://frontier.scetrov.live/develop/builder-scaffold/)
