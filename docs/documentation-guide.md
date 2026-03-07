@@ -5,7 +5,7 @@ Principles for builder-scaffold docs. Use this when adding or moving content (an
 ## Goals
 
 - **Minimal first**: happy path only upfront; details on demand.
-- **Cater all users**: quickstart for first-time users, depth for power users and AI.
+- **Cater to all users**: quickstart for first-time users, depth for power users and AI.
 
 ## Where to put what
 
@@ -15,7 +15,7 @@ Principles for builder-scaffold docs. Use this when adding or moving content (an
 | **Step-by-step flow** | [builder-flow-docker.md](./builder-flow-docker.md), [builder-flow-host.md](./builder-flow-host.md) | Only steps needed to complete the flow. |
 | **Long or optional explanations** | `<details>` in the same doc, or a separate doc in `docs/` linked from the flow / README | If it’s not used in the happy path, move here and link. |
 | **Solved issues (e.g. Discord)** | [Troubleshooting guide](../troubleshooting-guide.md) | One place; use the existing `<details>` template. |
-| **Area-specific detail** | Area readmes: `docker/readme.md`, `move-contracts/smart_gate_extension/readme.md`, etc. | Context and flow |
+| **Area-specific detail** | Area readmes: `docker/readme.md`, `move-contracts/readme.md`, etc. | Context and flow |
 
 ## Rules of thumb
 

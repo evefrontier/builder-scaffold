@@ -24,11 +24,9 @@ By the end you’ll have a deployed world (or use an existing one), a published 
 
 ### Community tool: efctl
 
-[**efctl**](https://frontier.scetrov.live/links/efctl/) is a community-built CLI that automates this entire setup (env up/down, deploy world, extension init/publish, run scripts). 
+[**efctl**](https://github.com/scetrov/efctl) is a community-maintained, unofficial CLI that automates this setup (env up/down, deploy world, extension init/publish, run scripts). Before installing, review the [source](https://github.com/scetrov/efctl) and [releases](https://github.com/scetrov/efctl/releases) (pinned versions and checksums).
 
-If you prefer a single-command workflow, install efctl and run e.g. `efctl env up` then `efctl env extension init` and `efctl env extension publish smart_gate`. 
-
-Full docs: [efctl](https://frontier.scetrov.live/links/efctl/). 
+If you prefer a single-command workflow: `efctl env up`, then `efctl env extension init` and `efctl env extension publish smart_gate`. [Docs](https://frontier.scetrov.live/links/efctl/). 
 
 For a high-level overview and more detail, see:
 - [Sui CLI Cookbook](https://frontier.scetrov.live/devsecops/sui-cli-cookbook/)
