@@ -1,6 +1,8 @@
 # Documentation review (for Copilot PR review agent)
 
-When **reviewing PRs** that add or edit documentation, enforce [docs/documentation-guide.md](../docs/documentation-guide.md) and the rules below. Suggest or request changes when they are violated.
+These rules apply to **all documentation** in this repo: root [README.md](../../README.md), every **README.md** (e.g. `docker/readme.md`, `move-contracts/readme.md`), flow docs in `docs/`, [troubleshooting-guide.md](../../troubleshooting-guide.md), and any other markdown in the repo.
+
+When **reviewing PRs** that add or edit documentation, enforce [docs/documentation-guide.md](../../docs/documentation-guide.md) and the rules below. Suggest or request changes when they are violated.
 
 ## Review criteria
 
@@ -21,7 +23,7 @@ When **reviewing PRs** that add or edit documentation, enforce [docs/documentati
    - Flag new content that should be moved into `<details>` or a linked doc.
 
 4. **No duplication**  
-   - The same instructions must **not** appear in multiple files.  
+   - The same instructions must **not** appear in multiple files (including between READMEs and other docs).  
    - Each piece of information has **one canonical place** (see “Where to put what” in the documentation guide); elsewhere, **link** to it.  
    - Flag duplicated procedures or copy-pasted blocks; suggest replacing with a link to the canonical doc.
 
@@ -29,7 +31,7 @@ When **reviewing PRs** that add or edit documentation, enforce [docs/documentati
 
 - Content is placed according to the documentation guide’s **“Where to put what”** table.  
 - Content that is not part of the happy path → in a detailed section or separate doc, with a link from the main path.  
-- Troubleshooting → in [troubleshooting-guide.md](../troubleshooting-guide.md) using the existing `<details>` pattern; do not add new troubleshooting in README or flow docs.  
+- Troubleshooting → in [troubleshooting-guide.md](../../troubleshooting-guide.md) using the existing `<details>` pattern; do not add new troubleshooting in README or flow docs.  
 - Flow docs: numbered steps kept minimal; “why” and optional material in `<details>` or linked docs.  
   - Flag new long explanations or alternatives in the middle of a flow.
 

@@ -4,7 +4,7 @@ When **reviewing PRs** that change code under `move-contracts/`, enforce the rul
 
 ## Scope
 
-- **`move-contracts/`** — All Move packages (e.g. `smart_gate_*`, `storage_uni_*t`, `tokens`). Each package has:
+- **`move-contracts/`** — All Move packages (e.g. `smart_gate_*`, `storage_unit_*`, `tokens`). Each package has:
   - `Move.toml` at package root
   - `sources/` for `.move` modules
   - `tests/` for test modules (optional but preferred for new logic)

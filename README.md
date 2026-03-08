@@ -2,6 +2,11 @@
 
 Templates and tools for building on EVE Frontier.
 
+## Prerequisites
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
+
 ## Quickstart
 
 **1. Clone the repo**:
@@ -22,21 +27,17 @@ cd builder-scaffold
 
 By the end you’ll have a deployed world (or use an existing one), a published custom contract (e.g. `smart_gate`), and scripts that call it.
 
-### Community tool: efctl
+<details><summary><strong>Community tool: efctl (Single command workflow)</strong></summary>
 
 [**efctl**](https://github.com/scetrov/efctl) is a community-maintained, unofficial CLI that automates this setup (env up/down, deploy world, extension init/publish, run scripts). Before installing, review the [source](https://github.com/scetrov/efctl) and [releases](https://github.com/scetrov/efctl/releases) (pinned versions and checksums).
 
-If you prefer a single-command workflow: `efctl env up`, then `efctl env extension init` and `efctl env extension publish smart_gate`. [Docs](https://frontier.scetrov.live/links/efctl/). 
+If you prefer a single-command workflow: `efctl env up`, then `efctl env extension init` and `efctl env extension publish smart_gate`. [Docs](https://frontier.scetrov.live/links/efctl/).
 
 For a high-level overview and more detail, see:
 - [Sui CLI Cookbook](https://frontier.scetrov.live/devsecops/sui-cli-cookbook/)
 - [World contracts](https://frontier.scetrov.live/develop/world-contracts/)
 - [Builder scaffold overview](https://frontier.scetrov.live/develop/builder-scaffold/)
-
-## Prerequisites
-
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
+</details>
 
 ## What's in this repo
 

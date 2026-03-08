@@ -6,7 +6,12 @@ Below are some of the common gotchas during building:
 **Failed transactions — how to read the error?**
 Use the [World Contracts Decoder](https://evefrontier.github.io/world-contracts/) to decode the error message into a human-readable form.
 
-<details><summary>Move.lock wrong env? </summary>`rm Move.lock && sui move build --build-env testnet`</details>
+<details><summary>Move.lock wrong env?</summary>
+
+```bash
+rm Move.lock && sui move build --build-env testnet
+```
+</details>
 
 <details><summary>Unpublished dependencies: World?</summary>
 ![publish error](./images/publish-error.png)
