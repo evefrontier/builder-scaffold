@@ -26,14 +26,14 @@ sui move build -e testnet
 
 ### Publish
 
-Some custom contracts depend on the world contract being published on either local or testnet. Commands below assume you are in the package directory (e.g. `move-contracts/smart_gate` from repo root).
+Some custom contracts depend on the world contract being published on either local or testnet. Commands below assume you are in the package directory (e.g. `move-contracts/smart_gate_extension` from repo root).
 
 **Testnet**
 
 On testnet the published world package is automatically resolved when deploying the custom contract:
 
 ```bash
-cd move-contracts/smart_gate   # from repo root
+cd move-contracts/smart_gate_extension   # from repo root
 sui client publish -e testnet
 ```
 
@@ -44,7 +44,7 @@ Since the local network is short-lived, you need to manually resolve to the publ
 > **Note:** If the contracts depend on the world package, deploy the world first (see [builder-flow](../docs/builder-flow.md) or the flow docs below).
 
 ```bash
-cd move-contracts/smart_gate   # from repo root
+cd move-contracts/smart_gate_extension   # from repo root
 sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
 ```
 
