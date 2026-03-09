@@ -24,8 +24,9 @@ cd move-contracts/smart_gate
 sui move build -e testnet
 ```
 
-### Publish 
-some custom contracts depend on the world contract being published on either local or testnet.
+### Publish
+
+Some custom contracts depend on the world contract being published on either local or testnet.
 
 **Testnet**
 

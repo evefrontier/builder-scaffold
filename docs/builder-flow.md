@@ -79,7 +79,7 @@ cd move-contracts/smart_gate   # or storage_unit, or your package
 - **Localnet:**  
   `sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml`
 - **Testnet:**  
-  `sui client publish --build-env testnet`
+  `sui client publish -e testnet`
 
 Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` from the publish output.
 
@@ -89,7 +89,7 @@ Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` fr
 
 From **builder-scaffold** root (e.g. for **smart_gate**):
 
-<!-- TODO: You can add refrences to additional example scripts when its available -->
+<!-- TODO: You can add references to additional example scripts when they're available -->
 
 ```bash
 cd ..   # builder-scaffold root if you were in move-contracts/smart_gate

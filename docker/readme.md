@@ -124,13 +124,13 @@ docker system prune -a --volumes
 ## Troubleshooting
 
 1. **Move.lock wrong env?**  
-   `rm Move.lock && sui move build --build-env testnet`
+   `rm Move.lock && sui move build -e testnet`
 
 2. **"Unpublished dependencies: World"?**  
    Deploy world-contracts first (see [builder-flow.md — Deploy world and create test resources](../docs/builder-flow.md#deploy-world-and-create-test-resources)), then pass its publication file:
 
    ```bash
-   sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml
+   sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
    ```
 
    ![publish error](../images/publish-error.png)
