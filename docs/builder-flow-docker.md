@@ -51,7 +51,7 @@ sui client faucet
 
 ```bash
 cd /workspace/world-contracts
-git clone https://github.com/evefrontier/world-contracts.git .
+git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git .
 /workspace/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys
 pnpm install
 pnpm deploy-world localnet       # or testnet

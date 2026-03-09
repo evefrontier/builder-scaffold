@@ -55,34 +55,39 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 
 
 ```bash
-sui client switch --env testnet   # or localnet
+sui client switch --env localnet   # or testnet
 ```
 
-Create and use a local Sui wallet
-```bash
-sui client new-address ed25519 ALIAS
-sui client switch --address ALIAS
-```
+## 4. Make sure the keys are funded
 
-Fund your wallet with the faucet `localnet` or `devnet` only
-```bash
-sui client faucet
-```
-Go to [Sui faucet](https://faucet.sui.io/) for testnet and enter the active local wallet:
-```bash
-sui client active-address
-```
+You need the same keys in three places: Sui keytool (for publish), world-contracts `.env`, and builder-scaffold `.env`.
 
-Check your balance:
-```bash
-sui client balance
-```
+**If you use the Docker local node** (from step 3):
 
-## 4. Deploy world and create test resources
+- Use the 3 keys in `docker/.env.sui`; import them into keytool and copy into both `.env` files. Localnet auto-funds them; for testnet, fund all 3 via the faucet.
+
+**If you use your own node** (e.g. `sui start --with-faucet` on host):
+
+- Create 3 accounts (ADMIN, Player A, Player B) **either** by:
+  - **Generating new addresses** with Sui CLI (recommended):
+    - `sui client new-address ed25519 --alias admin`
+    - `sui client new-address ed25519 --alias player-a`
+    - `sui client new-address ed25519 --alias player-b`
+    - These create key pairs in the Sui keystore; **no import into keytool is needed**.
+  - **Or** importing existing private keys into keytool (if you already have them):
+    - `sui keytool import <PRIVATE_KEY_BASE64> ed25519 --alias admin` (and similarly for `player-a`, `player-b`).
+- Fund all 3 accounts (local: use `sui client faucet`; testnet: [Sui testnet faucet](https://faucet.sui.io/)).
+- Get addresses for your aliases (for `.env` and for switching accounts): `sui client addresses` (or `sui keytool list`).
+- If your `.env` files need private keys, export from keytool: `sui keytool export --key admin` (and similarly for `player-a`, `player-b`).
+- Switch to the ADMIN account for publishing: `sui client switch --address <ADMIN_ADDRESS>`.
+- Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` (see steps 5 and 7).
+
+
+## 5. Deploy world and create test resources
 
 > **Coming soon:** These manual steps will be simplified into a single setup command. See [setup-world/readme.md](../setup-world/readme.md) for details.
 
-From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` as a sibling and deploy:
+From your workspace directory (parent of `builder-scaffold`), clone `world-contracts` at the stable tag as a sibling and deploy:
 
 **Before running the commands below set these environment variables in these [world-contracts/.env](world-contracts/.env) file:**
 - `SUI_NETWORK` = testnet (or localnet)
@@ -98,7 +103,7 @@ The ADMIN_PRIVATE_KEY must have at least 5 sui.
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
-git clone https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env
 # Set SUI_NETWORK=testnet (or localnet) and fill in your keys
@@ -116,7 +121,7 @@ Check all the created resources in the explorer:
 - [testnet explorer](https://suiscan.xyz/testnet/)
 - [mainnet explorer](https://suiscan.xyz/)
 
-## 5. Copy world artifacts into builder-scaffold
+## 6. Copy world artifacts into builder-scaffold
 
 ```bash
 NETWORK=localnet   # or testnet
@@ -126,7 +131,7 @@ cp test-resources.json ../builder-scaffold/test-resources.json
 cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet/Pub.localnet.toml"
 ```
 
-## 6. Configure builder-scaffold .env
+## 7. Configure builder-scaffold .env
 
 ```bash
 cd ../builder-scaffold
@@ -138,7 +143,7 @@ Set the following in `.env`:
 - `SUI_NETWORK=testnet` (or `localnet`)
 - `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
 
-## 7. Publish custom contract
+## 8. Publish custom contract
 
 Pick an example (e.g. **smart_gate** or **storage_unit**); use its folder in `move-contracts/`:
 
@@ -156,7 +161,7 @@ Those values are in the output of the publish command:
 1. `BUILDER_PACKAGE_ID` = changed_objects.objectId where objectType === "package"
 2. `EXTENSION_CONFIG_ID` = changed_objects.objectId where objectType ends with "config::ExtensionConfig"
 
-## 8. Run scripts
+## 9. Run scripts
 
 For the **smart_gate** example (scripts are in the repo root):
 

@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@radix-ui/themes/styles.css";
+import "./main.css";
 
 import { QueryClient } from "@tanstack/react-query";
-import { Theme } from "@radix-ui/themes";
 import App from "./App.tsx";
 import { EveFrontierProvider } from "@evefrontier/dapp-kit";
+import { Theme } from "@radix-ui/themes";
 
 const queryClient = new QueryClient();
 

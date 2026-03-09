@@ -12,7 +12,7 @@ export function AssemblyInfo() {
 
   return (
     <div>
-      <h2>{assembly.name}</h2>
+      <p>Name: {assembly.name || assembly.typeDetails?.name}</p>
       <p>Type: {assembly.type}</p>
       <p>State: {assembly.state}</p>
       <p>ID: {assembly.id}</p>

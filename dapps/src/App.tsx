@@ -16,43 +16,31 @@ function App() {
   const account = useCurrentAccount();
 
   return (
-    <>
+    <Box style={{ padding: "20px" }}>
       <Flex
         position="sticky"
         px="4"
         py="2"
-        justify="between"
+        direction="row"
         style={{
-          borderBottom: "1px solid var(--gray-a2)",
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
-        <Box>
-          <Heading>EVE Frontier dApp Starter Template</Heading>
-        </Box>
+        <Heading>EVE Frontier dApp Starter Template</Heading>
 
         {/* STEP 2 — Connect/disconnect; show abbreviated address in header. */}
-        <Box>
-          <button
-            onClick={() =>
-              account?.address ? handleDisconnect() : handleConnect()
-            }
-          >
-            {account ? abbreviateAddress(account?.address) : "Connect Wallet"}
-          </button>
-        </Box>
-      </Flex>
-      <Container>
-        {/* STEP 3 — Same hooks (useConnection, useCurrentAccount) drive WalletStatus; state stays in sync. */}
-        <Container
-          mt="5"
-          pt="2"
-          px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
+        <button
+          onClick={() =>
+            account?.address ? handleDisconnect() : handleConnect()
+          }
         >
-          <WalletStatus />
-        </Container>
-      </Container>
-    </>
+          {account ? abbreviateAddress(account?.address) : "Connect Wallet"}
+        </button>
+      </Flex>
+      {/* STEP 3 — Same hooks (useConnection, useCurrentAccount) drive WalletStatus; state stays in sync. */}
+      <WalletStatus />
+    </Box>
   );
 }
 

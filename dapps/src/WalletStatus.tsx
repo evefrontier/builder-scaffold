@@ -1,4 +1,4 @@
-import { Container, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box, Container, Flex, Text } from "@radix-ui/themes";
 import { AssemblyInfo } from "./AssemblyInfo";
 import { useCurrentAccount, useDAppKit } from "@mysten/dapp-kit-react";
 
@@ -11,17 +11,17 @@ export function WalletStatus() {
 
   return (
     <Container my="2">
-      <Heading mb="2">Wallet Status</Heading>
-
       {/* STEP 3 — Reading state: connected vs not, address (full or abbreviated). */}
       {account ? (
         <Flex direction="column">
-          <Text>Wallet connected</Text>
-          <Text>Address: {account.address}</Text>
+          <Box>Wallet connected</Box>
+          <Box>Address: {account.address}</Box>
         </Flex>
       ) : (
         <Text>Wallet not connected</Text>
       )}
+
+      <div className="divider" />
 
       <AssemblyInfo />
     </Container>

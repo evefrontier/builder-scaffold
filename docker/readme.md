@@ -83,12 +83,40 @@ sui client switch --env localnet
 
 Wait until the container logs `RPC ready` before connecting. Import keys from `docker/.env.sui` if needed.
 
+## PostgreSQL Indexer & GraphQL
+
+The compose setup includes PostgreSQL indexer and GraphQL support via `docker-compose.override.yml`.
+
+**GraphQL endpoint**: `http://localhost:9125/graphql`
+
+The indexer database is **automatically reset** on each container start to match the `--force-regenesis` behavior, ensuring the blockchain and indexer state stay synchronized.
+
+To query via GraphQL from your host:
+
+```bash
+curl -X POST http://localhost:9125/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ chainIdentifier }"}'
+```
+
+Or use a GraphQL client like [Altair](https://altairgraphql.dev/) or [Insomnia](https://insomnia.rest/).
+
 ## Clean up / fresh start
 
 ```bash
-docker volume rm docker_sui-config 2>/dev/null || true
+docker compose down --volumes
 docker compose build
 docker compose run --rm --service-ports sui-dev
+```
+
+If you are still having problems you can stop the containers and do a full prune
+
+> [!WARNING]
+> This deletes all your containers, volumes, and images not currently in use.
+
+```bash
+docker compose down
+docker system prune -a --volumes
 ```
 
 <details>

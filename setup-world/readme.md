@@ -33,8 +33,11 @@ For the **full** builder flow (environment → world → contract → scripts), 
 
 ### 1. Clone and deploy the world
 
+Use a **stable tag** so builder-scaffold stays compatible if world-contracts has breaking changes on `main`. 
+**Stable tag:** `v0.0.14`
+
 ```bash
-git clone https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env   # fill in keys, ADMIN_ADDRESS, SPONSOR_ADDRESS, etc.
 pnpm install
