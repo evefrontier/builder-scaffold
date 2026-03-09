@@ -34,7 +34,6 @@ By the end you’ll have a deployed world (or use an existing one), a published 
 | [docker/](./docker/readme.md) | Dev container (Sui CLI + Node.js) — used by the Docker flow. |
 | [move-contracts/](./move-contracts/readme.md) | Custom Smart Assembly examples (e.g. [smart_gate_extension](./move-contracts/smart_gate_extension/)); build & publish. |
 | [ts-scripts/](./ts-scripts/readme.md) | TypeScript scripts to call your contracts; run after publishing. |
-| [setup-world/](./setup-world/readme.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
 
