@@ -120,6 +120,8 @@ pnpm configure-world localnet    # or testnet
 pnpm create-test-resources localnet   # or testnet
 ```
 
+> The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host, so files persist across restarts and are editable from your IDE.
+
 ## 6. Copy world artifacts into builder-scaffold
 
 ```bash
@@ -191,6 +193,7 @@ For the **smart_gate_extension** example (scripts are in the repo root):
 cd /workspace/builder-scaffold
 pnpm install
 pnpm configure-rules
+pnpm authorise-storage-unit
 pnpm authorise-gate
 pnpm issue-tribe-jump-permit
 pnpm jump-with-permit

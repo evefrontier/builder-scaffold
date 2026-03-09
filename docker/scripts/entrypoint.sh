@@ -37,23 +37,89 @@ EOF
   echo "[sui-dev] Keys created."
 fi
 
+# ---------- wait for postgres ----------
+if [ -n "${SUI_INDEXER_DB_URL:-}" ]; thenExpand commentComment on line L44
+  echo "[sui-dev] Waiting for Postgres to be ready..."
+  POSTGRES_READY=0
+  for i in {1..60}; do
+    if pg_isready -d "$SUI_INDEXER_DB_URL" >/dev/null 2>&1; then
+      echo "[sui-dev] Postgres is ready."
+      POSTGRES_READY=1
+      break
+    fi
+    sleep 1
+  done
+
+  if [ "$POSTGRES_READY" -ne 1 ]; then
+    echo "[sui-dev] ERROR: Postgres did not become ready" >&2
+    exit 1
+  fi
+
+  # Reset the indexer database before the node/indexer starts so there are
+  # no active connections that would cause DROP DATABASE to fail.
+  #
+  # Parse the database name from the URL.
+  # Supports:  postgresql://user:pass@host:port/dbname
+  #            postgresql://user:pass@host:port/dbname?options
+  DB_NAME="$(printf '%s' "$SUI_INDEXER_DB_URL" | sed -E 's|.*://[^/]*/([^?]*).*|\1|')"
+
+  # Guard 1: DB_NAME must be non-empty (URL parse failure).
+  if [ -z "$DB_NAME" ]; then
+    echo "[sui-dev] ERROR: could not parse a database name from SUI_INDEXER_DB_URL" >&2
+    exit 1
+  fi
+
+  # Guard 2: only allow safe identifiers — letters, digits, underscores,
+  # first character must not be a digit.  Rejects hyphens, spaces, injection, etc.
+  if ! printf '%s' "$DB_NAME" | grep -qE '^[a-zA-Z_][a-zA-Z0-9_]{0,62}$'; then
+    echo "[sui-dev] ERROR: parsed DB_NAME '$DB_NAME' is not a valid identifier." >&2
+    echo "          Use only letters, digits and underscores; must not start with a digit; max 63 chars." >&2
+    exit 1
+  fi
+
+  # Build an admin connection URL targeting the always-present 'postgres' database
+  # so we can DROP / CREATE the target database while no one is connected to it.
+  ADMIN_DB_URL="$(printf '%s' "$SUI_INDEXER_DB_URL" | sed -E 's|(://[^/]*)/[^?]*|\1/postgres|')"
+
+  echo "[sui-dev] Resetting indexer database '$DB_NAME' before node start..."
+
+  # DB_NAME has been validated above (^[a-zA-Z_][a-zA-Z0-9_]{0,62}$), so it is
+  # safe to embed inside SQL double-quotes.  Standard double-quoting is used
+  # instead of psql :"variable" interpolation, which is unreliable across psql
+  # versions when passed via -c.
+  # ON_ERROR_STOP=1 ensures non-zero exit on SQL errors.
+  # stderr is intentionally NOT redirected so failures are fully visible.
+  psql "$ADMIN_DB_URL" \
+    --set ON_ERROR_STOP=1 \
+    -c "DROP DATABASE IF EXISTS \"${DB_NAME}\"" \
+    -c "CREATE DATABASE \"${DB_NAME}\""
+
+  echo "[sui-dev] Indexer database '$DB_NAME' ready."
+fi
+
 # ---------- start local node ----------
 echo "[sui-dev] Starting local Sui node..."
-sui start --with-faucet --force-regenesis &
+if [ -n "${SUI_INDEXER_DB_URL:-}" ]; then
+  sui start --with-faucet --force-regenesis --with-indexer="$SUI_INDEXER_DB_URL" --with-graphql=0.0.0.0:9125 &
+else
+  sui start --with-faucet --force-regenesis &
+fi
+
 NODE_PID=$!
 trap 'kill "$NODE_PID" 2>/dev/null || true' EXIT
 
 echo "[sui-dev] Waiting for RPC on port 9000..."
-for i in $(seq 1 30); do
+for i in $(seq 1 60); do
   curl -s -o /dev/null http://127.0.0.1:9000 2>/dev/null && break
-  if [ "$i" -eq 30 ]; then
+  if [ "$i" -eq 60 ]; then
     echo "[sui-dev] ERROR: RPC did not become ready" >&2
     kill $NODE_PID 2>/dev/null || true
     exit 1
   fi
   sleep 1
 done
-sleep 2
+echo "[sui-dev] RPC responding, waiting for full initialization..."
+sleep 5
 echo "[sui-dev] RPC ready."
 
 # ---------- fund accounts ----------

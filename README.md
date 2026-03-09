@@ -18,6 +18,7 @@ cd builder-scaffold
 |------|--------------|
 | **[Docker](./docs/builder-flow-docker.md)** | No Sui/Node on host; run everything in a container (local or testnet). |
 | **[Host](./docs/builder-flow-host.md)** | Sui CLI + Node.js on your machine; target local or testnet. |
+| **[Building on an existing world](./docs/building-on-existing-world.md)** | World already deployed (e.g. shared server, live game) *(WIP)* |
 
 By the end you’ll have a deployed world, a published custom contract (e.g. `smart_gate_extension`), and scripts that call it.
 

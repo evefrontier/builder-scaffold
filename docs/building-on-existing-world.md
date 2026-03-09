@@ -8,4 +8,4 @@ Planned topics:
 - **Object discovery** — No local `extracted-object-ids.json`; discovering world object IDs via RPC/GraphQL or a helper.
 
 
-Until this doc is written, use the [Docker](./builder-flow-docker.md) or [Host](./builder-flow-host.md) flow for localnet/testnet where you deploy the world; see [Auth and signers](./auth-and-signers.md) for who signs vs who sponsors each operation.
+Until this doc is written, use the [Docker](./builder-flow-docker.md) or [Host](./builder-flow-host.md) flow for localnet/testnet where you deploy the world;

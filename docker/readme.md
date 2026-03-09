@@ -85,6 +85,24 @@ sui client switch --env localnet
 
 Wait until the container logs `RPC ready` before connecting. Import keys from `docker/.env.sui` if needed.
 
+## PostgreSQL Indexer & GraphQLExpand commentComment on line L86
+
+The compose setup includes PostgreSQL indexer and GraphQL support via `docker-compose.override.yml`.
+
+**GraphQL endpoint**: `http://localhost:9125/graphql`
+
+The indexer database is **automatically reset** on each container start to match the `--force-regenesis` behavior, ensuring the blockchain and indexer state stay synchronized.
+
+To query via GraphQL from your host:
+
+```bash
+curl -X POST http://localhost:9125/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ chainIdentifier }"}'
+```
+
+Or use a GraphQL client like [Altair](https://altairgraphql.dev/) or [Insomnia](https://insomnia.rest/).
+
 ## Clean up / fresh start
 
 To fully reset — including regenerating all keypairs and picking up any changes to `entrypoint.sh`:
@@ -92,11 +110,21 @@ To fully reset — including regenerating all keypairs and picking up any change
 ```bash
 cd docker
 docker compose down -v          # stop container and delete the sui-config volume
+docker compose build
 docker compose run --rm --service-ports sui-dev
 ```
 
 - `down -v` removes the `sui-config` volume so the next start is treated as first-run (new keys generated).
 - `--build` is optional and only needed if `Dockerfile` or `scripts/entrypoint.sh` has changed since the image was last built. Omit it for faster restarts when you only want to reset the chain state and keys.
+
+- If you are still having problems you can stop the containers and do a full prune
+> [!WARNING]
+> This deletes all your containers, volumes, and images not currently in use.
+
+```bash
+docker compose down
+docker system prune -a --volumes
+```
 
 > **Example:** after pulling a builder-scaffold update that adds a new player key to `entrypoint.sh`, add `--build` so the new image is built before the volume is recreated.
 
