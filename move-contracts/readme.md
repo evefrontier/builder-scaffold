@@ -4,7 +4,7 @@ Build custom contracts to change the default behaviour of Smart Assemblies. You 
 
 Examples for extending EVE Frontier Smart Assemblies by defining a typed struct in a custom contract and calling the extendable world functions:
 
-- [Smart Gate example](./smart_gate/)
+- [Smart Gate example](./smart_gate_extension/)
 - [Smart Storage Unit example](./storage_unit/)
 <!-- - [Smart Turret example](./turret/) -->
 
@@ -15,12 +15,12 @@ See [typed witness pattern](https://github.com/evefrontier/world-contracts/blob/
 - Sui CLI or [Docker](../docker/readme.md)
 - [Deployed world](../setup-world/readme.md)
 
-## Build and publish (e.g. smart_gate)
+## Build and publish (e.g. smart_gate_extension)
 
 ### Build 
 
 ```bash
-cd move-contracts/smart_gate
+cd move-contracts/smart_gate_extension
 sui move build -e testnet
 ```
 

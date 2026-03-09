@@ -27,7 +27,7 @@ export function resolveSmartGateExtensionIdsFromEnv(): {
 }
 
 /**
- * Resolve smart_gate extension IDs (env + AdminCap for the given owner).
+ * Resolve smart_gate_extension IDs (env + AdminCap for the given owner).
  * BUILDER_PACKAGE_ID and EXTENSION_CONFIG_ID come from .env (set after publishing).
  */
 export async function resolveSmartGateExtensionIds(
@@ -46,7 +46,7 @@ export async function resolveSmartGateExtensionIds(
     if (!adminCapId) {
         throw new Error(
             `AdminCap not found for ${ownerAddress}. ` +
-                `Make sure this address published the smart_gate package.`
+                `Make sure this address published the smart_gate_extension package.`
         );
     }
 

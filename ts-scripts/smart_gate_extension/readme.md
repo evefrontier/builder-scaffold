@@ -1,6 +1,6 @@
 # Smart Gate example
 
-After publishing [move-contracts/smart_gate](../../move-contracts/smart_gate/), run these scripts from the repo root in order:
+After publishing [move-contracts/smart_gate_extension](../../move-contracts/smart_gate_extension/), run these scripts from the repo root in order:
 
 ```bash
 # 1. Configure extension rules (tribe config + bounty config)

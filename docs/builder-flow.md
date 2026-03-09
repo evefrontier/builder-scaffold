@@ -70,10 +70,10 @@ Set in `.env`:
 
 ## Publish custom contract
 
-Use any example (e.g. **smart_gate** or **storage_unit**) from `move-contracts/`:
+Use any example (e.g. **smart_gate_extension** or **storage_unit**) from `move-contracts/`:
 
 ```bash
-cd move-contracts/smart_gate   # or storage_unit, or your package
+cd move-contracts/smart_gate_extension   # or storage_unit, or your package
 ```
 
 - **Localnet:**  
@@ -87,12 +87,12 @@ Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` fr
 
 ## Interact with Custom Contract
 
-From **builder-scaffold** root (e.g. for **smart_gate**):
+From **builder-scaffold** root (e.g. for **smart_gate_extension**):
 
 <!-- TODO: You can add references to additional example scripts when they're available -->
 
 ```bash
-cd ..   # builder-scaffold root if you were in move-contracts/smart_gate
+cd ..   # builder-scaffold root if you were in move-contracts/smart_gate_extension
 pnpm install
 pnpm configure-rules
 pnpm authorise-gate

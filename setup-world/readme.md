@@ -73,6 +73,6 @@ cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet
 
 ## Next steps
 
-- [Move contracts](../move-contracts/readme.md) — build and publish your extension (e.g. `smart_gate`)
+- [Move contracts](../move-contracts/readme.md) — build and publish your extension (e.g. `smart_gate_extension`)
 - [TypeScript scripts](../ts-scripts/readme.md) — run scripts against the seeded resources
 - Full flow in one place: [Docker](../docs/builder-flow-docker.md) or [Host](../docs/builder-flow-host.md)

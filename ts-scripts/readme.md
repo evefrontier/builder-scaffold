@@ -6,7 +6,7 @@ Interact with your deployed extension contracts from TypeScript.
 
 1. World contracts deployed and configured (see [setup-world](../setup-world/readme.md)), or you're building on an existing world — [building-on-existing-world](../docs/building-on-existing-world.md) guide (coming soon)
 2. In both cases: `deployments/` and `test-resources.json` for that world copied to this repo's root
-3. Your extension package published (e.g. `smart_gate`)
+3. Your extension package published (e.g. `smart_gate_extension`)
 
 ## Setup
 
@@ -18,7 +18,7 @@ pnpm install
 
 Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output.
 
-For the Smart Gate example script order, see [smart_gate/readme.md](./smart_gate/readme.md).
+For the Smart Gate example script order, see [smart_gate_extension/readme.md](./smart_gate_extension/readme.md).
 
 ## Customization
 

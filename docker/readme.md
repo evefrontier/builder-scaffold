@@ -71,7 +71,7 @@ For TS scripts and world-contracts, manually fill in the `.env` files with your 
 | Import a key | `sui keytool import <key> ed25519` |
 | Stop local node | `pkill -f "sui start"` |
 | Generate world-contracts .env | `/workspace/scripts/generate-world-env.sh` |
-| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
+| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate_extension && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
 ## Connect to local node from host
