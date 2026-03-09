@@ -18,27 +18,7 @@ pnpm install
 
 Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output.
 
-## Example: interact with custom Smart Gate
-
-After publishing `move-contracts/smart_gate/`, run the scripts in order:
-
-```bash
-# 1. Configure extension rules (tribe config + bounty config)
-pnpm configure-rules
-
-# 2. Authorize the extension on gates and storage unit
-pnpm authorise-gate
-pnpm authorise-storage-unit
-
-# 3. Issue a jump permit (tribe-based) — typically happens in a dApp
-pnpm issue-tribe-jump-permit
-
-# 4. Jump using the permit — typically happens in the game UI
-pnpm jump-with-permit
-
-# 5. Collect corpse bounty for a jump permit
-pnpm collect-corpse-bounty
-```
+For the Smart Gate example script order, see [smart_gate/readme.md](./smart_gate/readme.md).
 
 ## Customization
 
