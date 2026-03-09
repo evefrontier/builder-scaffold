@@ -21,7 +21,7 @@ You get a fresh local node, three funded accounts, and the workspace at `/worksp
 
 ## 2. Choose your network
 
-Use localnet or switch to testnet [Using testnet instructions](../docker/readme.md#using-testnet).
+Use localnet, or switch to testnet (see [Using testnet](../docker/readme.md#using-testnet)).
 
 ## 3. Run the end-to-end flow
 

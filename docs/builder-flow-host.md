@@ -57,9 +57,7 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 
 </details>
 
-```bash
-sui client switch --env localnet   # or testnet
-```
+Switch your CLI to the network you're using: `sui client switch --env localnet` or `sui client switch --env testnet`.
 
 ## 3. Fund keys (same in three places)
 
