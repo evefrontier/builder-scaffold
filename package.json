@@ -9,8 +9,8 @@
     "fmt:check": "prettier --check \"move-contracts/**/*.move\" \"ts-scripts/**/*.ts\"",
     "lint": "sh scripts/lint-move.sh",
     "configure-rules": "tsx ts-scripts/smart_gate_extension/configure-rules.ts",
-    "authorise-gate": "tsx ts-scripts/smart_gate_extension/authorise-gate.ts",
-    "authorise-storage-unit": "tsx ts-scripts/smart_gate_extension/authorise-storage-unit.ts",
+    "authorise-gate-extension": "tsx ts-scripts/smart_gate_extension/authorise-gate-extension.ts",
+    "authorise-storage-unit-extension": "tsx ts-scripts/smart_gate_extension/authorise-storage-unit-extension.ts",
     "issue-tribe-jump-permit": "tsx ts-scripts/smart_gate_extension/issue-tribe-jump-permit.ts",
     "jump-with-permit": "tsx ts-scripts/smart_gate_extension/jump-with-permit.ts",
     "collect-corpse-bounty": "tsx ts-scripts/smart_gate_extension/collect-corpse-bounty.ts"
