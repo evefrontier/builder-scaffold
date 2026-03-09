@@ -70,10 +70,10 @@ Set in `.env`:
 
 ## Publish custom contract
 
-Use any example (e.g. **smart_gate_extension** or **storage_unit**) from `move-contracts/`:
+Use any example (e.g. **smart_gate_extension** or **storage_unit_extension**) from `move-contracts/`:
 
 ```bash
-cd move-contracts/smart_gate_extension   # or storage_unit, or your package
+cd move-contracts/smart_gate_extension   # or storage_unit_extension, or your package
 ```
 
 - **Localnet:**  
@@ -95,8 +95,8 @@ From **builder-scaffold** root (e.g. for **smart_gate_extension**):
 cd ..   # builder-scaffold root if you were in move-contracts/smart_gate_extension
 pnpm install
 pnpm configure-rules
-pnpm authorise-gate
-pnpm authorise-storage-unit
+pnpm authorise-gate-extension
+pnpm authorise-storage-unit-extension
 pnpm issue-tribe-jump-permit
 pnpm jump-with-permit
 pnpm collect-corpse-bounty

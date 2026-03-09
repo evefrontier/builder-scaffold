@@ -11,10 +11,10 @@ import {
     requireEnv,
 } from "../utils/helper";
 import { requireBuilderPackageId } from "./extension-ids";
-import { getOwnerCap as getStorageUnitOwnerCap } from "../helpers/storage-unit";
+import { getOwnerCap as getStorageUnitOwnerCap } from "../helpers/storage-unit-extension";
 import { MODULE } from "./modules";
 
-async function authoriseStorageUnit(
+async function authoriseStorageUnitExtension(
     ctx: ReturnType<typeof initializeContext>,
     storageUnitItemId: bigint,
     characterItemId: bigint
@@ -67,7 +67,7 @@ async function authoriseStorageUnit(
         options: { showEffects: true, showObjectChanges: true, showEvents: true },
     });
 
-    console.log("Extension authorized on storage unit!", storageUnitId);
+    console.log("Storage unit extension authorized!", storageUnitId);
     console.log("Auth type:", authType);
     console.log("Transaction digest:", result.digest);
 }
@@ -79,7 +79,7 @@ async function main() {
         const playerKey = requireEnv("PLAYER_A_PRIVATE_KEY");
         const ctx = initializeContext(env.network, playerKey);
         await hydrateWorldConfig(ctx);
-        await authoriseStorageUnit(ctx, STORAGE_A_ITEM_ID, BigInt(GAME_CHARACTER_ID));
+        await authoriseStorageUnitExtension(ctx, STORAGE_A_ITEM_ID, BigInt(GAME_CHARACTER_ID));
     } catch (error) {
         handleError(error);
     }

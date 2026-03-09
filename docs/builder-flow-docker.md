@@ -1,6 +1,6 @@
 # Builder flow: Docker
 
-Run the full builder-scaffold flow inside the Sui dev container — no Sui tools needed on your host. The same steps work for any extension example (**smart_gate_extension**, **storage_unit**, or your own); the shared flow uses **smart_gate_extension** for publish and scripts.
+Run the full builder-scaffold flow inside the Sui dev container — no Sui tools needed on your host. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); the shared flow uses **smart_gate_extension** for publish and scripts.
 
 ## Prerequisites
 

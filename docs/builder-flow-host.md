@@ -1,6 +1,6 @@
 # Builder flow: Host
 
-Run the builder-scaffold flow on your host, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate_extension**, **storage_unit**, or your own); the shared flow uses **smart_gate_extension** for publish and scripts.
+Run the builder-scaffold flow on your host, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); the shared flow uses **smart_gate_extension** for publish and scripts.
 
 > **Prefer Docker?** See [builder-flow-docker.md](builder-flow-docker.md) to run the full flow inside a container with no host tooling.
 

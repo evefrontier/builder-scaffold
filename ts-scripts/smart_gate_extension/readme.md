@@ -6,9 +6,9 @@ After publishing [move-contracts/smart_gate_extension](../../move-contracts/smar
 # 1. Configure extension rules (tribe config + bounty config)
 pnpm configure-rules
 
-# 2. Authorize the extension on gates and storage unit
-pnpm authorise-gate
-pnpm authorise-storage-unit
+# 2. Authorize the extension on gates and storage unit extension
+pnpm authorise-gate-extension
+pnpm authorise-storage-unit-extension
 
 # 3. Issue a jump permit (tribe-based) — typically in a dApp
 pnpm issue-tribe-jump-permit

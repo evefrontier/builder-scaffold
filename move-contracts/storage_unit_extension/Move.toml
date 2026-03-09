@@ -1,13 +1,13 @@
 [package]
-name = "tokens"
-edition = "2024"         # edition = "legacy" to use legacy (pre-2024) Move
+name = "storage_unit_extension"
+edition = "2024"                # edition = "legacy" to use legacy (pre-2024) Move
 # license = ""           # e.g., "MIT", "GPL", "Apache 2.0"
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
 [dependencies]
 
 [addresses]
-tokens = "0x0"
+storage_unit_extension = "0x0"
 
 # Use -e local for build/publish (local chain ID changes each run)
 [environments]
