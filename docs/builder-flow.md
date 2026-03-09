@@ -95,9 +95,11 @@ Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` fr
 
 <a id="run-scripts"></a>
 
-## 6. Run scripts
+## 6. Interact with Custom Contract
 
 From **builder-scaffold** root (e.g. for **smart_gate**):
+
+<!-- TODO: You can add refrences to additional example scripts when its available -->
 
 ```bash
 cd ..   # builder-scaffold root if you were in move-contracts/smart_gate

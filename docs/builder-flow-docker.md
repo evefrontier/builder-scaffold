@@ -33,7 +33,7 @@ Run all commands **inside the container**, in order:
 | 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
 | 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
 | 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
-| 5 | [Run scripts](builder-flow.md#run-scripts) |
+| 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
 
 **Docker context:** Paths are `/workspace/world-contracts` and `/workspace/builder-scaffold`. 
 

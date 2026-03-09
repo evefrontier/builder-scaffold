@@ -91,6 +91,6 @@ Run all commands **on your host**, in order:
 | 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
 | 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
 | 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
-| 5 | [Run scripts](builder-flow.md#run-scripts) |
+| 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
 
 **Host context:** **world-contracts** is a sibling of **builder-scaffold** (e.g. `workspace/world-contracts`, `workspace/builder-scaffold`). For step 1, use `cp env.example .env` in world-contracts and fill keys/addresses manually.
