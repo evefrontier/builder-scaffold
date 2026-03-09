@@ -12,7 +12,7 @@ Run the builder-scaffold flow on your host, targeting **testnet** or a **local n
 
 ## 1. Clone builder-scaffold (if needed)
 
-See [Clone builder-scaffold](builder-flow.md#clone-builder-scaffold).
+See [README Quickstart](../README.md#quickstart).
 
 ## 2. Choose your network
 
@@ -83,14 +83,14 @@ Use the three keys in `docker/.env.sui`; import them into keytool and copy into 
 
 ## 4. Run the end-to-end flow
 
-Run all commands **on your host**, in order:
+Run all commands **on your host**, in order. 
 
-| Step | Link |
-|------|------|
+| Step | Section |
+|------|---------|
 | 1 | [Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources) |
 | 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
 | 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
 | 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
 | 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
 
-**Host context:** **world-contracts** is a sibling of **builder-scaffold** (e.g. `workspace/world-contracts`, `workspace/builder-scaffold`). For step 1, use `cp env.example .env` in world-contracts and fill keys/addresses manually.
+**Host context:** **world-contracts** is a sibling of **builder-scaffold** (e.g. `workspace/world-contracts`, `workspace/builder-scaffold`). For the first section (deploy world), use `cp env.example .env` in world-contracts and fill keys/addresses manually.

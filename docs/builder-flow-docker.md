@@ -5,7 +5,7 @@ Run the full builder-scaffold flow inside the Sui dev container — no Sui tools
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) installed
-- [Clone builder-scaffold](builder-flow.md#clone-builder-scaffold).
+- [README Quickstart](../README.md#quickstart) — clone builder-scaffold.
 
 
 ## 1. Start the container
@@ -25,18 +25,26 @@ Use localnet or switch to testnet [Using testnet instructions](../docker/readme.
 
 ## 3. Run the end-to-end flow
 
-Run all commands **inside the container**, in order:
+Run all commands **inside the container**, in order. Each link opens the shared section in [builder-flow.md](builder-flow.md):
 
-| Step | Link |
-|------|------|
+| Step | Section |
+|------|---------|
 | 1 | [Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources) |
 | 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
 | 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
 | 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
 | 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
 
-**Docker context:** Paths are `/workspace/world-contracts` and `/workspace/builder-scaffold`. 
+**Docker context:** Paths are `/workspace/world-contracts` and `/workspace/builder-scaffold`. For the first section (deploy world), create `.env` by running `/workspace/scripts/generate-world-env.sh` ([docker/readme.md](../docker/readme.md)).
 
-For step 1 `.env`, run `/workspace/scripts/generate-world-env.sh` ([docker/readme.md](../docker/readme.md)).
+## 4. Tear down the container when done
 
-More: [docker/readme.md](../docker/readme.md) — useful commands, cleanup, troubleshooting.
+1. **Exit the container** — in the terminal where the container is running, type `exit` (or press Ctrl+D).
+2. **Stop and remove the containers** — from your host:
+
+```bash
+cd docker
+docker compose down
+```
+
+Otherwise the container keeps running in the background. For a full clean slate (including volumes) or troubleshooting, see [docker/readme.md — Clean up / fresh start](../docker/readme.md#clean-up--fresh-start).

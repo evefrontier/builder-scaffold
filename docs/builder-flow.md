@@ -2,30 +2,20 @@
 
 End-to-end flow to test builder-scaffold against world-contracts.
 
-- **Docker:** [builder-flow-docker.md](./builder-flow-docker.md) — full flow inside a container (local or testnet), no host tooling required.
-- **Host:** [builder-flow-host.md](./builder-flow-host.md) — run on host with Sui CLI and Node.js installed (local or testnet).
+**Choose one path, then follow that guide’s steps from start to finish:**
 
-The steps below are shared instructions for both flows: 
+| Choice | Guide | When to use it |
+|--------|--------|----------------|
+| **Docker** | [builder-flow-docker.md](./builder-flow-docker.md) | No Sui/Node on your machine; run everything in a container (local or testnet). |
+| **Host** | [builder-flow-host.md](./builder-flow-host.md) | Sui CLI and Node.js on your machine; target local or testnet from the host. |
 
 **Path convention:** Ensure **world-contracts** is a sibling of **builder-scaffold** in your workspace (e.g. `workspace/world-contracts` and `workspace/builder-scaffold` on host, or `/workspace/world-contracts` and `/workspace/builder-scaffold` in Docker). All commands use paths relative to that layout.
 
 ---
 
-<a id="clone-builder-scaffold"></a>
-
-## 1. Clone builder-scaffold (if needed)
-
-See the main [README Quickstart](../README.md#quickstart):
-
-```bash
-mkdir -p workspace && cd workspace
-git clone https://github.com/evefrontier/builder-scaffold.git
-cd builder-scaffold
-```
-
 <a id="deploy-world-and-create-test-resources"></a>
 
-## 2. Deploy world and create test resources
+## Deploy world and create test resources
 
 > **Coming soon:** These manual steps will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
 
@@ -51,7 +41,7 @@ pnpm create-test-resources localnet   # or testnet
 
 <a id="copy-world-artifacts-into-builder-scaffold"></a>
 
-## 3. Copy world artifacts into builder-scaffold
+## Copy world artifacts into builder-scaffold
 
 ```bash
 NETWORK=localnet   # or testnet
@@ -63,7 +53,7 @@ cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet
 
 <a id="configure-builder-scaffold-env"></a>
 
-## 4. Configure builder-scaffold .env
+## Configure builder-scaffold .env
 
 ```bash
 cd ../builder-scaffold
@@ -78,7 +68,7 @@ Set in `.env`:
 
 <a id="publish-custom-contract"></a>
 
-## 5. Publish custom contract
+## Publish custom contract
 
 Use any example (e.g. **smart_gate** or **storage_unit**) from `move-contracts/`:
 
@@ -95,7 +85,7 @@ Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` fr
 
 <a id="run-scripts"></a>
 
-## 6. Interact with Custom Contract
+## Interact with Custom Contract
 
 From **builder-scaffold** root (e.g. for **smart_gate**):
 
