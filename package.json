@@ -4,6 +4,9 @@
   "type": "module",
   "packageManager": "pnpm@10.17.0",
   "scripts": {
+    "setup-world": "bash scripts/setup-world.sh",
+    "clean-world": "bash scripts/clean-world-artifacts.sh",
+    "rebuild-world": "bash scripts/setup-world.sh --clean",
     "fmt": "prettier --write \"move-contracts/**/*.move\"",
     "fmt:ts": "prettier --write \"ts-scripts/**/*.ts\"",
     "fmt:check": "prettier --check \"move-contracts/**/*.move\" \"ts-scripts/**/*.ts\"",
