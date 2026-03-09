@@ -2,6 +2,11 @@
 
 Templates and tools for building on EVE Frontier.
 
+## Prerequisites
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
+
 ## Quickstart
 
 **1. Clone the repo**:
@@ -22,11 +27,6 @@ cd builder-scaffold
 
 By the end you’ll have a deployed world (or use an existing one), a published custom contract (e.g. `smart_gate`), and scripts that call it.
 
-## Prerequisites
-
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Docker](https://docs.docker.com/get-docker/) (for Docker path) **or** [Sui CLI](https://docs.sui.io/guides/developer/getting-started) + Node.js (for Host path)
-
 ## What's in this repo
 
 | Area | Purpose |
@@ -37,7 +37,6 @@ By the end you’ll have a deployed world (or use an existing one), a published 
 | [setup-world/](./setup-world/readme.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
-
 
 ## Contributing
 

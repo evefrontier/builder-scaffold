@@ -1,123 +1,42 @@
 # Builder flow: Docker
 
-Run the full builder-scaffold flow entirely inside Docker — no Sui tools needed on your host. The same steps work for any extension example (**smart_gate**, **storage_unit**, or your own); this guide uses **smart_gate** for the publish and run-scripts steps.
+Run the full builder-scaffold flow inside the Sui dev container — no Sui tools needed on your host. The same steps work for any extension example (**smart_gate**, **storage_unit**, or your own); the shared flow uses **smart_gate** for publish and scripts.
 
-## 1. Prerequisites
+## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) installed
+- [Clone builder-scaffold](builder-flow.md#clone-builder-scaffold).
 
-## 2. Clone builder-scaffold (if needed)
 
-If you haven’t already, run the [common clone step](../README.md#quickstart) from the main README:
+## 1. Start the container
 
-```bash
-mkdir -p workspace && cd workspace
-git clone https://github.com/evefrontier/builder-scaffold.git
-cd builder-scaffold
-```
-
-## 3. Start the container
+See [docker/readme.md — Quick start](../docker/readme.md#quick-start):
 
 ```bash
 cd docker
 docker compose run --rm --service-ports sui-dev
 ```
 
-On first run the container creates three funded accounts (`ADMIN`, `PLAYER_A`, `PLAYER_B`). Keys persist across container restarts. Every start spins up a fresh local node and funds the accounts.
+You get a fresh local node, three funded accounts, and the workspace at `/workspace/` (see [Workspace layout](../docker/readme.md#workspace-layout)).
 
-Inside the container you have:
+## 2. Choose your network
 
-```
-/workspace/
-├── builder-scaffold/    # full repo (syncs with host)
-└── world-contracts/     # bind mount — clone here (syncs with host)
-```
+Use localnet or switch to testnet [Using testnet instructions](../docker/readme.md#using-testnet).
 
-## 4. Switch to testnet (optional)
+## 3. Run the end-to-end flow
 
-You can use testnet the same way you would on your host
+Run all commands **inside the container**, in order:
 
-```bash
-sui client switch --env testnet
-sui keytool import <your-private-key> ed25519
-sui client faucet
-```
+| Step | Link |
+|------|------|
+| 1 | [Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources) |
+| 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
+| 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
+| 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
+| 5 | [Run scripts](builder-flow.md#run-scripts) |
 
-<a id="deploy-world-and-create-test-resources"></a>
+**Docker context:** Paths are `/workspace/world-contracts` and `/workspace/builder-scaffold`. 
 
-## 5. Deploy world and create test resources
+For step 1 `.env`, run `/workspace/scripts/generate-world-env.sh` ([docker/readme.md](../docker/readme.md)).
 
-> **Coming soon:** These manual steps (clone, deploy, configure, seed, copy artifacts) will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
-
-```bash
-cd /workspace/world-contracts
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git .
-/workspace/scripts/generate-world-env.sh   # creates .env from docker/.env.sui keys
-pnpm install
-pnpm deploy-world localnet       # or testnet
-pnpm configure-world localnet    # or testnet
-pnpm create-test-resources localnet   # or testnet
-```
-
-> The `/workspace/world-contracts/` directory is a bind mount at `docker/world-contracts/` on your host, so files persist across restarts and are editable from your IDE.
-
-## 6. Copy world artifacts into builder-scaffold
-
-```bash
-NETWORK=localnet   # or testnet
-mkdir -p /workspace/builder-scaffold/deployments/$NETWORK/
-cp -r deployments/* /workspace/builder-scaffold/deployments/
-cp test-resources.json /workspace/builder-scaffold/test-resources.json
-cp "contracts/world/Pub.localnet.toml" "/workspace/builder-scaffold/deployments/localnet/Pub.localnet.toml"
-```
-
-## 7. Configure builder-scaffold .env
-
-```bash
-cd /workspace/builder-scaffold
-cp .env.example .env
-```
-
-Set the following in `.env`:
-- Same keys/addresses used during world deployment
-- `SUI_NETWORK=testnet` (or `localnet`)
-- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
-
-## 8. Publish custom contract
-
-Pick an example (e.g. **smart_gate** or **storage_unit**); use its folder in `move-contracts/`:
-
-```bash
-cd /workspace/builder-scaffold/move-contracts/smart_gate   # or storage_unit, or your package
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml  # localnet
-sui client publish --build-env testnet   # testnet
-```
-
-Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `/workspace/builder-scaffold/.env` from the publish output.
-
-## 9. Run scripts
-
-For the **smart_gate** example (scripts are in the repo root):
-
-```bash
-cd /workspace/builder-scaffold
-pnpm install
-pnpm configure-rules
-pnpm authorise-gate
-pnpm authorise-storage-unit
-pnpm issue-tribe-jump-permit
-pnpm jump-with-permit
-pnpm collect-corpse-bounty
-```
-
-## Useful commands
-
-| Task | Command |
-|------|---------|
-| View keys | `cat /workspace/builder-scaffold/docker/.env.sui` |
-| List addresses | `sui client addresses` |
-| Switch network | `sui client switch --env testnet` |
-| Import a key | `sui keytool import <key> ed25519` |
-| Build a contract | `cd /workspace/builder-scaffold/move-contracts/<example> && sui move build -e testnet` |
-
-See [docker/readme.md](../docker/readme.md) for container setup details, rebuilding, cleanup, and troubleshooting.
+More: [docker/readme.md](../docker/readme.md) — useful commands, cleanup, troubleshooting.
