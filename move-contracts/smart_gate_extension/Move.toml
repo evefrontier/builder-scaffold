@@ -1,6 +1,6 @@
 [package]
-name = "smart_gate"
-edition = "2024"    # edition = "legacy" to use legacy (pre-2024) Move
+name = "smart_gate_extension"
+edition = "2024"              # edition = "legacy" to use legacy (pre-2024) Move
 # license = ""           # e.g., "MIT", "GPL", "Apache 2.0"
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
@@ -15,4 +15,4 @@ world = { local = "../../../world-contracts/contracts/world" }
 # Read more about the package management system options:
 # https://docs.sui.io/guides/developer/sui-101/move-package-management
 [addresses]
-smart_gate = "0x0"
+smart_gate_extension = "0x0"

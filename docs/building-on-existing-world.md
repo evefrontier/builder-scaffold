@@ -4,7 +4,7 @@
 
 Planned topics:
 
-- **GovernorCap / AdminACL** — In the live game you don't hold GovernorCap or AdminACL enrollment. You only perform player-signer operations (e.g. issue permit, jump with permit, collect bounty). Admin operations (configure rules, authorise gates) are for local testing.
+- **GovernorCap / AdminACL** — In the live game you don't hold GovernorCap or AdminACL enrollment. You only perform player-signer operations (e.g. issue permit, jump with permit, collect bounty). Admin operations (configure rules, authorise-gate-extension, authorise-storage-unit-extension) are for local testing.
 - **Object discovery** — No local `extracted-object-ids.json`; discovering world object IDs via RPC/GraphQL or a helper.
 
 

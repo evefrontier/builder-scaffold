@@ -2,6 +2,8 @@
 
 One container with **Sui CLI**, **Node.js**, and **pnpm**. No host tooling needed.
 
+For the full builder-scaffold flow (world deploy → publish contract → run scripts) inside this container, see [builder-flow-docker.md](../docs/builder-flow-docker.md).
+
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) installed
@@ -17,6 +19,12 @@ On first run the container creates three ed25519 keypairs (`ADMIN`, `PLAYER_A`, 
 
 Every start spins up a fresh local Sui node and funds the accounts from the faucet.
 
+## What’s in the container
+
+- **Sui CLI** — build and publish Move packages, interact with localnet/testnet
+- **Node.js & pnpm** — run world-contracts and builder-scaffold TS scripts
+- **Pre-funded keys** — `ADMIN`, `PLAYER_A`, `PLAYER_B` in `docker/.env.sui` (and in container at `/workspace/builder-scaffold/docker/.env.sui`)
+
 ## Workspace layout
 
 ```
@@ -25,13 +33,7 @@ Every start spins up a fresh local Sui node and funds the accounts from the fauc
 └── world-contracts/     # bind mount — clone here on host, visible inside container
 ```
 
-Edit files on your host, run commands in the container:
-
-```bash
-cd /workspace/builder-scaffold/move-contracts/smart_gate
-sui move build -e testnet
-```
-> **Why `-e testnet` even for local builds?** The localnet chain ID changes on every restart, so you can't pin it in `Move.toml`. Using testnet as the build environment resolves dependencies correctly while publishing to your local node via [ephemeral publication](https://docs.sui.io/guides/developer/packages/move-package-management#test-publish).
+Edit files on your host, run commands in the container. To build and publish Move contracts, see [move-contracts/readme.md](../move-contracts/readme.md)
 
 ## Using testnet
 
@@ -69,7 +71,7 @@ For TS scripts and world-contracts, manually fill in the `.env` files with your 
 | Import a key | `sui keytool import <key> ed25519` |
 | Stop local node | `pkill -f "sui start"` |
 | Generate world-contracts .env | `/workspace/scripts/generate-world-env.sh` |
-| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate && sui move build -e testnet` |
+| Build a contract | `cd /workspace/builder-scaffold/move-contracts/smart_gate_extension && sui move build -e testnet` |
 | Run TS scripts | `cd /workspace/builder-scaffold && pnpm configure-rules` |
 
 ## Connect to local node from host
@@ -104,12 +106,12 @@ Or use a GraphQL client like [Altair](https://altairgraphql.dev/) or [Insomnia](
 ## Clean up / fresh start
 
 ```bash
-docker compose down --volumes
+docker compose down
 docker compose build
 docker compose run --rm --service-ports sui-dev
 ```
 
-If you are still having problems you can stop the containers and do a full prune
+If you are still having problems you can stop the containers and do a full prune:
 
 > [!WARNING]
 > This deletes all your containers, volumes, and images not currently in use.
@@ -119,25 +121,20 @@ docker compose down
 docker system prune -a --volumes
 ```
 
-<details>
-<summary>Troubleshooting</summary>
+## Troubleshooting
 
-1. Move.lock wrong env? `rm Move.lock && sui move build --build-env testnet`
+1. **Move.lock wrong env?**  
+   `rm Move.lock && sui move build -e testnet`
 
-2. "Unpublished dependencies: World"?
+2. **"Unpublished dependencies: World"?**  
+   Deploy world-contracts first (see [builder-flow.md — Deploy world and create test resources](../docs/builder-flow.md)), then pass its publication file:
 
-![publish error](../images/publish-error.png)
+   ```bash
+   sui client test-publish --build-env testnet --pubfile-path ../../deployments/localnet/Pub.localnet.toml
+   ```
 
-Deploy world-contracts first (see [builder-flow-docker.md](../docs/builder-flow-docker.md#deploy-world-and-create-test-resources)), then pass its publication file:
+   ![publish error](../images/publish-error.png)
 
-```bash
-sui client test-publish --build-env testnet --pubfile-path ../../deployments/Pub.localnet.toml
-```
-
-</details>
-
-<details>
-<summary>Windows PowerShell</summary>
+## Windows PowerShell
 
 Replace `$(pwd)` with `${PWD}` and use backticks (`` ` ``) for line continuation instead of `\`.
-</details>

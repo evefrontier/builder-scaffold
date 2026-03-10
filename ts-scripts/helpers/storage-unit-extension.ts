@@ -17,13 +17,13 @@ export async function getOwnerCap(
         });
 
         if (!bytes) {
-            console.warn("Error checking storage unit ownercap id");
+            console.warn("Error checking storage unit extension ownercap id");
             return null;
         }
         return bcs.Address.parse(bytes);
     } catch (error) {
         console.warn(
-            "Failed to get storage unit ownerCap:",
+            "Failed to get storage unit extension ownerCap:",
             error instanceof Error ? error.message : error
         );
         return null;
