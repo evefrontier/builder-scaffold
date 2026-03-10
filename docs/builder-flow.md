@@ -17,54 +17,22 @@ End-to-end flow to test builder-scaffold against world-contracts.
 
 ## Deploy world and create test resources
 
-> **Coming soon:** These manual steps will be simplified into a single setup command. Move package dependencies will resolve automatically using [MVR](https://docs.sui.io/guides/developer/packages/move-package-management).
+This deploys the in-game setup (Smart Character, Network Node, Storage Unit, two Smart Gates) so you have real on-chain objects to build against.
 
-From your workspace directory (parent of `builder-scaffold`), clone world-contracts and deploy:
-
-```bash
-cd ..   # workspace (parent of builder-scaffold)
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
-cd world-contracts
-```
-
-- **Docker:** Run `/workspace/scripts/generate-world-env.sh` to create `.env` from the container keys (see [docker/readme.md](../docker/readme.md)).
-- **Host:** `cp env.example .env` and set `SUI_NETWORK`, keys, and addresses (ADMIN, SPONSOR, etc.).
-
-Then:
+**Run** (from builder-scaffold root):
 
 ```bash
-pnpm install
-pnpm deploy-world localnet    # or testnet
-pnpm configure-world localnet # or testnet
-pnpm create-test-resources localnet   # or testnet
+cd builder-scaffold
+pnpm setup-world
 ```
 
-<a id="copy-world-artifacts-into-builder-scaffold"></a>
+- The script checks out the stable world-contracts version that builder-scaffold is tested against (defaults: localnet, stable tag). 
+- To test bleeding-edge features, override the world version in `.env` — set `WORLD_CONTRACTS_REF` to a branch or commit (see `.env.example`). You can also set `SUI_NETWORK`; for repo URL or clone path see `WORLD_CONTRACTS_REPO` and `WORLD_CONTRACTS_DIR` in `.env.example`.
 
-## Copy world artifacts into builder-scaffold
+**Clean and rebuild:** 
 
-```bash
-NETWORK=localnet   # or testnet
-mkdir -p ../builder-scaffold/deployments/$NETWORK/
-cp -r deployments/* ../builder-scaffold/deployments/
-cp test-resources.json ../builder-scaffold/test-resources.json
-cp "contracts/world/Pub.localnet.toml" "../builder-scaffold/deployments/localnet/Pub.localnet.toml"
-```
-
-<a id="configure-builder-scaffold-env"></a>
-
-## Configure builder-scaffold .env
-
-```bash
-cd ../builder-scaffold
-cp .env.example .env
-```
-
-Set in `.env`:
-
-- Same keys/addresses as used for world deployment
-- `SUI_NETWORK=testnet` or `localnet`
-- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
+- After a chain reset or world ref change: `pnpm rebuild-world`, or `pnpm clean-world` then `pnpm setup-world`. 
+- Use `pnpm clean-world -- --all` to remove all of `deployments/` and `test-resources.json`.
 
 <a id="publish-custom-contract"></a>
 
@@ -81,7 +49,23 @@ cd move-contracts/smart_gate_extension   # or storage_unit_extension, or your pa
 - **Testnet:**  
   `sui client publish -e testnet`
 
-Set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `builder-scaffold/.env` from the publish output.
+Note the publish output; you will set `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` in `.env` in the next step.
+
+<a id="configure-builder-scaffold-env"></a>
+
+## Configure builder-scaffold .env
+
+```bash
+cd /workspace/builder-scaffold/
+cp .env.example .env
+```
+
+Set in `.env`:
+
+- Same keys/addresses as used for world deployment
+- `SUI_NETWORK=testnet` or `localnet`
+- `WORLD_PACKAGE_ID` — from `deployments/<network>/extracted-object-ids.json` (`world.packageId`)
+- `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` — from the publish output (previous step)
 
 <a id="run-scripts"></a>
 
@@ -92,7 +76,7 @@ From **builder-scaffold** root (e.g. for **smart_gate_extension**):
 <!-- TODO: You can add references to additional example scripts when they're available -->
 
 ```bash
-cd ..   # builder-scaffold root if you were in move-contracts/smart_gate_extension
+# builder-scaffold root if you were in move-contracts/smart_gate_extension
 pnpm install
 pnpm configure-rules
 pnpm authorise-gate-extension

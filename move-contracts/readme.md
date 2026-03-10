@@ -13,7 +13,7 @@ See [typed witness pattern](https://github.com/evefrontier/world-contracts/blob/
 ## Prerequisites
 
 - Sui CLI or [Docker](../docker/readme.md)
-- [Deployed world](../setup-world/readme.md)
+- [Deployed world](../docs/builder-flow.md#deploy-world-and-create-test-resources)
 
 ## Build and publish (e.g. smart_gate_extension)
 

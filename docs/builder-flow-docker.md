@@ -25,17 +25,23 @@ Use localnet, or switch to testnet (see [Using testnet](../docker/readme.md#usin
 
 ## 3. Run the end-to-end flow
 
-Run all commands **inside the container**, in order. Each link opens the shared section in [builder-flow.md](builder-flow.md):
+Run all commands **inside the container**, in order. Details for each step are in [builder-flow.md](builder-flow.md).
 
-| Step | Section |
-|------|---------|
-| 1 | [Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources) |
-| 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
-| 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
-| 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
-| 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
+### 3a. Setup world
 
-**Docker context:** Paths are `/workspace/world-contracts` and `/workspace/builder-scaffold`. For the first section (deploy world), create `.env` by running `/workspace/scripts/generate-world-env.sh` ([docker/readme.md](../docker/readme.md)).
+[Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources), deploy, configure, create test resources, copy artifacts. Ensure the container is running; the script generates world-contracts `.env` from `docker/.env.sui` automatically.
+
+### 3b. Publish custom contract
+
+[Publish custom contract](builder-flow.md#publish-custom-contract) — build and publish your extension (e.g. smart_gate_extension) to the network.
+
+### 3c. Configure builder-scaffold .env
+
+[Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) — create `.env` and set keys, `SUI_NETWORK`, `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, `EXTENSION_CONFIG_ID`.
+
+### 3d. Interact with custom contract
+
+[Interact with Custom Contract](builder-flow.md#run-scripts) — run the TypeScript scripts against your published extension.
 
 ## 4. Tear down the container when done
 

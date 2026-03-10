@@ -36,12 +36,11 @@ See [README Quickstart](../README.md#quickstart).
 
    ```bash
    sui client new-env --alias localnet --rpc http://127.0.0.1:9000
-   sui client switch --env localnet
    ```
 
 3. Wait for the container to log **RPC ready** before running deploy/scripts.
 
-Import the container’s keys from `docker/.env.sui` into your host config if needed — see [docker/readme.md — Connect to local node from host](../docker/readme.md#connect-to-local-node-from-host).
+Import the container's keys from `docker/.env.sui` into your host config if needed — see [docker/readme.md — Connect to local node from host](../docker/readme.md#connect-to-local-node-from-host).
 
 **Using Sui CLI directly (node on host):**
 
@@ -59,36 +58,43 @@ sui client new-env --alias localnet --rpc http://127.0.0.1:9000
 
 Switch your CLI to the network you're using: `sui client switch --env localnet` or `sui client switch --env testnet`.
 
-## 3. Fund keys (same in three places)
+## 3. Make sure the keys are funded
 
-Use the same keys in: Sui keytool (for publish), world-contracts `.env`, and builder-scaffold `.env`.
+You need the same keys in three places: Sui keytool (for publish), world-contracts `.env` (created by `pnpm setup-world` from your keys), and builder-scaffold `.env`. Copy `.env.example` to `.env` first.
 
-**If using the Docker local node:**  
-Use the three keys in `docker/.env.sui`; import them into keytool and copy into both `.env` files. Localnet auto-funds them; for testnet, fund all three via the faucet.
+**If you use the Docker local node** (from step 2):
 
-**If using your own node (e.g. `sui start --with-faucet` on host):**
+- Use the 3 keys in `docker/.env.sui`; import them into keytool and copy into builder-scaffold `.env`. Localnet auto-funds them; for testnet, fund all 3 via the [faucet](https://faucet.sui.io/). See [docker/readme.md — Connect to local node from host](../docker/readme.md#connect-to-local-node-from-host).
 
-- Create three accounts (ADMIN, Player A, Player B):
-  - **New addresses:**  
-    `sui client new-address ed25519 --alias admin` (and `player-a`, `player-b`)
-  - **Or import:**  
-    `sui keytool import <PRIVATE_KEY_BASE64> ed25519 --alias admin` (and similarly for player-a, player-b)
-- Fund all three (local: `sui client faucet`; testnet: [faucet](https://faucet.sui.io/))
-- Get addresses: `sui client addresses`
-- For `.env` private keys: `sui keytool export --key admin` (and player-a, player-b)
-- Use ADMIN for publishing: `sui client switch --address <ADMIN_ADDRESS>`
-- Set these keys and addresses in world-contracts `.env` and builder-scaffold `.env` in the shared flow steps below.
+**If you use your own node** (e.g. `sui start --with-faucet` on host):
+
+- Create 3 accounts (ADMIN, PLAYER_A, PLAYER_B) **either** by:
+  - **Generating new addresses** with Sui CLI: `sui client new-address ed25519 --alias ADMIN`, then PLAYER_A, then PLAYER_B.
+  - **Or** importing existing private keys: `sui keytool import <PRIVATE_KEY> ed25519 --alias ADMIN` (and similarly for PLAYER_A, PLAYER_B).
+- Fund all 3 (local: `sui client faucet`; testnet: [faucet](https://faucet.sui.io/)).
+- Get addresses: `sui client addresses`. Export private keys for `.env` if needed: `sui keytool export --key-identity ADMIN --json` (and PLAYER_A, PLAYER_B).
+- Switch to ADMIN for publishing: `sui client switch --address <ADMIN_ADDRESS>`.
+- Fill builder-scaffold `.env`: ADMIN_ADDRESS, SPONSOR_ADDRESS (= ADMIN_ADDRESS), ADMIN_PRIVATE_KEY, PLAYER_A_PRIVATE_KEY, PLAYER_B_PRIVATE_KEY.
 
 ## 4. Run the end-to-end flow
 
-Run all commands **on your host**, in order. 
+Run all commands **on your host**, in order. Details for each step are in [builder-flow.md](builder-flow.md).
 
-| Step | Section |
-|------|---------|
-| 1 | [Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources) |
-| 2 | [Copy world artifacts into builder-scaffold](builder-flow.md#copy-world-artifacts-into-builder-scaffold) |
-| 3 | [Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) |
-| 4 | [Publish custom contract](builder-flow.md#publish-custom-contract) |
-| 5 | [Interact with Custom Contract](builder-flow.md#run-scripts) |
+### 4a. Setup world
 
-**Host context:** **world-contracts** is a sibling of **builder-scaffold** (e.g. `workspace/world-contracts`, `workspace/builder-scaffold`). For the first section (deploy world), use `cp env.example .env` in world-contracts and fill keys/addresses manually.
+[Deploy world and create test resources](builder-flow.md#deploy-world-and-create-test-resources): deploy, configure, create test resources, copy artifacts.
+
+- Run `pnpm setup-world`. It uses `.env` (from [step 3](#3-make-sure-the-keys-are-funded)).
+- If the script exits because keys are missing, ensure `.env` has the keys section filled (step 3), then run `pnpm setup-world` again.
+
+### 4b. Publish custom contract
+
+[Publish custom contract](builder-flow.md#publish-custom-contract) — build and publish your extension (e.g. smart_gate_extension) to the network.
+
+### 4c. Configure builder-scaffold .env
+
+[Configure builder-scaffold .env](builder-flow.md#configure-builder-scaffold-env) — create `.env` and set keys, `SUI_NETWORK`, `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, `EXTENSION_CONFIG_ID`.
+
+### 4d. Interact with custom contract
+
+[Interact with Custom Contract](builder-flow.md#run-scripts) — run the TypeScript scripts against your published extension.
