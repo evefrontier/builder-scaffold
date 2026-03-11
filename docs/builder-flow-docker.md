@@ -34,7 +34,7 @@ Run all commands **inside the container**.
 From your workspace directory (parent of `builder-scaffold`), clone world-contracts and deploy:
 
 ```bash
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.18 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 ```
 Run `/workspace/scripts/generate-world-env.sh` to create `.env` from the container keys (see [docker/readme.md](../docker/readme.md)).

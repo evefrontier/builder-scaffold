@@ -85,7 +85,7 @@ From your workspace directory (parent of `builder-scaffold`), clone `world-contr
 **Before running the commands below set these environment variables in these [world-contracts/.env](world-contracts/.env) file:**
 - `SUI_NETWORK` = testnet (or localnet)
 - `ADMIN_ADDRESS` = "sui client active-address"
-- `SPONSOR_ADDRESS` = "sui client active-address" can be the same as `ADMIN_ADDRESS`
+- `SPONSOR_ADDRESSES` = "sui client active-address" can be the same as `ADMIN_ADDRESS`
 - `ADMIN_PRIVATE_KEY` = "sui keytool export --key-identity <ADMIN_ADDRESS>" and copy the `exportedPrivateKey` (`suiprivkeyXYZ`)
 - `PLAYER_A_PRIVATE_KEY` = Create another wallet and get private key and fund it
 - `PLAYER_B_PRIVATE_KEY` = Create another wallet and get private key and fund it
@@ -96,11 +96,11 @@ The ADMIN_PRIVATE_KEY must have at least 5 sui.
 
 ```bash
 cd ..   # workspace (parent of builder-scaffold)
-git clone -b v0.0.14 https://github.com/evefrontier/world-contracts.git
+git clone -b v0.0.18 https://github.com/evefrontier/world-contracts.git
 cd world-contracts
 cp env.example .env
 # Set SUI_NETWORK=testnet (or localnet) and fill in your keys
-# For development, ADMIN_ADDRESS and SPONSOR_ADDRESS can be the same
+# For development, ADMIN_ADDRESS and SPONSOR_ADDRESSES can be the same
 # GOVERNOR_PRIVATE_KEY is optional or can be the same as ADMIN_PRIVATE_KEY
 pnpm install
 pnpm deploy-world localnet       # or testnet
