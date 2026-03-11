@@ -5,13 +5,15 @@ edition = "2024"                # edition = "legacy" to use legacy (pre-2024) Mo
 # authors = ["..."]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
 
 [dependencies]
-
-[addresses]
-storage_unit_extension = "0x0"
-
-# Use -e local for build/publish (local chain ID changes each run)
-[environments]
-local = "0x0"
+# When using git instead of local, use the stable tag (e.g. v0.0.18) so main breaking changes don't break the scaffold:
+# world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "contracts/world", rev = "v0.0.18" }
+# TODO: This will be changed to use the mvr to automatically resolve the dependencies based on the chain.
+# For now, we resolve the dependencies locally for fast iteration.
+world = { local = "../../../world-contracts/contracts/world" }
 
 # Read more about the package management system options:
 # https://docs.sui.io/guides/developer/sui-101/move-package-management
+[environments]
+testnet_internal = "4c78adac"
+testnet_utopia = "4c78adac"
+testnet_stillness = "4c78adac"
