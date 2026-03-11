@@ -76,9 +76,9 @@ async function collectCorpseBounty(
             tx.object(sourceGateId),
             tx.object(destinationGateId),
             tx.object(characterId),
-            tx.object(config.adminAcl),
             ownerCap,
             tx.pure.u64(ITEM_A_TYPE_ID),
+            tx.pure.u32(1),
             tx.object(CLOCK_OBJECT_ID),
         ],
     });
