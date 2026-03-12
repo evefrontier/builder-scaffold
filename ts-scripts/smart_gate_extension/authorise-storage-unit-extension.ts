@@ -6,7 +6,7 @@ import { GAME_CHARACTER_ID, STORAGE_A_ITEM_ID } from "../utils/constants";
 import {
     getEnvConfig,
     handleError,
-    hydrateWorldConfig,
+    getWorldConfig,
     initializeContext,
     requireEnv,
 } from "../utils/helper";
@@ -78,7 +78,7 @@ async function main() {
         const env = getEnvConfig();
         const playerKey = requireEnv("PLAYER_A_PRIVATE_KEY");
         const ctx = initializeContext(env.network, playerKey);
-        await hydrateWorldConfig(ctx);
+        getWorldConfig(ctx);
         await authoriseStorageUnitExtension(ctx, STORAGE_A_ITEM_ID, BigInt(GAME_CHARACTER_ID));
     } catch (error) {
         handleError(error);
