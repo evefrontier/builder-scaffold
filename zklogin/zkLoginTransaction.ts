@@ -35,7 +35,7 @@ const suiClient = new SuiGrpcClient({
 });
 
 // Fixed salt (TODO: Change to Enoki return)
-const USER_SALT = "000000";
+const USER_SALT = "30157080988633063191577607925242240860";
 
 // Helper to prompt user for input
 const promptUser = (question: string): Promise<string> => {
@@ -151,24 +151,20 @@ const createTestTransactionBytes = async (zkLoginUserAddress: string) => {
 
 // Execute the test transaction
 const executeTxn = async (
-    transactionBytesString: string,
+    txBytes: Uint8Array,
     jwt: string,
     ephemeralKeyPair: Ed25519Keypair,
     maxEpoch: number,
-    proof: any
+    proof: Record<string, unknown>
 ) => {
     const decodedJwt = jwtDecode(jwt) as JwtPayload;
 
-    const txBytes = Uint8Array.from(transactionBytesString.split(",").map(Number));
-
-    // Sign either the provided transaction bytes or the test transaction bytes if none is provided
     const signedBytes = await ephemeralKeyPair.signTransaction(txBytes);
 
     if (!decodedJwt.sub || !decodedJwt.aud || Array.isArray(decodedJwt?.aud)) {
         throw new Error("Missing or invalid decoded JWT fields");
     }
 
-    // Generate addressSeed
     const addressSeed: string = genAddressSeed(
         BigInt(USER_SALT),
         "sub",
@@ -279,7 +275,13 @@ const main = async () => {
                 continue;
             }
 
-            await executeTxn(txbytesString, jwt, ephemeralKeyPair, maxEpoch, proof);
+            // Else, format and build tx bytes for zklogin
+            const txBytesFormatted = Uint8Array.from(txbytesString.split(",").map(Number));
+            const txb = Transaction.from(txBytesFormatted);
+            txb.setSender(zkLoginUserAddress);
+            const txBytes = await txb.build({ client: suiClient });
+
+            await executeTxn(txBytes, jwt, ephemeralKeyPair, maxEpoch, proof);
 
             console.log("✅ Ready for next transaction\n");
             console.log("\n═".repeat(10));
