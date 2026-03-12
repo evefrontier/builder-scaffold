@@ -8,7 +8,7 @@ import {
     CLOCK_OBJECT_ID,
 } from "../utils/constants";
 import type { Network } from "../utils/config";
-import { handleError, hydrateWorldConfig, initializeContext, requireEnv } from "../utils/helper";
+import { handleError, getWorldConfig, initializeContext, requireEnv } from "../utils/helper";
 import { resolveSmartGateExtensionIdsFromEnv } from "./extension-ids";
 import { MODULE } from "./modules";
 
@@ -58,7 +58,7 @@ async function main() {
         const network = (process.env.SUI_NETWORK as Network) || "localnet";
         const playerKey = requireEnv("PLAYER_B_PRIVATE_KEY");
         const ctx = initializeContext(network, playerKey);
-        await hydrateWorldConfig(ctx);
+        getWorldConfig(ctx);
         await issueJumpPermit(ctx, GATE_ITEM_ID_1, GATE_ITEM_ID_2, BigInt(GAME_CHARACTER_B_ID));
     } catch (error) {
         handleError(error);

@@ -7,19 +7,15 @@ import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 export const EXTRACTED_OBJECT_IDS_FILENAME = "extracted-object-ids.json";
 export const PUBLISH_OUTPUT_FILENAME = "publish.json";
 
+/** Only what scripts need to talk to a deployed world. */
 export type WorldObjectIds = {
-    governorCap: string;
-    serverAddressRegistry: string;
     objectRegistry: string;
     adminAcl: string;
-    energyConfig: string;
-    fuelConfig: string;
-    gateConfig: string;
 };
 
 export type ExtractedObjectIds = {
-    network: string;
-    world: WorldObjectIds & { packageId: string };
+    network?: string;
+    world?: { packageId: string; objectRegistry?: string; adminAcl?: string };
     builder?: {
         packageId: string;
         extensionConfigId: string;
@@ -31,8 +27,6 @@ export type WorldConfig = {
     url: string;
     packageId: string;
 } & WorldObjectIds;
-
-export type HydratedWorldConfig = WorldConfig;
 
 export type Network = "localnet" | "testnet" | "devnet" | "mainnet";
 
@@ -67,31 +61,23 @@ export function keypairFromPrivateKey(privateKey: string): Ed25519Keypair {
 export function getConfig(network: Network = "localnet"): WorldConfig {
     const url = process.env.SUI_RPC_URL || DEFAULT_RPC_URLS[network];
     const packageId = process.env.WORLD_PACKAGE_ID || "";
+    const objectRegistry = process.env.OBJECT_REGISTRY || "";
+    const adminAcl = process.env.ADMIN_ACL || "";
 
     return {
         url,
         packageId,
-        governorCap: "",
-        serverAddressRegistry: "",
-        objectRegistry: "",
-        adminAcl: "",
-        energyConfig: "",
-        fuelConfig: "",
-        gateConfig: "",
+        objectRegistry,
+        adminAcl,
     };
 }
 
 // World package module names
 export const MODULES = {
     WORLD: "world",
-    ACCESS: "access",
-    SIG_VERIFY: "sig_verify",
-    LOCATION: "location",
     CHARACTER: "character",
-    NETWORK_NODE: "network_node",
     ASSEMBLY: "assembly",
     STORAGE_UNIT: "storage_unit",
     GATE: "gate",
-    FUEL: "fuel",
-    ENERGY: "energy",
+    TURRET: "turret",
 } as const;

@@ -14,7 +14,7 @@ import {
 import {
     getEnvConfig,
     handleError,
-    hydrateWorldConfig,
+    getWorldConfig,
     initializeContext,
     requireEnv,
 } from "../utils/helper";
@@ -108,7 +108,7 @@ async function main() {
     try {
         const env = getEnvConfig();
         const adminCtx = initializeContext(env.network, env.adminExportedKey);
-        await hydrateWorldConfig(adminCtx);
+        getWorldConfig(adminCtx);
 
         const playerKey = requireEnv("PLAYER_B_PRIVATE_KEY");
         const playerCtx = initializeContext(env.network, playerKey);
