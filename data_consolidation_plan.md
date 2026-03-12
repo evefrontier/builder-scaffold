@@ -68,7 +68,7 @@ ts-scripts/
 - Add `networkForEnv(env: Environment): Network` helper
 - Add `DEFAULT_GRAPHQL_URLS: Record<Network, string>` — `{ localnet: "http://localhost:9125/graphql", testnet: "https://graphql.testnet.sui.io/graphql", ... }`
 - Add `WORLD_PACKAGE_ID_BY_ENV: Partial<Record<Environment, string>>` — hardcoded testnet package IDs from world-contracts `Published.toml` (localnet is not included; read from `Pub.localnet.toml` at runtime)
-- Make `governorCap` optional in `WorldObjectIds` (it is owned, not shared)
+- Make `governorCap` optional in `WorldObjectIds` (it is owned, not shared, and only used by the builder on localnet)
 
 ### 3. Update `[ts-scripts/utils/helper.ts](ts-scripts/utils/helper.ts)` (`update-helper`)
 
@@ -127,13 +127,6 @@ Add scripts:
 
 ```json
 "publish-extension": "tsx ts-scripts/publish-extension.ts",
-"publish-smart-gate-extension": "pnpm publish-extension --extension smart_gate_extension",
-"publish-storage-unit-extension": "pnpm publish-extension --extension storage_unit_extension"
-```
-
-Also add:
-
-```json
 "populate-world-ids": "tsx ts-scripts/populate-world-ids.ts"
 ```
 
@@ -177,8 +170,8 @@ Note: `GovernorCap` is an **owned** object (not shared) — skip it in `populate
 
 **Populated fields per env:**
 
-- testnet variants: `serverAddressRegistry`, `objectRegistry`, `energyConfig`, `fuelConfig`, `gateConfig` (builders don't need `adminAcl` or `governorCap`)
-- localnet: all of the above + `adminAcl` (builder is the world admin in localnet; `governorCap` still omitted as it's owned not shared)
+- testnet variants: `serverAddressRegistry`, `adminAcl`, `objectRegistry`, `energyConfig`, `fuelConfig`, `gateConfig` (builders don't need `governorCap`)
+- localnet: all of the above + `governorCap` to setup and simulate game operations locally
 
 **Logic:**
 
