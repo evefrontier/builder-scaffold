@@ -26,16 +26,21 @@ import { createInterface } from "readline";
 // Configuration
 const AUTH_URL = "https://test.auth.evefrontier.com";
 const CLIENT_ID = "00d3ce5b-4cab-4970-a9dc-e122fc1d30ce"; // Utopia
+
+//** This ZK Prover endpoint works only for sui:devnet
+// In order to get proof for testnet and mainnet, you need to use an Enoki endpoint
+// You can create an Enoki client API key at https://portal.enoki.mystenlabs.com/
+//*/
 const PROVER_URL = "https://prover-dev.mystenlabs.com/v1";
-const SUI_NETWORK_URL = "https://fullnode.testnet.sui.io:443";
+const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";
 
 const suiClient = new SuiGrpcClient({
-    network: "testnet",
+    network: "devnet",
     baseUrl: SUI_NETWORK_URL,
 });
 
 // Fixed salt (TODO: Change to Enoki return)
-const USER_SALT = "30157080988633063191577607925242240860";
+const USER_SALT = "000000";
 
 // Helper to prompt user for input
 const promptUser = (question: string): Promise<string> => {
@@ -126,7 +131,7 @@ const fetchBalance = async (zkLoginUserAddress: string) => {
         console.log("No current balance");
         console.log("Requesting balance");
         const txDigest = await requestSuiFromFaucetV2({
-            host: getFaucetHost("testnet"),
+            host: getFaucetHost("devnet"),
             recipient: zkLoginUserAddress,
         });
 
@@ -278,7 +283,7 @@ const main = async () => {
             // Else, format and build tx bytes for zklogin
             const txBytesFormatted = Uint8Array.from(txbytesString.split(",").map(Number));
             const txb = Transaction.from(txBytesFormatted);
-            txb.setSender(zkLoginUserAddress);
+            txb.setSender(jwtToAddress(jwt, USER_SALT, false));
             const txBytes = await txb.build({ client: suiClient });
 
             await executeTxn(txBytes, jwt, ephemeralKeyPair, maxEpoch, proof);
