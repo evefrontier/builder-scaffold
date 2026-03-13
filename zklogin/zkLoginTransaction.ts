@@ -31,11 +31,12 @@ const CLIENT_ID = "00d3ce5b-4cab-4970-a9dc-e122fc1d30ce"; // Utopia
 // In order to get proof for testnet and mainnet, you need to use an Enoki endpoint
 // You can create an Enoki client API key at https://portal.enoki.mystenlabs.com/
 //*/
+const NETWORK = "devnet";
 const PROVER_URL = "https://prover-dev.mystenlabs.com/v1";
 const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";
 
 const suiClient = new SuiGrpcClient({
-    network: "devnet",
+    network: NETWORK,
     baseUrl: SUI_NETWORK_URL,
 });
 
@@ -131,7 +132,7 @@ const fetchBalance = async (zkLoginUserAddress: string) => {
         console.log("No current balance");
         console.log("Requesting balance");
         const txDigest = await requestSuiFromFaucetV2({
-            host: getFaucetHost("devnet"),
+            host: getFaucetHost(NETWORK),
             recipient: zkLoginUserAddress,
         });
 

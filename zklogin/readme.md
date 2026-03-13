@@ -14,8 +14,10 @@ Configure the script with your Enoki API keys and endpoints so it fetches salt a
 
 ## Usage
 
+``` bash copy
 pnpm install
 pnpm zklogin
+```
 
 ## Flow
 
