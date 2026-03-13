@@ -15,22 +15,22 @@ import axios from "axios";
 import { jwtDecode, type JwtPayload } from "jwt-decode";
 import { createInterface } from "readline";
 
-//** Send a transaction with the zkLogin address.
-//  - Check balance
-//  - Generate ephemeral credentials
-//  - Display login URL
-//  - Wait for JWT input (returned from the user)
-//  - Execute transaction (either with the provided transaction bytes or a test transaction)
-//** */
+/** Send a transaction with the zkLogin address.
+ - Check balance
+ - Generate ephemeral credentials
+ - Display login URL
+ - Wait for JWT input (returned from the user)
+ - Execute transaction (either with the provided transaction bytes or a test transaction)
+*/
 
 // Configuration
 const AUTH_URL = "https://test.auth.evefrontier.com";
 const CLIENT_ID = "00d3ce5b-4cab-4970-a9dc-e122fc1d30ce"; // Utopia
 
-//** This ZK Prover endpoint works only for sui:devnet
-// In order to get proof for testnet and mainnet, you need to use an Enoki endpoint
-// You can create an Enoki client API key at https://portal.enoki.mystenlabs.com/
-//*/
+/** This ZK Prover endpoint works only for sui:devnet
+ In order to get proof for testnet and mainnet, you need to use an Enoki endpoint
+ You can create an Enoki client API key at https://portal.enoki.mystenlabs.com/
+*/
 const NETWORK = "devnet";
 const PROVER_URL = "https://prover-dev.mystenlabs.com/v1";
 const SUI_NETWORK_URL = "https://fullnode.devnet.sui.io:443";

@@ -14,6 +14,8 @@ Configure the script with your Enoki API keys and endpoints so it fetches salt a
 
 ## Usage
 
+ Requires **Node.js >=22** and `pnpm` installed globally.
+
 ``` bash copy
 pnpm install
 pnpm zklogin
