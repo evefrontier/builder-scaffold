@@ -61,7 +61,17 @@ const promptUser = (question: string): Promise<string> => {
 // Calculate proof expiration epoch
 const calculateProofExpirationEpoch = async (epochDuration: number = 5): Promise<number> => {
     const { response: epochInfo } = await suiClient.ledgerService.getEpoch({});
-    return Number(epochInfo.epoch?.epoch) + epochDuration;
+    const rawEpoch = epochInfo.epoch?.epoch;
+    if (rawEpoch === undefined || rawEpoch === null) {
+        throw new Error("Failed to retrieve current epoch from Sui ledger service.");
+    }
+    const currentEpoch = Number(rawEpoch);
+    if (!Number.isFinite(currentEpoch)) {
+        throw new Error(
+            `Unparseable epoch value received from Sui ledger service: ${String(rawEpoch)}`
+        );
+    }
+    return currentEpoch + epochDuration;
 };
 
 // Generate ephemeral keypair, randomness, and nonce for zkLogin
@@ -120,7 +130,7 @@ const getProof = async (
 const fetchBalance = async (zkLoginUserAddress: string) => {
     console.log("\n📍 Your zkLogin address:", zkLoginUserAddress);
 
-    const suiBalance = await suiClient.getBalance({
+    const suiBalance = await suiClient.core.getBalance({
         owner: zkLoginUserAddress,
         coinType: "0x2::sui::SUI",
     });
@@ -153,6 +163,30 @@ const createTestTransactionBytes = async (zkLoginUserAddress: string) => {
     testTx.setSender(zkLoginUserAddress);
     const testTxnBytes = await testTx.build({ client: suiClient });
     return testTxnBytes.toString();
+};
+
+// Parse the transaction bytes
+const formatTxBytes = (txbytesString: string) => {
+    const byteStrings = txbytesString.split(",");
+    const byteValues = byteStrings.map((value, index) => {
+        const trimmed = value.trim();
+        if (trimmed === "") {
+            throw new Error(
+                `Invalid transaction bytes: empty value at position ${index}. ` +
+                    "Expected a comma-separated list of integers between 0 and 255."
+            );
+        }
+        const num = Number(trimmed);
+        if (!Number.isFinite(num) || !Number.isInteger(num) || num < 0 || num > 255) {
+            throw new Error(
+                `Invalid transaction bytes: value "${trimmed}" at position ${index} ` +
+                    "is not an integer between 0 and 255."
+            );
+        }
+        return num;
+    });
+    const txBytesFormatted = Uint8Array.from(byteValues);
+    return txBytesFormatted;
 };
 
 // Execute the test transaction
@@ -189,8 +223,8 @@ const executeTxn = async (
 
     console.log("📤 Executing transaction...\n");
 
-    const res = await suiClient.executeTransaction({
-        transaction: txBytes,
+    const res = await suiClient.core.executeTransaction({
+        transaction: new Uint8Array(Buffer.from(signedBytes.bytes, "base64")),
         signatures: [zkLoginSignature],
     });
 
@@ -282,7 +316,7 @@ const main = async () => {
             }
 
             // Else, format and build tx bytes for zklogin
-            const txBytesFormatted = Uint8Array.from(txbytesString.split(",").map(Number));
+            const txBytesFormatted = formatTxBytes(txbytesString);
             const txb = Transaction.from(txBytesFormatted);
             txb.setSender(jwtToAddress(jwt, USER_SALT, false));
             const txBytes = await txb.build({ client: suiClient });
