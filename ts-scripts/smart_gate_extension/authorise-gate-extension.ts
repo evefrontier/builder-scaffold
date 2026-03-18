@@ -6,7 +6,7 @@ import { GAME_CHARACTER_ID, GATE_ITEM_ID_1, GATE_ITEM_ID_2 } from "../utils/cons
 import {
     getEnvConfig,
     handleError,
-    hydrateWorldConfig,
+    getWorldConfig,
     initializeContext,
     requireEnv,
     delay,
@@ -71,7 +71,7 @@ async function main() {
         const env = getEnvConfig();
         const playerKey = requireEnv("PLAYER_A_PRIVATE_KEY");
         const ctx = initializeContext(env.network, playerKey);
-        await hydrateWorldConfig(ctx);
+        getWorldConfig(ctx);
         await authoriseGate(ctx, GATE_ITEM_ID_1, BigInt(GAME_CHARACTER_ID));
         await delay(DELAY_MS);
         await authoriseGate(ctx, GATE_ITEM_ID_2, BigInt(GAME_CHARACTER_ID));

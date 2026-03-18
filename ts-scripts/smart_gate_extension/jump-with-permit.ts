@@ -13,7 +13,7 @@ import {
     extractEvent,
     getEnvConfig,
     handleError,
-    hydrateWorldConfig,
+    getWorldConfig,
     initializeContext,
     requireEnv,
 } from "../utils/helper";
@@ -104,7 +104,7 @@ async function main() {
         const env = getEnvConfig();
         const playerKey = requireEnv("PLAYER_B_PRIVATE_KEY");
         const playerCtx = initializeContext(env.network, playerKey);
-        await hydrateWorldConfig(playerCtx);
+        getWorldConfig(playerCtx);
         const adminKeypair = keypairFromPrivateKey(env.adminExportedKey);
         const adminAddress = adminKeypair.getPublicKey().toSuiAddress();
 

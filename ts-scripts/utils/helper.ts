@@ -4,7 +4,6 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import {
     createClient,
     keypairFromPrivateKey,
-    HydratedWorldConfig,
     WorldConfig,
     getConfig,
     Network,
@@ -53,9 +52,6 @@ export function toHex(bytes: Uint8Array): string {
             .join("")
     );
 }
-
-/** @deprecated Use fromHex instead */
-export const hexToBytes = fromHex;
 
 export function handleError(error: unknown): never {
     console.error("\n=== Error ===");
@@ -110,28 +106,27 @@ export function extractEvent<T = unknown>(
     return (event?.parsedJson as T) || null;
 }
 
-export async function hydrateWorldConfig(ctx: InitializedContext): Promise<HydratedWorldConfig> {
-    const hasManualIds =
-        !!ctx.config.governorCap &&
-        !!ctx.config.serverAddressRegistry &&
-        !!ctx.config.objectRegistry &&
-        !!ctx.config.adminAcl &&
-        !!ctx.config.energyConfig &&
-        !!ctx.config.fuelConfig &&
-        !!ctx.config.gateConfig;
-
-    if (!hasManualIds) {
-        const network = ctx.network;
-        const extracted = loadExtractedObjectIds(network);
-        if (!extracted?.world || extracted.world.packageId !== ctx.config.packageId) {
-            const filePath = getExtractedObjectIdsPath(network);
-            throw new Error(`Missing or mismatched ${filePath}. Deploy world-contracts first.`);
-        }
-        const { packageId: _p, ...ids } = extracted.world;
-        ctx.config = { ...ctx.config, ...ids } as WorldConfig;
+/**
+ * Resolve world config: use OBJECT_REGISTRY and ADMIN_ACL from env if set (deployed world).
+ * Otherwise load from deployments/<network>/extracted-object-ids.json (local).
+ */
+export function getWorldConfig(ctx: InitializedContext): WorldConfig {
+    if (ctx.config.objectRegistry && ctx.config.adminAcl) {
+        return ctx.config;
     }
 
-    return ctx.config as HydratedWorldConfig;
+    const extracted = loadExtractedObjectIds(ctx.network);
+    if (extracted?.world && extracted.world.packageId === ctx.config.packageId) {
+        const w = extracted.world;
+        ctx.config.objectRegistry = w.objectRegistry ?? ctx.config.objectRegistry;
+        ctx.config.adminAcl = w.adminAcl ?? ctx.config.adminAcl;
+        return ctx.config;
+    }
+
+    const filePath = getExtractedObjectIdsPath(ctx.network);
+    throw new Error(
+        `Missing objectRegistry or adminAcl. Set OBJECT_REGISTRY and ADMIN_ACL in .env for a deployed world, or ensure ${filePath} exists for local.`
+    );
 }
 
 export function loadExtractedObjectIds(network: string): ExtractedObjectIds | null {

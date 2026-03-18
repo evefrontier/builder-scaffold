@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Transaction } from "@mysten/sui/transactions";
-import { getEnvConfig, handleError, hydrateWorldConfig, initializeContext } from "../utils/helper";
+import { getEnvConfig, handleError, getWorldConfig, initializeContext } from "../utils/helper";
 import { resolveSmartGateExtensionIds } from "./extension-ids";
 import { ITEM_A_TYPE_ID } from "../utils/constants";
 import { MODULE } from "./modules";
@@ -12,7 +12,7 @@ async function main() {
         const env = getEnvConfig();
         const ctx = initializeContext(env.network, env.adminExportedKey);
         const { client, keypair, address } = ctx;
-        await hydrateWorldConfig(ctx);
+        getWorldConfig(ctx);
 
         const { builderPackageId, adminCapId, extensionConfigId } =
             await resolveSmartGateExtensionIds(client, address);
