@@ -1,13 +1,12 @@
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { Transaction } from "@mysten/sui/transactions";
 
-function resolveDevInspectSender(senderAddress?: string): string {
-    if (senderAddress) return senderAddress;
-    return process.env.ADMIN_ADDRESS || "0x0";
-}
-
+/**
+ * Simulate a single Move call and return the BCS bytes of its first return
+ * value, or null if the call fails. Replaces JSON-RPC devInspect.
+ */
 export async function devInspectMoveCallFirstReturnValueBytes(
-    client: SuiJsonRpcClient,
+    client: SuiGrpcClient,
     params: {
         target: string;
         typeArguments?: string[];
@@ -16,24 +15,18 @@ export async function devInspectMoveCallFirstReturnValueBytes(
     }
 ): Promise<Uint8Array | null> {
     const tx = new Transaction();
+    tx.setSender(params.senderAddress ?? "0x0");
     tx.moveCall({
         target: params.target,
         typeArguments: params.typeArguments,
         arguments: params.arguments(tx),
     });
 
-    const result = await client.devInspectTransactionBlock({
-        sender: resolveDevInspectSender(params.senderAddress),
-        transactionBlock: tx,
+    const result = await client.core.simulateTransaction({
+        transaction: tx,
+        include: { commandResults: true },
     });
 
-    if (result.effects?.status?.status !== "success") {
-        return null;
-    }
-
-    const returnValues = result.results?.[0]?.returnValues;
-    if (!returnValues?.length) return null;
-
-    const [valueBytes] = returnValues[0];
-    return Uint8Array.from(valueBytes);
+    if (result.$kind !== "Transaction") return null;
+    return result.commandResults?.[0]?.returnValues?.[0]?.bcs ?? null;
 }

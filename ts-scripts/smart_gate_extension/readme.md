@@ -1,21 +1,27 @@
 # Smart Gate example
 
-After publishing [move-contracts/smart_gate_extension](../../move-contracts/smart_gate_extension/), run these scripts from the repo root in order:
+Change who can pass your gate. Run from the repo root, signing each transaction in the
+[zkLogin tool](../../zklogin/readme.md) after its build step:
 
 ```bash
-# 1. Configure extension rules (tribe config + bounty config)
-pnpm configure-rules
+# 1. Publish your extension package
+pnpm publish-extension     # sign, then:
+pnpm record-publish
 
-# 2. Authorize the extension on gates and storage unit extension
-pnpm authorise-gate-extension
-pnpm authorise-storage-unit-extension
+# 2. Set the bounty and authorize your extension on gate 1, gate 2 and the storage unit
+pnpm setup-gate            # sign, then:
+pnpm tx-status
 
-# 3. Issue a jump permit (tribe-based) — typically in a dApp
-pnpm issue-tribe-jump-permit
+# 3. Hand in a corpse for a JumpPermit — your rule decides
+pnpm collect-corpse-bounty # sign, then:
+pnpm check-permit
 
-# 4. Jump using the permit — typically in the game UI
-pnpm jump-with-permit
-
-# 5. Collect corpse bounty for a jump permit
-pnpm collect-corpse-bounty
+# 4. Jump through your gate in the game
 ```
+
+Your rule is `check_rule` in
+[corpse_gate_bounty.move](../../move-contracts/smart_gate_extension/sources/corpse_gate_bounty.move),
+between the `YOUR RULE` markers. After changing it, repeat all three steps.
+
+Fallback rule with no inventory: set `RULE=tribe` and `TRIBE_ID` in `.env`, run
+`pnpm setup-gate`, then `pnpm issue-tribe-jump-permit` instead of step 3.
