@@ -13,9 +13,8 @@
     "license": "ISC",
     "packageManager": "pnpm@10.17.0",
     "dependencies": {
+        "@mysten/enoki": "^1.2.28",
         "@mysten/sui": "^2.6.0",
-        "axios": "^1.13.5",
-        "jwt-decode": "^4.0.0",
         "typescript": "^5.9.3"
     },
     "devDependencies": {
