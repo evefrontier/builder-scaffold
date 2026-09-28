@@ -1,0 +1,13 @@
+diff --git a/dist/parsing.mjs b/dist/parsing.mjs
+index cce25b3be8efc7fec714df408d9fb5c3ed55419a..f6f4433e4d4eb30581ea480bb3bb772ff35b465e 100644
+--- a/dist/parsing.mjs
++++ b/dist/parsing.mjs
+@@ -3,7 +3,7 @@ import { readFile } from "fs/promises";
+ import { dirname, extname, isAbsolute, join } from "path";
+ import { parseArgs } from "util";
+ import { isValidNamedPackage } from "@mysten/sui/utils";
+-import { prompt } from "enquirer";
++import enquirer from "enquirer"; const { prompt } = enquirer;
+ import { glob } from "glob";
+ import { format } from "prettier";
+ 
