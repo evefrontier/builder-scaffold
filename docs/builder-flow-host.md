@@ -1,5 +1,11 @@
 # Builder flow: Host
 
+> **Note:** This repo's TypeScript scripts now target the live Liminality world on Sui
+> testnet, signed with your game account via zkLogin — see
+> [building on an existing world](./building-on-existing-world.md). The local-world steps below deploy a world
+> with world-contracts, but the scripts no longer read local deployment artifacts
+> (`deployments/`, `test-resources.json`).
+
 Run the builder-scaffold flow on your host, targeting **testnet** or a **local network**. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); 
 
 > **Prefer Docker?** See [builder-flow-docker.md](builder-flow-docker.md) to run the full flow inside a container with no host tooling.
