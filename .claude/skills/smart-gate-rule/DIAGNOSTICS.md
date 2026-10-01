@@ -18,7 +18,7 @@ when a transaction fails, so retrying after the fix is always safe.
 
 | Error | Cause | Next action |
 |---|---|---|
-| `ESenderCannotAccessCharacter` | Signed by an address that doesn't own the character — usually logged in with the wrong EVE Frontier account. | Restart the zkLogin terminal and log in with the kit's account; it checks against `ZKLOGIN_ADDRESS`. |
+| `ESenderCannotAccessCharacter` | Signed by an address that doesn't own the character — usually logged in with the wrong EVE Frontier account. | Restart the zkLogin terminal and log in with the account on the team's login slip; it checks against `ZKLOGIN_ADDRESS`. |
 | `EExtensionNotAuthorized` | A gate or the storage unit still trusts a different package — usually the rule was republished without rerunning setup. | `pnpm setup-gate`, sign, retry. |
 | `ENotOnline` | A gate or the storage unit is offline, often a network node out of fuel. | Facilitator. |
 | `EGatesNotLinked` | The kit's two gates aren't linked. | Facilitator. |
@@ -37,7 +37,11 @@ These come from the builder script or the zkLogin terminal rather than an abort.
 | `No OwnerCap found for …` / `not found on chain` | Wrong item ID or `TENANT`. | `pnpm resolve-ids`. |
 | `AdminCap not found` | This address didn't publish `BUILDER_PACKAGE_ID`. | Rerun `pnpm record-publish` after the publish succeeds, or republish. |
 | `No result yet` | The pending transaction hasn't been signed. | Ask them to load the file in the zkLogin terminal. |
-| Object version / "not available for consumption" | Bytes went stale — something changed after they were built. | Rerun the same `pnpm` step for fresh bytes, then sign. |
+| Object version / "not available for consumption" | Bytes went stale — something changed after they were built, often another laptop sending as the team's address. | Check that only the signer's laptop is sending transactions, then rerun the same `pnpm` step for fresh bytes and sign. |
 | Insufficient gas / no SUI | The kit address is unfunded. | Facilitator. |
 | Proof expired / invalid signature in the zkLogin terminal | The login session aged out. | Restart the zkLogin terminal and log in again. |
+| `You logged in to …, but TENANT in your .env is …` | The account is on a different server from the kit. | Log in with the team's Liminality account from the login slip; leave `TENANT=liminality`. |
+| `This login's address doesn't match ZKLOGIN_ADDRESS` | Logged in with a different account, or `ZKLOGIN_ADDRESS` was copied wrong. | Compare the address it printed with the kit card; log in with the login-slip account or fix `.env`. |
+| `/auth/zklogin… failed (401)` or `(403)` | The pasted login token expired or was rejected. | Restart the zkLogin terminal and log in again; paste the fresh `id_token`. |
+| `That doesn't look like a JWT` | Something other than the `id_token` was pasted. | Copy only the value after `id_token=` in the redirect URL. |
 | `Sui CLI is on "…", not testnet` | Publish needs the CLI on testnet to fetch the world package. | `sui client switch --env testnet`. |

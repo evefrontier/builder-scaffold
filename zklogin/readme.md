@@ -4,6 +4,10 @@ Interactive CLI that signs and executes Sui testnet transactions as your EVE Fro
 account. The repo's `pnpm` scripts build unsigned transactions; this tool is where you sign
 them. Nothing else in the repo holds your login.
 
+In a team sharing one account, only the team's signer runs this tool, on the same laptop that
+runs the `pnpm` steps. See
+[working as a team](../docs/building-on-existing-world.md#working-as-a-team).
+
 ## Setup
 
 Requires **Node.js >= 22** and `pnpm`.

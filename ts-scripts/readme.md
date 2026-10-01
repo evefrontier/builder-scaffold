@@ -31,6 +31,10 @@ pnpm preflight
 
 Add `--paste` to any build step to also print the bytes for pasting.
 
+`preflight` and `resolve-ids` are read-only and safe on any laptop. The steps that build
+transactions run only on the team's signer's laptop when a team shares one account — see
+[working as a team](../docs/building-on-existing-world.md#working-as-a-team).
+
 ## Adding your own scripts
 
 Use the existing scripts as templates. The key pieces:

@@ -52,8 +52,7 @@ fun check_rule(bounty_cfg: &BountyConfig, item: &Item, _character: &Character, _
 
 ## 3. Allies only
 
-"Only my allies may pass." Tribe IDs are numbers; the participant's own is on their kit
-card.
+"Only my allies may pass." Tribe IDs are numbers; the team's own is on its kit card.
 
 ```move
 #[error(code = 100)]

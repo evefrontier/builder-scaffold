@@ -1,7 +1,11 @@
 # Smart Gate example
 
 Change who can pass your gate. Run from the repo root, signing each transaction in the
-[zkLogin tool](../../zklogin/readme.md) after its build step:
+[zkLogin tool](../../zklogin/readme.md) after its build step.
+
+In a team sharing one account, only the team's signer runs these steps, all on one laptop;
+everyone else stops after building a rule. See
+[working as a team](../../docs/building-on-existing-world.md#working-as-a-team).
 
 ```bash
 # 1. Publish your extension package

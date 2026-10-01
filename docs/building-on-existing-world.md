@@ -5,14 +5,39 @@ don't deploy a world: you publish your own extension package and point your gate
 
 Every transaction is signed by your EVE Frontier game account through the
 [zkLogin tool](../zklogin/readme.md). The scripts in this repo never hold a private key —
-they build unsigned transactions, and you sign them in a second terminal.
+they build unsigned transactions, and the signer signs them in a second terminal on the same
+laptop.
 
 ```
- Terminal 1 — pnpm scripts (or Claude)       Terminal 2 — zkLogin tool (you)
+ Terminal 1 — pnpm scripts (or Claude)       Terminal 2 — zkLogin tool (signer)
  ─────────────────────────────────────       ─────────────────────────────────
  pnpm <step>  → writes zklogin/pending/…  ──▶ load the file → sign → execute
  pnpm tx-status / record-publish          ◀── writes zklogin/last-tx.json
 ```
+
+## Working as a team
+
+At the workshop, teams of four share one EVE Frontier account and one kit: one character,
+one pair of gates and one storage unit. Each team has one **signer**:
+
+| | Everyone | Signer only |
+|---|---|---|
+| Setup and `pnpm preflight` | ✅ | ✅ |
+| Write and build a rule with Claude | ✅ | ✅ |
+| Pick the team's rule | ✅ | ✅ |
+| Log in to the zkLogin tool, with the account on the team's login slip | | ✅ |
+| Publish, set up the gate, hand in a corpse | | ✅ |
+
+Everyone's `.env` holds the same `ZKLOGIN_ADDRESS`, so transactions built on two laptops at
+once compete for the same gas coins and owner caps. Conflicting ones can fail, or lock the
+team's gas coin for the rest of the epoch, so all of the team's transactions go through the
+signer's laptop. Your gates also trust one package at a time: whichever rule the signer
+publishes and sets up last is the one that's live.
+
+To move the team's pick to the signer, paste the rule block (everything between the
+`YOUR RULE` markers) to them, or describe the rule to the signer's Claude.
+
+Working alone? You're your own signer: follow every step.
 
 ## What you need
 
@@ -23,11 +48,14 @@ Your EVE Frontier account needs, on Liminality:
 - a **storage unit**, online, owned by that character, with **corpses in your character's
   inventory at that storage unit** (ship cargo doesn't count)
 - some **testnet SUI** on your account's address for gas
+- enough corpses for every hand-in your team tries — they're shared, and each one uses some
 
 And on your machine: Node.js ≥ 22, pnpm, and the Sui CLI switched to testnet
 (`sui client switch --env testnet`).
 
 ## Setup
+
+Everyone on the team:
 
 ```bash
 pnpm install
@@ -40,7 +68,7 @@ pnpm preflight
 `pnpm preflight` checks your toolchain and your assemblies on chain, and prints a fix for
 anything that fails. Carry on once it prints `PREFLIGHT PASSED`.
 
-Start the zkLogin tool in a second terminal and log in:
+The signer starts the zkLogin tool in a second terminal and logs in:
 
 ```bash
 cd zklogin && pnpm zklogin
@@ -63,7 +91,8 @@ doesn't exist, which is the usual cause of "not found".
 
 ## The flow
 
-Three transactions. After each `pnpm` step, load the printed file path in the zkLogin tool.
+Three transactions, all on the signer's laptop. After each `pnpm` step, load the printed file
+path in the zkLogin tool.
 
 | # | Build | Sign, then check | What it does |
 |---|---|---|---|
@@ -71,7 +100,7 @@ Three transactions. After each `pnpm` step, load the printed file path in the zk
 | 2 | `pnpm setup-gate` | `pnpm tx-status` | Sets the bounty and authorizes your extension on **gate 1, gate 2 and the storage unit** |
 | 3 | `pnpm collect-corpse-bounty` | `pnpm check-permit` | Hands in a corpse; your rule decides whether you get a `JumpPermit` |
 
-Then jump through your gate in the game.
+Then your team's ship jumps through your gate in the game.
 
 ### Why three assemblies
 
@@ -88,7 +117,8 @@ touch inventory (`RULE=tribe`) needs only the two gates.
 ### Changing your rule
 
 A published package can't change, and your gates trust its exact type. To change the rule,
-edit it and repeat all three steps: `setup-gate` points your gates at the new package.
+the team agrees the change and the signer edits it and repeats all three steps: `setup-gate`
+points your gates at the new package.
 
 `authorize_extension` replaces whatever extension was there before, so reusing gates is fine.
 **Never call `freeze_extension_config`** on a gate you want to change again: freezing is
@@ -142,5 +172,5 @@ that server's `AUTH_URL` and `CLIENT_ID` too; the tool stops if your login's ten
 
 | Operation | Signed by | Sponsored |
 |---|---|---|
-| Publish, set up gate, hand in corpse | your zkLogin address | no — you pay gas |
+| Publish, set up gate, hand in corpse | your team's zkLogin address, from the signer's laptop | no — the account pays gas |
 | Jump (`jump_with_permit`) | your character, via the game | yes — it requires an `AdminACL`-enrolled sponsor, which is why jumping happens in the game client |
