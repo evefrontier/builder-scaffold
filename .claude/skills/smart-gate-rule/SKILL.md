@@ -56,9 +56,11 @@ Run each command from the repo root.
 ### Everyone
 
 1. **Preflight.** `pnpm preflight`. Done when it prints `PREFLIGHT PASSED`. Anything else:
-   show the failing lines and the fix each one prints; kit problems (offline, frozen, no
-   corpses) go to a facilitator. Note the build env on the `World:` line it prints first —
-   `testnet_stillness` for Liminality.
+   show the failing lines and the fix each one prints. Offline or frozen assemblies go to a
+   facilitator. A ⚠️ on corpses doesn't block anything until step 8 — carry on, and remind
+   the team to deposit them in-game into their storage unit (press **F** at the storage
+   unit) before then. Note the build env on the `World:` line it prints
+   first — `testnet_stillness` for Liminality.
 2. **Write the rule.** Restate the rule back in one sentence, edit the rule block, then
    `sui move build --path move-contracts/smart_gate_extension -e <build env> --lint`.
    Done when the build prints no warnings and no errors.
@@ -84,10 +86,12 @@ wait for them to say they've signed it.
 7. **Set up the gate.** `pnpm setup-gate`, they sign it, then `pnpm tx-status`. This one
    transaction sets the bounty and points gate 1, gate 2 and the storage unit at the
    team's package. Done when `tx-status` prints ✅.
-8. **Hand in a corpse.** `pnpm collect-corpse-bounty`, they sign it, then `pnpm check-permit`.
+8. **Hand in a corpse.** If preflight warned about corpses, run `pnpm preflight` again first
+   and wait until the corpse line is ✅. Then `pnpm collect-corpse-bounty`, they sign it, then
+   `pnpm check-permit`.
    Done when it prints `You hold a JumpPermit`. A failure with the team's own error
    (code 100+) is their rule working — say so, and offer to change the rule or the input.
-   The corpses are shared by the team; `pnpm preflight` shows how many are left.
+   The hand-in returns the corpses to the same storage unit, so the team never runs out.
 9. **Jump.** The team's ship jumps through their gate in the game client.
 
 When a transaction fails, read [DIAGNOSTICS.md](DIAGNOSTICS.md) and match the error name

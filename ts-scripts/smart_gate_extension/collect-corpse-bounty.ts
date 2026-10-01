@@ -10,10 +10,11 @@ import { resolveKit, withOwnerCap } from "./kit";
 import { MODULE } from "./modules";
 
 /**
- * "Submit a corpse" — the player side. Withdraws the corpse from the
- * character's inventory at the storage unit, runs your rule, deposits it, and
- * issues a JumpPermit to the character. Self-paid: the Move function takes no
- * AdminACL, so no sponsor is needed.
+ * "Submit a corpse" — the player side. Withdraws the corpse from the storage
+ * unit's main inventory, where the owner's in-game deposits land, runs your
+ * rule, deposits it back, and issues a JumpPermit to the character. The
+ * corpses aren't used up: they return to the same inventory. Self-paid: the
+ * Move function takes no AdminACL, so no sponsor is needed.
  */
 async function main() {
     console.log("============= Collect Corpse Bounty ==============\n");
@@ -24,26 +25,34 @@ async function main() {
         const corpseTypeId = requireItemId("CORPSE_TYPE_ID");
         const quantity = optionalNumber("CORPSE_QUANTITY", 1);
 
-        const characterCapId = await requireOwnerCapId("character", kit.characterId, ctx);
+        // The storage unit's OwnerCap selects its main inventory; a character's own
+        // OwnerCap would select that character's Ephemeral Inventory instead.
+        const storageUnitCapId = await requireOwnerCapId("storage_unit", kit.storageUnitId, ctx);
 
         const tx = new Transaction();
-        withOwnerCap(tx, kit.characterId, characterCapId, "character::Character", (ownerCap) => {
-            tx.moveCall({
-                target: `${builderPackageId}::${MODULE.CORPSE_GATE_BOUNTY}::collect_corpse_bounty`,
-                typeArguments: [worldType("character::Character")],
-                arguments: [
-                    tx.object(extensionConfigId),
-                    tx.object(kit.storageUnitId),
-                    tx.object(kit.sourceGateId),
-                    tx.object(kit.destinationGateId),
-                    tx.object(kit.characterId),
-                    ownerCap,
-                    tx.pure.u64(corpseTypeId),
-                    tx.pure.u32(quantity),
-                    tx.object(CLOCK_OBJECT_ID),
-                ],
-            });
-        });
+        withOwnerCap(
+            tx,
+            kit.characterId,
+            storageUnitCapId,
+            "storage_unit::StorageUnit",
+            (ownerCap) => {
+                tx.moveCall({
+                    target: `${builderPackageId}::${MODULE.CORPSE_GATE_BOUNTY}::collect_corpse_bounty`,
+                    typeArguments: [worldType("storage_unit::StorageUnit")],
+                    arguments: [
+                        tx.object(extensionConfigId),
+                        tx.object(kit.storageUnitId),
+                        tx.object(kit.sourceGateId),
+                        tx.object(kit.destinationGateId),
+                        tx.object(kit.characterId),
+                        ownerCap,
+                        tx.pure.u64(corpseTypeId),
+                        tx.pure.u32(quantity),
+                        tx.object(CLOCK_OBJECT_ID),
+                    ],
+                });
+            }
+        );
 
         console.log(`Submitting ${quantity} × item type ${corpseTypeId}`);
         await submit(tx, ctx, "collect-corpse-bounty");

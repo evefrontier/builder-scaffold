@@ -47,8 +47,14 @@ public struct BountyConfigKey has copy, drop, store {}
 //   clock.timestamp_ms()
 // Number your own errors from 100 up so they never collide with the ones above.
 
+#[error(code = 100)]
+const ENotEnoughCorpses: vector<u8> = b"Hand in 3 corpses to pass";
+
+const MIN_CORPSES: u32 = 3;
+
 fun check_rule(bounty_cfg: &BountyConfig, item: &Item, _character: &Character, _clock: &Clock) {
     assert!(item.type_id() == bounty_cfg.bounty_type_id, ECorpseTypeMismatch);
+    assert!(item.quantity() >= MIN_CORPSES, ENotEnoughCorpses);
 }
 
 // ╚═════════════════════════════ END RULE ══════════════════════════════╝

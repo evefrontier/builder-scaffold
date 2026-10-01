@@ -261,18 +261,19 @@ async function checkChain(ctx: InitializedContext) {
     }
     await checkAssembly(ctx, "Storage unit", "storage_unit", kit.storageUnitId);
 
-    // The bounty withdraws from the character's own inventory at the storage unit.
-    const characterCapId = await getOwnerCapId("character", kit.characterId, ctx);
+    // The bounty withdraws from the storage unit's main inventory, keyed by the storage
+    // unit's OwnerCap, where the owner's in-game deposits land.
+    const storageUnitCapId = await getOwnerCapId("storage_unit", kit.storageUnitId, ctx);
     const corpseTypeId = process.env.CORPSE_TYPE_ID!;
     const needed = optionalNumber("CORPSE_QUANTITY", 1);
     let quantity = 0;
-    if (characterCapId) {
+    if (storageUnitCapId) {
         try {
             const { dynamicField } = await ctx.client.core.getDynamicField({
                 parentId: kit.storageUnitId,
                 name: {
                     type: "0x2::object::ID",
-                    bcs: bcs.Address.serialize(characterCapId).toBytes(),
+                    bcs: bcs.Address.serialize(storageUnitCapId).toBytes(),
                 },
             });
             const inventory = Inventory.parse(dynamicField.value.bcs);
@@ -282,12 +283,16 @@ async function checkChain(ctx: InitializedContext) {
             quantity = 0;
         }
     }
-    record(
-        "Corpses at your storage unit",
-        quantity >= needed,
-        `${quantity} of type ${corpseTypeId}`,
-        "deposit corpses into your storage unit in-game (ship cargo isn't enough)"
-    );
+    // Only the hand-in needs corpses, so the team can publish and set up the gate first.
+    const label = "Corpses in the storage unit";
+    const detail = `${quantity} of type ${corpseTypeId}`;
+    if (quantity >= needed) console.log(`✅ ${label} — ${detail}`);
+    else
+        warn(
+            label,
+            `${detail}; needed before you hand one in — in the game, press F at your ` +
+                "storage unit and deposit corpses into it"
+        );
 }
 
 async function main() {

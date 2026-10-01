@@ -113,6 +113,24 @@ const createLoginUrl = (nonce: string): string => {
 
 type ApiContext = { apiBaseUrl: string; tenant: string };
 
+/**
+ * Error message with its `cause` chain. Node's `fetch` reports every network failure as
+ * "fetch failed" and puts the reason — e.g. `getaddrinfo ENOTFOUND <host>` — in `cause`.
+ */
+const describeError = (error: unknown): string => {
+    const parts: string[] = [];
+    for (let e: unknown = error; e != null && parts.length < 5; ) {
+        if (e instanceof Error) {
+            parts.push(e.message);
+            e = e.cause;
+        } else {
+            parts.push(String(e));
+            break;
+        }
+    }
+    return parts.join(" — ");
+};
+
 /** Unverified JWT payload — used only to route requests, never to trust them. */
 const decodeJwtClaims = (jwt: string): Record<string, unknown> => {
     const payload = jwt.split(".")[1];
@@ -442,7 +460,7 @@ const main = async () => {
         );
         console.log("   ✓ ZK proof cached\n");
     } catch (error) {
-        console.error("\n❌ Error:", error instanceof Error ? error.message : error);
+        console.error("\n❌ Error:", describeError(error));
         process.exit(1);
     }
 
@@ -481,7 +499,7 @@ const main = async () => {
 
             console.log("\n═".repeat(10));
         } catch (error) {
-            console.error("\n❌ Error:", error instanceof Error ? error.message : error);
+            console.error("\n❌ Error:", describeError(error));
             // Don't exit - just continue to next iteration
             console.log("\n🔄 You can try again or type 'x' to exit\n");
         }

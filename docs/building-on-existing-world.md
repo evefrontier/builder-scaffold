@@ -45,10 +45,14 @@ Your EVE Frontier account needs, on Liminality:
 
 - a **character**
 - **two gates**, online, linked to each other, owned by that character
-- a **storage unit**, online, owned by that character, with **corpses in your character's
-  inventory at that storage unit** (ship cargo doesn't count)
+- a **storage unit**, online, owned by that character, with **corpses in its inventory**.
+  Items only reach the chain once deposited there: in the game, press **F** at the storage
+  unit and deposit them. Corpses in ship cargo aren't on chain yet. Only the hand-in needs
+  them: until then `pnpm preflight` shows a ⚠️, not a failure, so you can publish and set
+  up the gate first
 - some **testnet SUI** on your account's address for gas
-- enough corpses for every hand-in your team tries — they're shared, and each one uses some
+- enough corpses for one hand-in (`CORPSE_QUANTITY`). The hand-in withdraws them from the
+  storage unit's main inventory and deposits them straight back, so they aren't used up
 
 And on your machine: Node.js ≥ 22, pnpm, and the Sui CLI switched to testnet
 (`sui client switch --env testnet`).

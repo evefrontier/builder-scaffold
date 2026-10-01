@@ -9,7 +9,7 @@ when a transaction fails, so retrying after the fix is always safe.
 | Error | Cause | Next action |
 |---|---|---|
 | code 100+ (their own error) | Their rule denied the jump — it's working. | Celebrate, then offer to change the rule or what they hand in. |
-| `ECorpseTypeMismatch` | The item handed in isn't the bounty type. | Check `CORPSE_TYPE_ID` in `.env` matches the corpses at their storage unit (`pnpm preflight` shows the count). |
+| `ECorpseTypeMismatch` | The item handed in isn't the bounty type. | Check `CORPSE_TYPE_ID` in `.env` matches the corpses in the storage unit (`pnpm preflight` shows the count). |
 | `ENoBountyConfig` | The gate was never set up with this package. | `pnpm setup-gate`, sign, then retry. |
 | `ECorpseTypeIdEmpty` | `CORPSE_TYPE_ID` is 0. | Set it from the kit card; rerun `pnpm setup-gate`. |
 | `EExpiryOverflow` | `PERMIT_EXPIRY_MS` is absurdly large. | Remove it from `.env` to use the one-hour default. |
@@ -23,7 +23,7 @@ when a transaction fails, so retrying after the fix is always safe.
 | `ENotOnline` | A gate or the storage unit is offline, often a network node out of fuel. | Facilitator. |
 | `EGatesNotLinked` | The kit's two gates aren't linked. | Facilitator. |
 | `EGateNotAuthorized`, `EAssemblyNotAuthorized`, `EOwnerCapIdMismatch` | An item ID in `.env` points at an assembly this character doesn't own. | `pnpm resolve-ids`; compare against the kit card. |
-| `EInventoryNotAuthorized`, `EItemDoesNotExist`, `EInventoryInsufficientQuantity` | No (or too few) corpses in the character's inventory **at their storage unit** — ship cargo doesn't count. | Deposit corpses at the storage unit in-game; `pnpm preflight` shows the count. |
+| `EInventoryNotAuthorized`, `EItemDoesNotExist`, `EInventoryInsufficientQuantity` | No (or too few) corpses in the storage unit's inventory. Corpses in ship cargo, or anywhere else, aren't on chain yet. | In the game, press **F** at the team's storage unit and deposit corpses into it; `pnpm preflight` shows the count. |
 | `EExtensionConfigFrozen` | The kit's extension was frozen and can never change. | Facilitator, for a spare kit. |
 | `EJumpPermitExpired` | The permit's hour ran out. | `pnpm collect-corpse-bounty` again for a fresh one. |
 
@@ -43,5 +43,6 @@ These come from the builder script or the zkLogin terminal rather than an abort.
 | `You logged in to …, but TENANT in your .env is …` | The account is on a different server from the kit. | Log in with the team's Liminality account from the login slip; leave `TENANT=liminality`. |
 | `This login's address doesn't match ZKLOGIN_ADDRESS` | Logged in with a different account, or `ZKLOGIN_ADDRESS` was copied wrong. | Compare the address it printed with the kit card; log in with the login-slip account or fix `.env`. |
 | `/auth/zklogin… failed (401)` or `(403)` | The pasted login token expired or was rejected. | Restart the zkLogin terminal and log in again; paste the fresh `id_token`. |
+| `fetch failed — getaddrinfo ENOTFOUND api.…` (or `ECONNREFUSED`, `ETIMEDOUT`) in the zkLogin terminal | The laptop can't reach the EVE Frontier API for the login's tier. Live (Liminality) is public; test-tier tenants such as tetra resolve to an internal address. | Check the laptop is online. On a test-tier tenant, connect to the internal network or VPN, then restart the zkLogin terminal and log in again. |
 | `That doesn't look like a JWT` | Something other than the `id_token` was pasted. | Copy only the value after `id_token=` in the redirect URL. |
 | `Sui CLI is on "…", not testnet` | Publish needs the CLI on testnet to fetch the world package. | `sui client switch --env testnet`. |
