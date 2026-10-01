@@ -15,25 +15,67 @@ const mainnetResolution = {
 };
 const testnetResolution = {
     packages: {
+        "@evefrontier/world-uat":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230",
         "@evefrontier/world": "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92",
+        "@evefrontier/world-test":
+            "0x4adc2ee28cf9ea38c164ac8ae4c2e174f4869c9bbcbd588beb110f4fbe4a2554",
     },
     types: {
-        "@evefrontier/world::in_game_id::TenantItemId":
-            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::in_game_id::TenantItemId",
         "@evefrontier/world::gate::JumpPermit":
             "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::gate::JumpPermit",
-        "@evefrontier/world::storage_unit::StorageUnit":
-            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::storage_unit::StorageUnit",
-        "@evefrontier/world::gate::JumpEvent":
-            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::gate::JumpEvent",
+        "@evefrontier/world-test::gate::JumpPermit":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::gate::JumpPermit",
+        "@evefrontier/world-test::access::AdminACL":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::access::AdminACL",
+        "@evefrontier/world::in_game_id::TenantItemId":
+            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::in_game_id::TenantItemId",
+        "@evefrontier/world-test::character::Character":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::character::Character",
+        "@evefrontier/world-test::access::OwnerCap":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::access::OwnerCap",
+        "@evefrontier/world-test::gate::Gate":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::gate::Gate",
+        "@evefrontier/world::access::AdminACL":
+            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::access::AdminACL",
         "@evefrontier/world::character::Character":
             "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::character::Character",
+        "@evefrontier/world-test::gate::JumpEvent":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::gate::JumpEvent",
+        "@evefrontier/world-uat::object_registry::ObjectRegistry":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::object_registry::ObjectRegistry",
         "@evefrontier/world::object_registry::ObjectRegistry":
             "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::object_registry::ObjectRegistry",
-        "@evefrontier/world::access::OwnerCap":
-            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::access::OwnerCap",
+        "@evefrontier/world-uat::access::OwnerCap":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::access::OwnerCap",
+        "@evefrontier/world-uat::character::Character":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::character::Character",
+        "@evefrontier/world-uat::access::AdminACL":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::access::AdminACL",
+        "@evefrontier/world-uat::storage_unit::StorageUnit":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::storage_unit::StorageUnit",
+        "@evefrontier/world-uat::in_game_id::TenantItemId":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::in_game_id::TenantItemId",
+        "@evefrontier/world-uat::gate::Gate":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::gate::Gate",
+        "@evefrontier/world-test::object_registry::ObjectRegistry":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::object_registry::ObjectRegistry",
+        "@evefrontier/world::storage_unit::StorageUnit":
+            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::storage_unit::StorageUnit",
         "@evefrontier/world::gate::Gate":
             "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::gate::Gate",
+        "@evefrontier/world-uat::gate::JumpEvent":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::gate::JumpEvent",
+        "@evefrontier/world-uat::gate::JumpPermit":
+            "0x28eab6a6e9e12808a15901b12fcd3adfb07317d716dcaeb3f2965e25c7da0230::gate::JumpPermit",
+        "@evefrontier/world::access::OwnerCap":
+            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::access::OwnerCap",
+        "@evefrontier/world-test::in_game_id::TenantItemId":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::in_game_id::TenantItemId",
+        "@evefrontier/world::gate::JumpEvent":
+            "0x7be18d6294e533bedd9a5d70a96ce8d9d4b87a7c74188ba65d3fe966bbed9d92::gate::JumpEvent",
+        "@evefrontier/world-test::storage_unit::StorageUnit":
+            "0x353988e063b4683580e3603dbe9e91fefd8f6a06263a646d43fd3a2f3ef6b8c1::storage_unit::StorageUnit",
     },
 };
 

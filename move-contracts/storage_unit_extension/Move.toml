@@ -3,10 +3,15 @@ name = "storage_unit_extension"
 edition = "2024"
 
 [dependencies]
-# Pinned to the world-contracts commit whose Published.toml records the live
-# @evefrontier/world package (0x7be1…9d92) under `testnet_stillness`.
-# Liminality shares that package with Stillness, so build with:
-#   sui move build -e testnet_stillness
+# Pinned to the world-contracts commit whose Published.toml records each world
+# tier's package under its build environment (see WORLD_TIERS in
+# ts-scripts/mvr/tenants.ts):
+#   testnet_stillness  @evefrontier/world      stillness, liminality
+#   testnet_utopia     @evefrontier/world-uat  utopia, umbra
+#   testnet_internal   @evefrontier/world-test tauceti, tiaki, tetra, tesseract
+# Build with the tier's environment, e.g. `sui move build -e testnet_stillness`.
+# If a tier is upgraded past what this commit records, its build links against
+# a stale package: move the pin forward.
 # TODO: switch to `world = { r.mvr = "@evefrontier/world" }` once the MVR
 # registration carries git source info (resolution currently fails with
 # "Version 1 of @evefrontier/world does not have git information specified").
@@ -14,3 +19,5 @@ world = { git = "https://github.com/evefrontier/world-contracts.git", subdir = "
 
 [environments]
 testnet_stillness = "4c78adac"
+testnet_utopia = "4c78adac"
+testnet_internal = "4c78adac"

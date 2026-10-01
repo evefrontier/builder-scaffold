@@ -8,7 +8,7 @@
     "fmt:ts": "prettier --write \"ts-scripts/**/*.ts\"",
     "fmt:check": "prettier --check \"move-contracts/**/*.move\" \"ts-scripts/**/*.ts\"",
     "lint": "sh scripts/lint-move.sh",
-    "gen:mvr": "mvr-static --directory ts-scripts/mvr --include worldTypeKeys.ts --output ts-scripts/mvr/mvrCache.generated.ts --force && prettier --write ts-scripts/mvr/mvrCache.generated.ts",
+    "gen:mvr": "mvr-static --directory ts-scripts/mvr --include worldTypeKeys.ts --output ts-scripts/mvr/mvrCache.generated.ts --force && tsx ts-scripts/mvr/gen-world-objects.ts && prettier --write ts-scripts/mvr/mvrCache.generated.ts ts-scripts/mvr/worldObjects.generated.ts",
     "preflight": "tsx ts-scripts/preflight.ts",
     "resolve-ids": "tsx ts-scripts/resolve-ids.ts",
     "publish-extension": "tsx ts-scripts/smart_gate_extension/publish-extension.ts",

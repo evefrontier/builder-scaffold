@@ -10,20 +10,20 @@ Requires **Node.js >= 22** and `pnpm`.
 
 ```bash
 pnpm install
-cp .env.example .env   # AUTH_URL, CLIENT_ID, ENOKI_API_KEY
+cp .env.example .env   # AUTH_URL, CLIENT_ID
 pnpm zklogin
 ```
 
-Salt and ZK proof come from [Enoki](https://portal.enoki.mystenlabs.com/). Use the same
-Enoki app as EVE Vault: the salt determines your address, and a different app derives an
-address that doesn't own your character. The tool checks the address it logs in as against
-`ZKLOGIN_ADDRESS` in the repo-root `.env`, and stops if they differ.
+Your address and ZK proof come from the EVE Frontier API, through the same endpoints EVE
+Vault uses, so you sign as the address EVE Vault shows you. The API picks the server from
+your login. The tool stops if that server isn't the `TENANT` in the repo-root `.env`, or if
+the address isn't its `ZKLOGIN_ADDRESS`.
 
 ## Flow
 
 1. The tool generates an ephemeral key and prints a login URL
 2. Open it, log in, and copy the `id_token` from the redirect URL (`https://sui.io/#id_token=eyJ...`)
-3. Paste it when prompted — the tool fetches your salt and a ZK proof, valid for the session
+3. Paste it when prompted — the tool fetches your address and a ZK proof, valid for the session
 4. For each transaction, choose how to supply it:
    - **[f]ile** — enter the path a `pnpm` step printed (e.g. `zklogin/pending/publish.tx`)
    - **[p]aste** — paste the bytes (base64 or comma-separated numbers)
@@ -37,6 +37,6 @@ and created objects), which `pnpm tx-status` and `pnpm record-publish` read.
 
 | Variable | |
 |---|---|
-| `AUTH_URL`, `CLIENT_ID` | EVE Frontier OAuth for the live tier |
-| `ENOKI_API_KEY` | Enoki public API key |
+| `AUTH_URL`, `CLIENT_ID` | EVE Frontier OAuth for the server `TENANT` points at (live for the workshop) |
+| `EVE_API_URL` | Optional EVE Frontier API override; derived from your login by default |
 | `SUI_NETWORK_URL` | Optional testnet fullnode override |

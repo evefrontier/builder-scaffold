@@ -33,7 +33,7 @@ And on your machine: Node.js ≥ 22, pnpm, and the Sui CLI switched to testnet
 pnpm install
 (cd zklogin && pnpm install)
 cp .env.example .env                 # your address and in-game item IDs
-cp zklogin/.env.example zklogin/.env # auth and Enoki settings
+cp zklogin/.env.example zklogin/.env # AUTH_URL, CLIENT_ID
 pnpm preflight
 ```
 
@@ -114,13 +114,29 @@ pnpm gen:mvr
 ```
 
 To resolve a new world type, add it to [worldTypeKeys.ts](../ts-scripts/mvr/worldTypeKeys.ts)
-first. The world's `objectRegistry` and `adminAcl` are shared objects rather than packages,
-so they live in [tenants.ts](../ts-scripts/mvr/tenants.ts) and must be updated if the world is
-redeployed.
+first. The world's `ObjectRegistry` and `AdminACL` are shared objects rather than packages, so
+MVR doesn't resolve them. `pnpm gen:mvr` finds each tier's pair on chain by its MVR type and
+writes [worldObjects.generated.ts](../ts-scripts/mvr/worldObjects.generated.ts).
 
 The Move side builds against the world source pinned in
 [Move.toml](../move-contracts/smart_gate_extension/Move.toml). Liminality shares
 `@evefrontier/world` with Stillness, so the build environment is `testnet_stillness`.
+
+### Targeting another world
+
+`TENANT` in `.env` picks the world. It defaults to `liminality`; set it to another tenant to
+point every script, the Move build and preflight at that world:
+
+| `TENANT` | World tier | Build env |
+|---|---|---|
+| `stillness`, `liminality` | `@evefrontier/world` | `testnet_stillness` |
+| `utopia`, `umbra` | `@evefrontier/world-uat` | `testnet_utopia` |
+| `tauceti`, `tiaki`, `tetra`, `tesseract` | `@evefrontier/world-test` | `testnet_internal` |
+
+The list mirrors wallet-core's `src/tenant/tenants.ts`, which is the source of truth; keep
+[tenants.ts](../ts-scripts/mvr/tenants.ts) in sync with it. Log in to the zkLogin tool with
+that server's `AUTH_URL` and `CLIENT_ID` too; the tool stops if your login's tenant isn't `TENANT`.
+`pnpm preflight` prints the world it's targeting first.
 
 ## Signers
 

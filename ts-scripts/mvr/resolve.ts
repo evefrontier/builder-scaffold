@@ -1,5 +1,11 @@
 import { getMvrCache } from "./mvrCache.generated";
-import { TENANT_CONFIG, isTenantId, type TenantConfig, type TenantId } from "./tenants";
+import {
+    DEFAULT_TENANT,
+    TENANT_CONFIG,
+    isTenantId,
+    type TenantConfig,
+    type TenantId,
+} from "./tenants";
 import type { WorldTypeKey } from "./worldTypeKeys";
 
 /** Every EVE Frontier world tier is published on Sui testnet. */
@@ -16,7 +22,7 @@ const mvrCache = getMvrCache(WORLD_MVR_NETWORK) as MvrResolution;
 export const MVR_OVERRIDES = mvrCache;
 
 export function currentTenant(): TenantId {
-    const tenant = process.env.TENANT || "liminality";
+    const tenant = process.env.TENANT || DEFAULT_TENANT;
     if (!isTenantId(tenant)) {
         throw new Error(
             `Unknown TENANT "${tenant}". Supported: ${Object.keys(TENANT_CONFIG).join(", ")}.`

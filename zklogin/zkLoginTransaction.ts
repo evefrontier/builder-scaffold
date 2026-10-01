@@ -1,16 +1,22 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { EnokiClient } from "@mysten/enoki";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { fromBase64, normalizeSuiAddress } from "@mysten/sui/utils";
-import { generateNonce, generateRandomness, getZkLoginSignature } from "@mysten/sui/zklogin";
+import {
+    generateNonce,
+    generateRandomness,
+    getExtendedEphemeralPublicKey,
+    getZkLoginSignature,
+    type ZkLoginSignatureInputs,
+} from "@mysten/sui/zklogin";
 import { createInterface } from "readline";
 
 /** Send transactions as your EVE Frontier zkLogin address, on Sui testnet.
  - Log in once with your EVE Frontier account
- - Fetch salt and ZK proof from Enoki (cached for the session)
+ - Fetch your address and ZK proof from the EVE Frontier API, as EVE Vault
+   does (cached for the session)
  - Loop: load unsigned transaction bytes from a file or a paste, sign, execute
  - Write each result to last-tx.json for the builder scripts to read
 */
@@ -21,7 +27,6 @@ loadEnv(path.join(SCRIPT_DIR, ".env"));
 
 const AUTH_URL = requireConfig("AUTH_URL");
 const CLIENT_ID = requireConfig("CLIENT_ID");
-const ENOKI_API_KEY = requireConfig("ENOKI_API_KEY");
 const NETWORK = "testnet";
 const SUI_NETWORK_URL = process.env.SUI_NETWORK_URL || "https://fullnode.testnet.sui.io:443";
 
@@ -32,8 +37,6 @@ const suiClient = new SuiGrpcClient({
     network: NETWORK,
     baseUrl: SUI_NETWORK_URL,
 });
-
-const enoki = new EnokiClient({ apiKey: ENOKI_API_KEY });
 
 function loadEnv(file: string) {
     if (fs.existsSync(file)) process.loadEnvFile(file);
@@ -103,10 +106,137 @@ const createLoginUrl = (nonce: string): string => {
     return `${AUTH_URL}/oauth2/authorize?client_id=${CLIENT_ID}&response_type=id_token&scope=openid&redirect_uri=${redirectURL}&nonce=${nonce}`;
 };
 
+// ── EVE Frontier API ──────────────────────────────────────────────────────────
+// The same endpoints EVE Vault uses (evevault packages/shared/src/auth and
+// wallet/zkProof.ts). The API holds the Enoki app, so your salt — and so your
+// address — is the one EVE Vault gives you, and no Enoki key is needed here.
+
+type ApiContext = { apiBaseUrl: string; tenant: string };
+
+/** Unverified JWT payload — used only to route requests, never to trust them. */
+const decodeJwtClaims = (jwt: string): Record<string, unknown> => {
+    const payload = jwt.split(".")[1];
+    if (!payload)
+        throw new Error("That doesn't look like a JWT (expected header.payload.signature).");
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+};
+
 /**
- * The kit's expected address, from the repo-root .env. If Enoki derives a
- * different one, the salt doesn't match the one the character was created
- * with, and every transaction would come from an address that owns nothing.
+ * API gateway and tenant for this login. Mirrors wallet-core's
+ * `resolveEveTier` (src/jwt/api-context.ts): stillness and liminality default
+ * to the live tier, utopia and umbra are always uat, others default to test;
+ * an explicit `tier` claim overrides the defaults.
+ */
+const getApiContext = (jwt: string): ApiContext => {
+    const claims = decodeJwtClaims(jwt);
+    const tenant = typeof claims.tenant === "string" ? claims.tenant : "";
+    const tierClaim = typeof claims.tier === "string" ? claims.tier : "";
+    if (!tenant) throw new Error("The login token has no tenant claim.");
+    const tier =
+        tenant === "utopia" || tenant === "umbra"
+            ? "uat"
+            : tierClaim || (tenant === "stillness" || tenant === "liminality" ? "live" : "test");
+    const apiBaseUrl =
+        process.env.EVE_API_URL?.replace(/\/$/, "") || `https://api.${tier}.pub.evefrontier.com`;
+    return { apiBaseUrl, tenant };
+};
+
+const callApi = async <T>(
+    jwt: string,
+    route: string,
+    init: { method: "GET" | "POST"; body?: unknown }
+): Promise<T> => {
+    const { apiBaseUrl, tenant } = getApiContext(jwt);
+    const response = await fetch(`${apiBaseUrl}${route}`, {
+        method: init.method,
+        headers: {
+            "X-Tenant": tenant,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${jwt}`,
+        },
+        ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }),
+    });
+    const text = await response.text();
+    if (!response.ok) {
+        throw new Error(`${init.method} ${route} failed (${response.status}): ${text}`);
+    }
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        throw new Error(`${route} returned invalid JSON: ${text}`);
+    }
+};
+
+/** Your zkLogin address, derived from the salt the API holds for this account. */
+const fetchZkLoginAddress = async (jwt: string): Promise<string> => {
+    const data = await callApi<{ address?: string }>(jwt, "/auth/zklogin", { method: "GET" });
+    if (!data.address)
+        throw new Error(`/auth/zklogin returned no address: ${JSON.stringify(data)}`);
+    return data.address;
+};
+
+/**
+ * Exchanges the login token for one the prover accepts, carrying this
+ * session's nonce. EVE Vault does the same before every proof.
+ */
+const vendJwt = async (jwt: string, nonce: string): Promise<string> => {
+    const data = await callApi<{ token?: string }>(jwt, "/auth/zklogin/vend-jwt", {
+        method: "POST",
+        body: { nonce },
+    });
+    if (!data.token) throw new Error("/auth/zklogin/vend-jwt returned no token.");
+    return data.token;
+};
+
+const fetchZkProof = async (
+    vendedJwt: string,
+    ephemeralKeyPair: Ed25519Keypair,
+    randomness: string,
+    maxEpoch: number
+): Promise<ZkLoginSignatureInputs> => {
+    const proof = await callApi<ZkLoginSignatureInputs>(vendedJwt, "/auth/zklogin/zkp", {
+        method: "POST",
+        body: {
+            extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(
+                ephemeralKeyPair.getPublicKey()
+            ),
+            maxEpoch,
+            network: NETWORK,
+            randomness,
+        },
+    });
+    if (
+        !proof.proofPoints ||
+        !proof.issBase64Details ||
+        !proof.headerBase64 ||
+        !proof.addressSeed
+    ) {
+        throw new Error(`/auth/zklogin/zkp returned an incomplete proof: ${JSON.stringify(proof)}`);
+    }
+    return proof;
+};
+
+/**
+ * The repo-root .env must target the world this login belongs to; otherwise
+ * the scripts build transactions against a world where you own nothing.
+ */
+const checkTenant = (jwt: string) => {
+    loadEnv(path.join(SCRIPT_DIR, "..", ".env"));
+    const expected = process.env.TENANT;
+    const { tenant } = getApiContext(jwt);
+    console.log("   Tenant:", tenant);
+    if (expected && expected !== tenant) {
+        console.error(`\n❌ You logged in to ${tenant}, but TENANT in your .env is ${expected}.`);
+        console.error("   Log in to the matching server, or change TENANT in the repo-root .env.");
+        process.exit(1);
+    }
+};
+
+/**
+ * The kit's expected address, from the repo-root .env. If the API derives a
+ * different one, this isn't the account the character belongs to, and every
+ * transaction would come from an address that owns nothing.
  */
 const checkExpectedAddress = (zkLoginUserAddress: string) => {
     loadEnv(path.join(SCRIPT_DIR, "..", ".env"));
@@ -202,7 +332,7 @@ const executeTxn = async (
     txBytes: Uint8Array,
     ephemeralKeyPair: Ed25519Keypair,
     maxEpoch: number,
-    proof: Awaited<ReturnType<EnokiClient["createZkLoginZkp"]>>
+    proof: ZkLoginSignatureInputs
 ) => {
     const signedBytes = await ephemeralKeyPair.signTransaction(txBytes);
 
@@ -295,21 +425,21 @@ const main = async () => {
     console.log("\n⚙️  Step 3: Resolving your zkLogin address...\n");
 
     let zkLoginUserAddress: string;
-    let proof: Awaited<ReturnType<EnokiClient["createZkLoginZkp"]>>;
+    let proof: ZkLoginSignatureInputs;
     try {
-        ({ address: zkLoginUserAddress } = await enoki.getZkLogin({ jwt }));
+        checkTenant(jwt);
+        zkLoginUserAddress = await fetchZkLoginAddress(jwt);
         await fetchBalance(zkLoginUserAddress);
         checkExpectedAddress(zkLoginUserAddress);
 
         // Fetch ZK proof once and cache it for all transactions
         console.log("\n🔐 Fetching ZK proof (one-time)...");
-        proof = await enoki.createZkLoginZkp({
-            network: NETWORK,
-            jwt,
-            ephemeralPublicKey: ephemeralKeyPair.getPublicKey(),
+        proof = await fetchZkProof(
+            await vendJwt(jwt, nonce),
+            ephemeralKeyPair,
             randomness,
-            maxEpoch,
-        });
+            maxEpoch
+        );
         console.log("   ✓ ZK proof cached\n");
     } catch (error) {
         console.error("\n❌ Error:", error instanceof Error ? error.message : error);

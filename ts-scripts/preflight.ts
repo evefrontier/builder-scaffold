@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { bcs } from "@mysten/sui/bcs";
 import { normalizeSuiAddress } from "@mysten/sui/utils";
-import { worldTarget } from "./mvr/resolve";
+import { currentTenant, tenantConfig, worldPackage, worldTarget } from "./mvr/resolve";
 import { getOwnerCapId } from "./helpers/owner-cap";
 import { optionalNumber } from "./utils/constants";
 import { devInspectMoveCallFirstReturnValueBytes } from "./utils/dev-inspect";
@@ -57,6 +57,28 @@ const Inventory = bcs.struct("Inventory", {
         contents: bcs.vector(bcs.struct("Entry", { key: bcs.u64(), value: ItemEntry })),
     }),
 });
+
+// ── World ────────────────────────────────────────────────────────────────────
+
+/** Shows which world TENANT points at, so a wrong one is caught before signing. */
+function checkWorld(): boolean {
+    try {
+        const tenant = currentTenant();
+        const { mvrName, buildEnv } = tenantConfig(tenant);
+        console.log(
+            `\nWorld: ${tenant} — ${mvrName} (${worldPackage(tenant)}), build env ${buildEnv}`
+        );
+        return true;
+    } catch (error) {
+        record(
+            "TENANT is valid",
+            false,
+            error instanceof Error ? error.message : String(error),
+            "fix TENANT in .env, or remove it for the workshop default"
+        );
+        return false;
+    }
+}
 
 // ── Toolchain ────────────────────────────────────────────────────────────────
 
@@ -270,8 +292,9 @@ async function checkChain(ctx: InitializedContext) {
 
 async function main() {
     console.log("============= Workshop Preflight ==============");
+    const worldOk = checkWorld();
     const envComplete = checkToolchain();
-    if (envComplete) {
+    if (worldOk && envComplete) {
         try {
             await checkChain(initializeContext());
         } catch (error) {
