@@ -1,131 +1,62 @@
 import "dotenv/config";
 import { Transaction } from "@mysten/sui/transactions";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { MODULES } from "../utils/config";
-import { deriveObjectId } from "../utils/derive-object-id";
-import {
-    GATE_ITEM_ID_1,
-    GATE_ITEM_ID_2,
-    CLOCK_OBJECT_ID,
-    ITEM_A_TYPE_ID,
-    STORAGE_A_ITEM_ID,
-    GAME_CHARACTER_B_ID,
-} from "../utils/constants";
-import {
-    getEnvConfig,
-    handleError,
-    hydrateWorldConfig,
-    initializeContext,
-    requireEnv,
-} from "../utils/helper";
-import { resolveSmartGateExtensionIds } from "./extension-ids";
+import { worldType } from "../mvr/resolve";
+import { requireOwnerCapId } from "../helpers/owner-cap";
+import { CLOCK_OBJECT_ID, optionalNumber, requireItemId } from "../utils/constants";
+import { handleError, initializeContext } from "../utils/helper";
+import { submit } from "../utils/submit";
+import { resolveSmartGateExtensionIdsFromEnv } from "./extension-ids";
+import { resolveKit, withOwnerCap } from "./kit";
 import { MODULE } from "./modules";
-import { getCharacterOwnerCap } from "../helpers/character";
-import { executeSponsoredTransaction } from "../utils/transaction";
 
-async function collectCorpseBounty(
-    ctx: ReturnType<typeof initializeContext>,
-    adminKeypair: Ed25519Keypair,
-    adminAddress: string,
-    sourceGateItemId: bigint,
-    destinationGateItemId: bigint,
-    storageUnitItemId: bigint,
-    characterItemId: bigint
-) {
-    const { client, keypair, config, address } = ctx;
-
-    const { builderPackageId, extensionConfigId } = await resolveSmartGateExtensionIds(
-        client,
-        requireEnv("ADMIN_ADDRESS")
-    );
-
-    const sourceGateId = deriveObjectId(config.objectRegistry, sourceGateItemId, config.packageId);
-    const destinationGateId = deriveObjectId(
-        config.objectRegistry,
-        destinationGateItemId,
-        config.packageId
-    );
-    const characterId = deriveObjectId(config.objectRegistry, characterItemId, config.packageId);
-    const storageUnitId = deriveObjectId(
-        config.objectRegistry,
-        storageUnitItemId,
-        config.packageId
-    );
-
-    const playerOwnerCapId = await getCharacterOwnerCap(characterId, client, config, address);
-    if (!playerOwnerCapId) {
-        throw new Error(`OwnerCap not found for ${characterId}`);
-    }
-
-    const tx = new Transaction();
-    tx.setSender(address);
-    tx.setGasOwner(adminAddress);
-
-    const [ownerCap, returnReceipt] = tx.moveCall({
-        target: `${config.packageId}::${MODULES.CHARACTER}::borrow_owner_cap`,
-        typeArguments: [`${config.packageId}::${MODULES.CHARACTER}::Character`],
-        arguments: [tx.object(characterId), tx.object(playerOwnerCapId)],
-    });
-
-    tx.moveCall({
-        target: `${builderPackageId}::${MODULE.CORPSE_GATE_BOUNTY}::collect_corpse_bounty`,
-        typeArguments: [`${config.packageId}::${MODULES.CHARACTER}::Character`],
-        arguments: [
-            tx.object(extensionConfigId),
-            tx.object(storageUnitId),
-            tx.object(sourceGateId),
-            tx.object(destinationGateId),
-            tx.object(characterId),
-            ownerCap,
-            tx.pure.u64(ITEM_A_TYPE_ID),
-            tx.pure.u32(1),
-            tx.object(CLOCK_OBJECT_ID),
-        ],
-    });
-
-    tx.moveCall({
-        target: `${config.packageId}::${MODULES.CHARACTER}::return_owner_cap`,
-        typeArguments: [`${config.packageId}::${MODULES.CHARACTER}::Character`],
-        arguments: [tx.object(characterId), ownerCap, returnReceipt],
-    });
-
-    const result = await executeSponsoredTransaction(
-        tx,
-        client,
-        keypair,
-        adminKeypair,
-        address,
-        adminAddress,
-        { showEffects: true, showObjectChanges: true, showEvents: true }
-    );
-
-    console.log("Corpse bounty collected + JumpPermit issued!");
-    console.log("Transaction digest:", result.digest);
-}
-
+/**
+ * "Submit a corpse" — the player side. Withdraws the corpse from the storage
+ * unit's main inventory, where the owner's in-game deposits land, runs your
+ * rule, deposits it back, and issues a JumpPermit to the character. The
+ * corpses aren't used up: they return to the same inventory. Self-paid: the
+ * Move function takes no AdminACL, so no sponsor is needed.
+ */
 async function main() {
     console.log("============= Collect Corpse Bounty ==============\n");
     try {
-        const env = getEnvConfig();
-        const adminCtx = initializeContext(env.network, env.adminExportedKey);
-        await hydrateWorldConfig(adminCtx);
+        const ctx = initializeContext();
+        const kit = resolveKit(ctx);
+        const { builderPackageId, extensionConfigId } = resolveSmartGateExtensionIdsFromEnv();
+        const corpseTypeId = requireItemId("CORPSE_TYPE_ID");
+        const quantity = optionalNumber("CORPSE_QUANTITY", 1);
 
-        const playerKey = requireEnv("PLAYER_B_PRIVATE_KEY");
-        const playerCtx = initializeContext(env.network, playerKey);
-        playerCtx.config = adminCtx.config;
+        // The storage unit's OwnerCap selects its main inventory; a character's own
+        // OwnerCap would select that character's Ephemeral Inventory instead.
+        const storageUnitCapId = await requireOwnerCapId("storage_unit", kit.storageUnitId, ctx);
 
-        const adminKeypair = adminCtx.keypair;
-        const adminAddress = adminKeypair.getPublicKey().toSuiAddress();
-
-        await collectCorpseBounty(
-            playerCtx,
-            adminKeypair,
-            adminAddress,
-            GATE_ITEM_ID_1,
-            GATE_ITEM_ID_2,
-            STORAGE_A_ITEM_ID,
-            BigInt(GAME_CHARACTER_B_ID)
+        const tx = new Transaction();
+        withOwnerCap(
+            tx,
+            kit.characterId,
+            storageUnitCapId,
+            "storage_unit::StorageUnit",
+            (ownerCap) => {
+                tx.moveCall({
+                    target: `${builderPackageId}::${MODULE.CORPSE_GATE_BOUNTY}::collect_corpse_bounty`,
+                    typeArguments: [worldType("storage_unit::StorageUnit")],
+                    arguments: [
+                        tx.object(extensionConfigId),
+                        tx.object(kit.storageUnitId),
+                        tx.object(kit.sourceGateId),
+                        tx.object(kit.destinationGateId),
+                        tx.object(kit.characterId),
+                        ownerCap,
+                        tx.pure.u64(corpseTypeId),
+                        tx.pure.u32(quantity),
+                        tx.object(CLOCK_OBJECT_ID),
+                    ],
+                });
+            }
         );
+
+        console.log(`Submitting ${quantity} × item type ${corpseTypeId}`);
+        await submit(tx, ctx, "collect-corpse-bounty");
+        console.log("\nAfter it succeeds, run: pnpm check-permit");
     } catch (error) {
         handleError(error);
     }

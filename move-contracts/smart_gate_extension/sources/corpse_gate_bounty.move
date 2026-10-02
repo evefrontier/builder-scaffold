@@ -2,8 +2,8 @@
 ///
 /// This module demonstrates how to extend `world`'s `StorageUnit` and `Gate` assemblies:
 /// - withdraw an item from a player's `StorageUnit` (with owner auth)
-/// - validate it against a bounty rule (stored under `ExtensionConfig`)
-/// - deposit it into an owner `StorageUnit`
+/// - check it against your rule (see the YOUR RULE block below)
+/// - deposit it into the owner's `StorageUnit`
 /// - issue a `world::gate::JumpPermit` so the player can use the gate
 module smart_gate_extension::corpse_gate_bounty;
 
@@ -13,6 +13,7 @@ use world::{
     access::OwnerCap,
     character::Character,
     gate::{Self, Gate},
+    inventory::Item,
     storage_unit::StorageUnit
 };
 
@@ -34,6 +35,35 @@ public struct BountyConfig has drop, store {
 
 /// Dynamic-field key for `BountyConfig`.
 public struct BountyConfigKey has copy, drop, store {}
+
+// ╔═════════════════════════════ YOUR RULE ═════════════════════════════╗
+// Decides whether `character` may jump, given the `item` they handed in.
+// Abort with one of your own errors to deny the jump; return to allow it.
+//
+// Edit only between the YOUR RULE markers. Available inputs:
+//   bounty_cfg.bounty_type_id   the item type set by `pnpm setup-gate`
+//   item.type_id(), item.quantity()
+//   character.tribe(), character.key().item_id()  (the character item ID)
+//   clock.timestamp_ms()
+// Number your own errors from 100 up so they never collide with the ones above.
+
+#[error(code = 100)]
+const ENotInTribe: vector<u8> = b"Only members of our tribe may use this gate";
+#[error(code = 101)]
+const EGateClosed: vector<u8> = b"The gate is open 18:00 to 00:00 UTC";
+
+const OWN_TRIBE: u32 = 1000167;
+const OPEN_HOUR_UTC: u64 = 18;
+
+fun check_rule(bounty_cfg: &BountyConfig, item: &Item, character: &Character, clock: &Clock) {
+    assert!(item.type_id() == bounty_cfg.bounty_type_id, ECorpseTypeMismatch);
+    assert!(character.tribe() == OWN_TRIBE, ENotInTribe);
+    // Open from 18:00 until midnight UTC.
+    let hour = (clock.timestamp_ms() / 3_600_000) % 24;
+    assert!(hour >= OPEN_HOUR_UTC, EGateClosed);
+}
+
+// ╚═════════════════════════════ END RULE ══════════════════════════════╝
 
 /// Submit a corpse to get a `JumpPermit` for using the gate.
 public fun collect_corpse_bounty<T: key>(
@@ -63,8 +93,7 @@ public fun collect_corpse_bounty<T: key>(
         ctx,
     );
 
-    // Check if the corpse is of the correct type.
-    assert!(corpse.type_id() == bounty_cfg.bounty_type_id, ECorpseTypeMismatch);
+    check_rule(bounty_cfg, &corpse, character, clock);
 
     storage_unit.deposit_item<XAuth>(
         character,

@@ -1,5 +1,11 @@
 # Builder flow
 
+> **Note:** This repo's TypeScript scripts now target the live Liminality world on Sui
+> testnet, signed with your game account via zkLogin — see
+> [building on an existing world](./building-on-existing-world.md). The local-world steps below deploy a world
+> with world-contracts, but the scripts no longer read local deployment artifacts
+> (`deployments/`, `test-resources.json`).
+
 End-to-end flow to test builder-scaffold against world-contracts.
 
 **Choose one path, then follow that guide’s steps from start to finish:**

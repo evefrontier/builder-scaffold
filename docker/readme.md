@@ -1,5 +1,11 @@
 # Sui development environment (Docker)
 
+> **Note:** This repo's TypeScript scripts now target the live Liminality world on Sui
+> testnet, signed with your game account via zkLogin — see
+> [building on an existing world](../docs/building-on-existing-world.md). The local-world steps below deploy a world
+> with world-contracts, but the scripts no longer read local deployment artifacts
+> (`deployments/`, `test-resources.json`).
+
 One container with **Sui CLI**, **Node.js**, and **pnpm**. No host tooling needed.
 
 For the full builder-scaffold flow (world deploy → publish contract → run scripts) inside this container, see [builder-flow-docker.md](../docs/builder-flow-docker.md).

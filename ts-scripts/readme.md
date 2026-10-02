@@ -1,35 +1,49 @@
 # TypeScript scripts
 
-Interact with your deployed extension contracts from TypeScript.
-
-## Prerequisites
-
-1. World contracts deployed and configured (see [setup-world](../setup-world/readme.md)), or you're building on an existing world — [building-on-existing-world](../docs/building-on-existing-world.md) guide (coming soon)
-2. In both cases: `deployments/` and `test-resources.json` for that world copied to this repo's root
-3. Your extension package published (e.g. `smart_gate_extension`)
+Build transactions against the live Liminality world on Sui testnet. The scripts never
+sign: each writes an unsigned transaction to `zklogin/pending/<step>.tx`, which you sign in
+the [zkLogin tool](../zklogin/readme.md). Full walkthrough:
+[building on an existing world](../docs/building-on-existing-world.md).
 
 ## Setup
 
 ```bash
 # From repo root
-cp .env.example .env    # fill in keys, WORLD_PACKAGE_ID, BUILDER_PACKAGE_ID
+cp .env.example .env    # your zkLogin address and in-game item IDs
 pnpm install
+pnpm preflight
 ```
 
-Set `WORLD_PACKAGE_ID`, `BUILDER_PACKAGE_ID`, and other environment variables in `.env` from your extension package deployment output.
+## Scripts
 
-For the Smart Gate example script order, see [smart_gate_extension/readme.md](./smart_gate_extension/readme.md).
+| Script | Does |
+|---|---|
+| `pnpm preflight` | Checks toolchain and your kit on chain (read-only) |
+| `pnpm resolve-ids [itemId…]` | Derives object IDs from in-game item IDs and checks they exist |
+| `pnpm publish-extension` | Builds and prepares the publish of `smart_gate_extension` |
+| `pnpm record-publish` | Saves the new package and `ExtensionConfig` IDs to `.env` |
+| `pnpm setup-gate` | Sets the rule config and authorizes your extension on both gates and the storage unit |
+| `pnpm collect-corpse-bounty` | Hands in a corpse for a `JumpPermit` |
+| `pnpm issue-tribe-jump-permit` | Fallback rule: a permit by tribe (`RULE=tribe`) |
+| `pnpm check-permit` | Shows the `JumpPermit`s you hold |
+| `pnpm tx-status` | Reports whether the last signed transaction succeeded |
+| `pnpm gen:mvr` | Regenerates the world MVR cache after a world upgrade |
 
-## Customization
+Add `--paste` to any build step to also print the bytes for pasting.
 
-- Edit `test-resources.json` to change item IDs, type IDs, or location hash
-- Object IDs are derived at runtime from `test-resources.json` + `extracted-object-ids.json` using `deriveObjectId()`
+`preflight` and `resolve-ids` are read-only and safe on any laptop. The steps that build
+transactions run only on the team's signer's laptop when a team shares one account — see
+[working as a team](../docs/building-on-existing-world.md#working-as-a-team).
 
 ## Adding your own scripts
 
-Use the existing scripts as templates. The key utilities:
+Use the existing scripts as templates. The key pieces:
 
-- `utils/helper.ts` — env config, context initialization, world config hydration
-- `utils/derive-object-id.ts` — derive Sui object IDs from game item IDs
-- `utils/proof.ts` — generate location proofs for proximity verification
-- `helpers/` — query OwnerCap objects for gates, storage units, characters
+- `mvr/resolve.ts` — `worldTarget()` for call targets, `worldType()` for type tags; never
+  build world type strings by hand
+- `utils/helper.ts` — `initializeContext()`: client, world config, your zkLogin address
+- `utils/submit.ts` — `submit(tx, ctx, step)`: build for your address and write the bytes
+- `utils/derive-object-id.ts` — derive object IDs from in-game item IDs
+- `smart_gate_extension/kit.ts` — your kit's object IDs, and `withOwnerCap()` for the
+  borrow/return pair
+- `helpers/owner-cap.ts` — look up the `OwnerCap` of a character, gate or storage unit

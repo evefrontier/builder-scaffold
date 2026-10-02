@@ -20,3 +20,10 @@ dapps/frontend
 
 .pnpm-store/
 move-contracts/**/build/**/
+
+# Participant publish metadata (each attendee publishes their own package)
+move-contracts/**/Published.toml
+
+# zkLogin REPL hand-off files
+zklogin/pending/
+zklogin/last-tx.json
