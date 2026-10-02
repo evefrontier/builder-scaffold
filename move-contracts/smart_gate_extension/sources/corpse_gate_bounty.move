@@ -48,13 +48,19 @@ public struct BountyConfigKey has copy, drop, store {}
 // Number your own errors from 100 up so they never collide with the ones above.
 
 #[error(code = 100)]
-const ENotEnoughCorpses: vector<u8> = b"Hand in 3 corpses to pass";
+const ENotInTribe: vector<u8> = b"Only members of our tribe may use this gate";
+#[error(code = 101)]
+const EGateClosed: vector<u8> = b"The gate is open 18:00 to 00:00 UTC";
 
-const MIN_CORPSES: u32 = 3;
+const OWN_TRIBE: u32 = 1000167;
+const OPEN_HOUR_UTC: u64 = 18;
 
-fun check_rule(bounty_cfg: &BountyConfig, item: &Item, _character: &Character, _clock: &Clock) {
+fun check_rule(bounty_cfg: &BountyConfig, item: &Item, character: &Character, clock: &Clock) {
     assert!(item.type_id() == bounty_cfg.bounty_type_id, ECorpseTypeMismatch);
-    assert!(item.quantity() >= MIN_CORPSES, ENotEnoughCorpses);
+    assert!(character.tribe() == OWN_TRIBE, ENotInTribe);
+    // Open from 18:00 until midnight UTC.
+    let hour = (clock.timestamp_ms() / 3_600_000) % 24;
+    assert!(hour >= OPEN_HOUR_UTC, EGateClosed);
 }
 
 // ╚═════════════════════════════ END RULE ══════════════════════════════╝
