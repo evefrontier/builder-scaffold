@@ -131,6 +131,17 @@ const describeError = (error: unknown): string => {
     return parts.join(" — ");
 };
 
+/**
+ * Accepts either the bare id_token or the whole sui.io redirect URL
+ * (`https://www.sui.io/#iss=...&id_token=eyJ...`) and returns the token.
+ */
+const extractJwt = (input: string): string => {
+    const trimmed = input.trim();
+    if (!trimmed.includes("id_token=")) return trimmed;
+    const params = trimmed.slice(trimmed.search(/[#?]/) + 1);
+    return new URLSearchParams(params).get("id_token") ?? "";
+};
+
 /** Unverified JWT payload — used only to route requests, never to trust them. */
 const decodeJwtClaims = (jwt: string): Record<string, unknown> => {
     const payload = jwt.split(".")[1];
@@ -428,10 +439,10 @@ const main = async () => {
 
     console.log("═".repeat(50));
     console.log("\n   After logging in, you'll be redirected to sui.io");
-    console.log("   Copy the 'id_token' value from the URL fragment.\n");
+    console.log("   Copy the whole URL from the address bar (or just its 'id_token' value).\n");
 
     // Step 3: Wait for JWT input
-    const jwt = await promptUser("📋 Paste your JWT token here: ");
+    const jwt = extractJwt(await promptUser("📋 Paste the redirect URL or JWT here: "));
 
     if (!jwt) {
         console.error("\n❌ No JWT provided. Exiting.");

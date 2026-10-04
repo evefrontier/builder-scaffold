@@ -26,7 +26,7 @@ the address isn't its `ZKLOGIN_ADDRESS`.
 ## Flow
 
 1. The tool generates an ephemeral key and prints a login URL
-2. Open it, log in, and copy the `id_token` from the redirect URL (`https://sui.io/#id_token=eyJ...`)
+2. Open it, log in, and copy the whole redirect URL (`https://www.sui.io/#...&id_token=eyJ...`) — pasting just the `id_token` value also works
 3. Paste it when prompted — the tool fetches your address and a ZK proof, valid for the session
 4. For each transaction, choose how to supply it:
    - **[f]ile** — enter the path a `pnpm` step printed (e.g. `zklogin/pending/publish.tx`)
