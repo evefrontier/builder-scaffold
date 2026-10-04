@@ -1,5 +1,11 @@
 # Setup EVE Frontier world
 
+> **Note:** This repo's TypeScript scripts now target the live Liminality world on Sui
+> testnet, signed with your game account via zkLogin — see
+> [building on an existing world](../docs/building-on-existing-world.md). The local-world steps below deploy a world
+> with world-contracts, but the scripts no longer read local deployment artifacts
+> (`deployments/`, `test-resources.json`).
+
 ## Why
 
 In the real game, players create a **Smart Character** (an on-chain identity that owns all their assemblies), build a **Network Node** (the power source that burns fuel to produce energy), and deploy assemblies like **Smart Storage Units** and **Smart Gates**. All assemblies need energy to function.

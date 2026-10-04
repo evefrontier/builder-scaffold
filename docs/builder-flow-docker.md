@@ -1,5 +1,11 @@
 # Builder flow: Docker
 
+> **Note:** This repo's TypeScript scripts now target the live Liminality world on Sui
+> testnet, signed with your game account via zkLogin — see
+> [building on an existing world](./building-on-existing-world.md). The local-world steps below deploy a world
+> with world-contracts, but the scripts no longer read local deployment artifacts
+> (`deployments/`, `test-resources.json`).
+
 Run the full builder-scaffold flow inside the Sui dev container — no Sui tools needed on your host. The same steps work for any extension example (**smart_gate_extension**, **storage_unit_extension**, or your own); 
 
 ## Prerequisites

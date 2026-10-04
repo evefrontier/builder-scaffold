@@ -1,11 +1,180 @@
 # Building on an existing world
 
-*Coming soon.* This guide will cover the end-to-end flow when the world is already deployed (e.g. shared server, live game) and you don't hold GovernorCap or run the world deploy yourself.
+Change who can pass a Smart Gate on the live **Liminality** world, on Sui testnet. You
+don't deploy a world: you publish your own extension package and point your gates at it.
 
-Planned topics:
+Every transaction is signed by your EVE Frontier game account through the
+[zkLogin tool](../zklogin/readme.md). The scripts in this repo never hold a private key —
+they build unsigned transactions, and the signer signs them in a second terminal on the same
+laptop.
 
-- **GovernorCap / AdminACL** — In the live game you don't hold GovernorCap or AdminACL enrollment. You only perform player-signer operations (e.g. issue permit, jump with permit, collect bounty). Admin operations (configure rules, authorise-gate-extension, authorise-storage-unit-extension) are for local testing.
-- **Object discovery** — No local `extracted-object-ids.json`; discovering world object IDs via RPC/GraphQL or a helper.
+```
+ Terminal 1 — pnpm scripts (or Claude)       Terminal 2 — zkLogin tool (signer)
+ ─────────────────────────────────────       ─────────────────────────────────
+ pnpm <step>  → writes zklogin/pending/…  ──▶ load the file → sign → execute
+ pnpm tx-status / record-publish          ◀── writes zklogin/last-tx.json
+```
 
+## Working as a team
 
-Until this doc is written, use the [Docker](./builder-flow-docker.md) or [Host](./builder-flow-host.md) flow for localnet/testnet where you deploy the world; see [Auth and signers](./auth-and-signers.md) for who signs vs who sponsors each operation.
+At the workshop, teams of four share one EVE Frontier account and one kit: one character,
+one pair of gates and one storage unit. Each team has one **signer**:
+
+| | Everyone | Signer only |
+|---|---|---|
+| Setup and `pnpm preflight` | ✅ | ✅ |
+| Write and build a rule with Claude | ✅ | ✅ |
+| Pick the team's rule | ✅ | ✅ |
+| Log in to the zkLogin tool, with the account on the team's login slip | | ✅ |
+| Publish, set up the gate, hand in a corpse | | ✅ |
+
+Everyone's `.env` holds the same `ZKLOGIN_ADDRESS`, so transactions built on two laptops at
+once compete for the same gas coins and owner caps. Conflicting ones can fail, or lock the
+team's gas coin for the rest of the epoch, so all of the team's transactions go through the
+signer's laptop. Your gates also trust one package at a time: whichever rule the signer
+publishes and sets up last is the one that's live.
+
+To move the team's pick to the signer, paste the rule block (everything between the
+`YOUR RULE` markers) to them, or describe the rule to the signer's Claude.
+
+Working alone? You're your own signer: follow every step.
+
+## What you need
+
+Your EVE Frontier account needs, on Liminality:
+
+- a **character**
+- **two gates**, online, linked to each other, owned by that character
+- a **storage unit**, online, owned by that character, with **corpses in its inventory**.
+  Items only reach the chain once deposited there: in the game, press **F** at the storage
+  unit and deposit them. Corpses in ship cargo aren't on chain yet. Only the hand-in needs
+  them: until then `pnpm preflight` shows a ⚠️, not a failure, so you can publish and set
+  up the gate first
+- some **testnet SUI** on your account's address for gas
+- enough corpses for one hand-in (`CORPSE_QUANTITY`). The hand-in withdraws them from the
+  storage unit's main inventory and deposits them straight back, so they aren't used up
+
+And on your machine: Node.js ≥ 22, pnpm, and the Sui CLI switched to testnet
+(`sui client switch --env testnet`).
+
+## Setup
+
+Everyone on the team:
+
+```bash
+pnpm install
+(cd zklogin && pnpm install)
+cp .env.example .env                 # your address and in-game item IDs
+cp zklogin/.env.example zklogin/.env # AUTH_URL, CLIENT_ID
+pnpm preflight
+```
+
+`pnpm preflight` checks your toolchain and your assemblies on chain, and prints a fix for
+anything that fails. Carry on once it prints `PREFLIGHT PASSED`.
+
+The signer starts the zkLogin tool in a second terminal and logs in:
+
+```bash
+cd zklogin && pnpm zklogin
+```
+
+## Finding your object IDs
+
+On-chain object IDs are derived from in-game item IDs, so you only need the item IDs.
+Put them in `.env`, then check they resolve:
+
+```bash
+pnpm resolve-ids                 # every item ID in .env
+pnpm resolve-ids 1000000012372   # any item ID
+```
+
+A derived ID depends on the world's object registry, the `TenantItemId` type, and your
+tenant (`liminality`). Those are fixed for the world and committed in
+[ts-scripts/mvr/](../ts-scripts/mvr/). A wrong tenant derives a valid-looking ID for an object that
+doesn't exist, which is the usual cause of "not found".
+
+## The flow
+
+Three transactions, all on the signer's laptop. After each `pnpm` step, load the printed file
+path in the zkLogin tool.
+
+| # | Build | Sign, then check | What it does |
+|---|---|---|---|
+| 1 | `pnpm publish-extension` | `pnpm record-publish` | Publishes your package; saves `BUILDER_PACKAGE_ID` and `EXTENSION_CONFIG_ID` to `.env` |
+| 2 | `pnpm setup-gate` | `pnpm tx-status` | Sets the bounty and authorizes your extension on **gate 1, gate 2 and the storage unit** |
+| 3 | `pnpm collect-corpse-bounty` | `pnpm check-permit` | Hands in a corpse; your rule decides whether you get a `JumpPermit` |
+
+Then your team's ship jumps through your gate in the game.
+
+### Why three assemblies
+
+Your extension is a type, `<your package>::config::XAuth`, and each assembly trusts one
+extension type:
+
+- `gate::issue_jump_permit<XAuth>` checks the extension on **both** gates of the route.
+- `storage_unit::deposit_item<XAuth>` checks it on the **storage unit** the corpse goes into.
+  (`withdraw_by_owner` needs no extension — it's authorized by your character.)
+
+`setup-gate` does all three in one transaction so none can be missed. A rule that doesn't
+touch inventory (`RULE=tribe`) needs only the two gates.
+
+### Changing your rule
+
+A published package can't change, and your gates trust its exact type. To change the rule,
+the team agrees the change and the signer edits it and repeats all three steps: `setup-gate`
+points your gates at the new package.
+
+`authorize_extension` replaces whatever extension was there before, so reusing gates is fine.
+**Never call `freeze_extension_config`** on a gate you want to change again: freezing is
+permanent.
+
+## World resolution (MVR)
+
+The world package is resolved through the [Move Registry](https://www.moveregistry.com/) as
+`@evefrontier/world`. A resolved world has two kinds of ID, and the scripts keep them apart:
+
+- the **latest package** — for `moveCall` targets (`worldTarget()` in
+  [resolve.ts](../ts-scripts/mvr/resolve.ts))
+- each type's **type-origin** — the package version that first defined it, for type
+  arguments, object-ID derivation and type filters (`worldType()`)
+
+They're identical until the world is upgraded, then they diverge, so each type is resolved
+individually. The resolutions are a committed, generated cache
+([mvrCache.generated.ts](../ts-scripts/mvr/mvrCache.generated.ts)). After a world upgrade,
+regenerate it:
+
+```bash
+pnpm gen:mvr
+```
+
+To resolve a new world type, add it to [worldTypeKeys.ts](../ts-scripts/mvr/worldTypeKeys.ts)
+first. The world's `ObjectRegistry` and `AdminACL` are shared objects rather than packages, so
+MVR doesn't resolve them. `pnpm gen:mvr` finds each tier's pair on chain by its MVR type and
+writes [worldObjects.generated.ts](../ts-scripts/mvr/worldObjects.generated.ts).
+
+The Move side builds against the world source pinned in
+[Move.toml](../move-contracts/smart_gate_extension/Move.toml). Liminality shares
+`@evefrontier/world` with Stillness, so the build environment is `testnet_stillness`.
+
+### Targeting another world
+
+`TENANT` in `.env` picks the world. It defaults to `liminality`; set it to another tenant to
+point every script, the Move build and preflight at that world:
+
+| `TENANT` | World tier | Build env |
+|---|---|---|
+| `stillness`, `liminality` | `@evefrontier/world` | `testnet_stillness` |
+| `utopia`, `umbra` | `@evefrontier/world-uat` | `testnet_utopia` |
+| `tauceti`, `tiaki`, `tetra`, `tesseract` | `@evefrontier/world-test` | `testnet_internal` |
+
+The list mirrors wallet-core's `src/tenant/tenants.ts`, which is the source of truth; keep
+[tenants.ts](../ts-scripts/mvr/tenants.ts) in sync with it. Log in to the zkLogin tool with
+that server's `AUTH_URL` and `CLIENT_ID` too; the tool stops if your login's tenant isn't `TENANT`.
+`pnpm preflight` prints the world it's targeting first.
+
+## Signers
+
+| Operation | Signed by | Sponsored |
+|---|---|---|
+| Publish, set up gate, hand in corpse | your team's zkLogin address, from the signer's laptop | no — the account pays gas |
+| Jump (`jump_with_permit`) | your character, via the game | yes — it requires an `AdminACL`-enrolled sponsor, which is why jumping happens in the game client |

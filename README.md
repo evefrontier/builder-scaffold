@@ -23,7 +23,7 @@ cd builder-scaffold
 |------|--------------|
 | **[Docker](./docs/builder-flow-docker.md)** | No Sui/Node on host; run everything in a container (local or testnet). Recommended for local testing  |
 | **[Host](./docs/builder-flow-host.md)** | Sui CLI + Node.js on your machine; target local or testnet. |
-| **[Building on an existing world](./docs/building-on-existing-world.md)** | World already deployed (e.g. shared server, live game); you don't deploy the world yourself. *(WIP – guide coming soon; use Docker/Host flows for now.)* |
+| **[Building on an existing world](./docs/building-on-existing-world.md)** | The live Liminality world on Sui testnet. Publish your own extension and sign with your game account via zkLogin. **The TypeScript scripts target this flow.** |
 
 By the end you’ll have a deployed world (or use an existing one), a published custom contract (e.g. `smart_gate_extension`), and scripts that call it.
 
@@ -36,7 +36,7 @@ By the end you’ll have a deployed world (or use an existing one), a published 
 | [ts-scripts/](./ts-scripts/readme.md) | TypeScript scripts to call your contracts; run after publishing. |
 | [setup-world/](./setup-world/readme.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
-| [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
+| [zklogin/](./zklogin/readme.md) | zkLogin CLI that signs the scripts' transactions as your EVE Frontier game account. |
 
 ## Contributing
 
