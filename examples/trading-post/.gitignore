@@ -1,0 +1,8 @@
+vendor/
+node_modules/
+**/build/
+dist/
+scripts/.state/
+scripts/testnet.json
+scripts/.env
+world.local.env

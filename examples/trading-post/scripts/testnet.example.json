@@ -1,0 +1,18 @@
+{
+  "worldEnv": "test",
+  "grpcUrl": "https://fullnode.testnet.sui.io:443",
+  "post": {
+    "entity": "0x<your trading post's object ID>",
+    "inventory": "<its inventory component ID>",
+    "character": "0x<your character's object ID>"
+  },
+  "buyerShip": {
+    "entity": "0x<the buyer's ship object ID>",
+    "inventory": "<its inventory component ID>",
+    "character": "0x<the buyer's character object ID>"
+  },
+  "items": {
+    "ore": { "tenant": "<your tenant>", "typeId": "<type ID of the item the buyer gives>", "variantId": "<its variant ID, or 0>" },
+    "parts": { "tenant": "<your tenant>", "typeId": "<type ID of the item the trading post sells>", "variantId": "<its variant ID, or 0>" }
+  }
+}

@@ -39,6 +39,7 @@ By the end you’ll have a deployed world (or use an existing one), a published 
 | [setup-world/](./setup-world/readme.md) | What “deploy world” does and what gets created (world flow steps are in the flow guides). |
 | [dapps/](./dapps/readme.md) | Reference dApp template (optional next step). |
 | [zklogin/](./zklogin/readme.md) | zkLogin CLI for OAuth-based signing (optional). |
+| [examples/trading-post/](./examples/trading-post/README.md) | **Cycle 8 preview:** a trading post on the new v1 world contracts, with a dApp. Runs on localnet only, since v1 is not yet on a public server. |
 
 ## Contributing
 

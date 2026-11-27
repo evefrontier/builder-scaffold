@@ -1,0 +1,28 @@
+{
+  "name": "builder-scaffold",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.17.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "localnet:start": "node localnet/localnet.ts start",
+    "localnet:stop": "node localnet/localnet.ts stop",
+    "move:test": "cd move/trade && sui move test --build-env testnet",
+    "typecheck": "pnpm -r typecheck",
+    "game:setup": "pnpm --filter frontier-trade-scripts game:setup",
+    "publish:trade": "pnpm --filter frontier-trade-scripts publish:trade",
+    "balances": "pnpm --filter frontier-trade-scripts balances",
+    "1:setup": "pnpm --filter frontier-trade-scripts 1:setup",
+    "1:trade": "pnpm --filter frontier-trade-scripts 1:trade",
+    "2:setup": "pnpm --filter frontier-trade-scripts 2:setup",
+    "2:trade": "pnpm --filter frontier-trade-scripts 2:trade",
+    "3:setup": "pnpm --filter frontier-trade-scripts 3:setup",
+    "3:trade": "pnpm --filter frontier-trade-scripts 3:trade",
+    "4:setup": "pnpm --filter frontier-trade-scripts 4:setup",
+    "4:trade": "pnpm --filter frontier-trade-scripts 4:trade",
+    "all": "pnpm --filter frontier-trade-scripts all",
+    "dapp": "pnpm --filter frontier-trade-dapp dev"
+  }
+}

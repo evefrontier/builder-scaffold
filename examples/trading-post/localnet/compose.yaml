@@ -1,0 +1,63 @@
+# The local network: a world-contracts snapshot image, which has the world
+# already deployed, plus the Postgres database its indexer needs.
+#
+# Run it with `pnpm localnet:start` (localnet/localnet.ts), which sets
+# WORLD_IMAGE from ../world.env and prepares vendor/. Based on world-contracts'
+# docker/docker-compose-snapshot-image.yml.
+name: frontier-localnet
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    # A named volume, removed by `pnpm localnet:stop`. The chain resets to the
+    # snapshot whenever its container is recreated, and the indexer's data
+    # must reset with it.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  sui:
+    image: ${WORLD_IMAGE:?set WORLD_IMAGE in world.env}
+    container_name: frontier-localnet
+    ports:
+      - 9000:9000 # RPC
+      - 9123:9123 # faucet
+      - 9125:9125 # GraphQL
+    volumes:
+      # On start the image copies world.json, accounts.json and
+      # test-resources.json here.
+      - ../vendor/localnet:/data/deployment:rw
+      # The example itself, so the Sui CLI in the container can publish
+      # move/trade (see scripts/src/publish.ts).
+      - ..:/scaffold
+    environment:
+      POSTGRES_CONNECTION_STRING: postgres://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Ready once the node answers a gRPC call, the API the scripts and the
+    # dApp use (gRPC-web over HTTP/1.1, so plain curl works). The request is
+    # an empty GetServiceInfo message: a 5-byte frame of zeros. A good reply
+    # ends with "grpc-status:0". JSON-RPC is not used: Sui is retiring it.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          printf '\0\0\0\0\0' | curl -sf -X POST
+          -H 'content-type: application/grpc-web+proto' --data-binary @-
+          http://127.0.0.1:9000/sui.rpc.v2.LedgerService/GetServiceInfo
+          | grep -aq 'grpc-status:0'
+      interval: 5s
+      timeout: 5s
+      retries: 60
+
+volumes:
+  postgres_data:
