@@ -1,6 +1,8 @@
-# Builder Scaffold
+# Builder Scaffold (Cycle 8)
 
 Templates and tools for building on EVE Frontier.
+
+> **This branch is the scaffold for Cycle 8, which is not yet live.** It is in progress and merges into `main` when Cycle 8 goes live. Until then, parts of it still describe the current game. For the current game, use the [`main` branch](https://github.com/evefrontier/builder-scaffold/tree/main).
 
 ## Prerequisites
 
