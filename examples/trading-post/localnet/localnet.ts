@@ -4,6 +4,7 @@
  *
  *   node localnet/localnet.ts start    (pnpm localnet:start)
  *   node localnet/localnet.ts stop     (pnpm localnet:stop)
+ *   node localnet/localnet.ts move-test (pnpm move:test)
  *
  * The network runs from a world-contracts snapshot image, which has the world
  * already deployed. The image is set in world.env, and world.local.env (not
@@ -212,7 +213,37 @@ function writePubfile(worldPath: string): void {
   writeFileSync(join(VENDOR, 'world-contracts/Pub.localnet.toml'), `${lines.join('\n')}\n`)
 }
 
+/**
+ * Run the trade package's Move unit tests with the Sui CLI inside the localnet
+ * container, so you don't need the Sui CLI on your machine and its version
+ * matches the node. Extra arguments go to `sui move test`.
+ */
+function moveTest(args: string[]): void {
+  if (!read('docker', ['ps', '-q', '--filter', `name=^${CONTAINER}$`])) {
+    fail('The local network is not running. Run: pnpm localnet:start')
+  }
+  // The container runs as root; on Linux, hand the build output back.
+  const res = spawnSync(
+    'docker',
+    [
+      'exec',
+      '-w',
+      '/scaffold/move/trade',
+      CONTAINER,
+      'sh',
+      '-c',
+      'sui move test --build-env testnet "$@"; status=$?; ' +
+        `${chownArgs('/scaffold/move/trade/build')}; exit $status`,
+      'sh',
+      ...args,
+    ],
+    { stdio: 'inherit' },
+  )
+  process.exit(res.status ?? 1)
+}
+
 const command = process.argv[2]
 if (command === 'start') start()
 else if (command === 'stop') stop()
-else fail('Usage: node localnet/localnet.ts start|stop')
+else if (command === 'move-test') moveTest(process.argv.slice(3))
+else fail('Usage: node localnet/localnet.ts start|stop|move-test')

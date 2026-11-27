@@ -29,7 +29,8 @@ Then a **dApp** in [`dapp/`](dapp/) shows the trading post's stock, finds your d
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Node.js](https://nodejs.org/) 24 or later, and [pnpm](https://pnpm.io/installation)
-- The [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install), only to run the Move unit tests on your machine
+
+You don't need the Sui CLI. On localnet, the Sui commands run inside the local network's container.
 
 The commands work the same on macOS, Linux and Windows. On Windows, use either [WSL 2](https://learn.microsoft.com/windows/wsl/install) with this repository in your WSL home folder (not under `/mnt/c`), or a native checkout on an NTFS drive. FAT32 and exFAT drives don't work, because pnpm needs links that they don't support. Windows is not yet tested.
 
@@ -56,7 +57,7 @@ Or one step at a time:
 
 Each `trade` step prints balances before and after, checks that they moved by exactly what the action says, and then checks that a bad trade is refused (asking for too much, a player who isn't on the allowlist, or the wrong payment).
 
-`pnpm move:test` runs the Move unit tests. `pnpm localnet:stop` removes the local network and all its state.
+`pnpm move:test` runs the Move unit tests, with the Sui CLI inside the local network's container, so the network must be running. `pnpm localnet:stop` removes the local network and all its state.
 
 ## The local network
 

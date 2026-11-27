@@ -9,7 +9,7 @@
   "scripts": {
     "localnet:start": "node localnet/localnet.ts start",
     "localnet:stop": "node localnet/localnet.ts stop",
-    "move:test": "cd move/trade && sui move test --build-env testnet",
+    "move:test": "node localnet/localnet.ts move-test",
     "typecheck": "pnpm -r typecheck",
     "game:setup": "pnpm --filter frontier-trade-scripts game:setup",
     "publish:trade": "pnpm --filter frontier-trade-scripts publish:trade",
