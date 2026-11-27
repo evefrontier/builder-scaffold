@@ -1,0 +1,35 @@
+{
+  "name": "frontier-trade-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "game:setup": "tsx src/game/setup.ts",
+    "publish:trade": "tsx src/publish.ts",
+    "balances": "tsx src/balances.ts",
+    "ship:prepare": "tsx src/ship-prepare.ts",
+    "1:setup": "tsx src/examples/1-barter/setup.ts",
+    "1:trade": "tsx src/examples/1-barter/trade.ts",
+    "2:setup": "tsx src/examples/2-allowlist/setup.ts",
+    "2:trade": "tsx src/examples/2-allowlist/trade.ts",
+    "3:setup": "tsx src/examples/3-fee/setup.ts",
+    "3:trade": "tsx src/examples/3-fee/trade.ts",
+    "4:setup": "tsx src/examples/4-shop/setup.ts",
+    "4:trade": "tsx src/examples/4-shop/trade.ts",
+    "all": "tsx src/run-all.ts"
+  },
+  "dependencies": {
+    "@evefrontier/world-sdk": "file:../vendor/world-sdk.tgz",
+    "@mysten/sui": "2.39.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    "./world": "./src/lib/world.ts",
+    "./rules": "./src/examples/rules.ts",
+    "./context": "./src/lib/context.ts"
+  }
+}

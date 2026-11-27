@@ -1,0 +1,10 @@
+[package]
+name = "trade"
+edition = "2024"
+
+# The world packages these examples build on. `pnpm localnet:start` puts their
+# sources in vendor/, from the same world-contracts commit as the local network.
+[dependencies]
+core = { local = "../../vendor/world-contracts/contracts/core" }
+character = { local = "../../vendor/world-contracts/contracts/character" }
+currency = { local = "../../vendor/world-contracts/contracts/currency" }

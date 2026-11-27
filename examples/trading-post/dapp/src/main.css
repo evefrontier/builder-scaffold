@@ -1,0 +1,42 @@
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --text: #16191d;
+  --muted: #5d6670;
+  --line: #dde1e6;
+  --accent: #d2691e;
+  --ok: #1f7a4d;
+  --bad: #b3261e;
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317;
+    --panel: #1a1d22;
+    --text: #e8eaed;
+    --muted: #9aa3ad;
+    --line: #2c3138;
+    --accent: #f08a3c;
+    --ok: #4cc38a;
+    --bad: #f2867f;
+  }
+}
+body { margin: 0; background: var(--bg); color: var(--text); }
+main { max-width: 880px; margin: 0 auto; padding: 24px 16px 64px; }
+header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+h1 { font-size: 22px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); font-size: 13px; }
+.mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; word-break: break-all; }
+.offer { border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.offer h3 { margin: 0; font-size: 15px; }
+button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+select { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+.ok { color: var(--ok); }
+.bad { color: var(--bad); }
+.signer { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
